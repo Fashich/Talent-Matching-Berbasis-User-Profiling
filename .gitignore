@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .claude/
+
+# Catatan internal Claude/AI — JANGAN PERNAH di-commit (biar nggak kelihatan
+# pakai AI & nggak bocorin isi percakapan ke repo public)
+CLAUDE.md
+RIWAYAT_PERCAKAPAN_CAPSTONE.md
