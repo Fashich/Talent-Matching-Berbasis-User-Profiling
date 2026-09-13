@@ -1,0 +1,195 @@
+classDiagram
+    class User {
+        -int id
+        -string username
+        -string passwordHash
+        -string nama
+        -string email
+        -string role
+        -string status
+        +login() AuthToken
+        +verifyPassword(pw) bool
+    }
+
+    class AuthToken {
+        -int id
+        -int userId
+        -string token
+        -datetime expiresAt
+        +isExpired() bool
+        +revoke() void
+    }
+
+    class Student {
+        -int id
+        -int userId
+        -string nisn
+        -string nama
+        -string jenisKelamin
+        -string kelas
+        -string jurusan
+        -string alamat
+        -string status
+        +getCompetencies() list
+        +getInterests() list
+        +getExperiences() list
+    }
+
+    class StudentInterest {
+        -int id
+        -int studentId
+        -string minat
+    }
+
+    class StudentExperience {
+        -int id
+        -int studentId
+        -string judul
+        -string deskripsi
+    }
+
+    class Competency {
+        -int id
+        -string nama
+        -string kategori
+    }
+
+    class StudentCompetency {
+        -int id
+        -int studentId
+        -int competencyId
+        -string tingkat
+        -string sertifikasi
+    }
+
+    class Keyword {
+        -int id
+        -string jurusan
+        -string keyword
+        +byJurusan(jurusan)$ list
+    }
+
+    class BidangJurusanMap {
+        -int id
+        -string bidangUsaha
+        -string jurusan
+    }
+
+    class Company {
+        -int id
+        -string nama
+        -string bidangUsaha
+        -int kuota
+        -string status
+        +getRequirements() list
+    }
+
+    class CompanyRequirement {
+        -int id
+        -int companyId
+        -string posisi
+        -string tingkatPengalaman
+        +getMajors() list
+        +getCompetencies() list
+    }
+
+    class RequirementMajor {
+        -int id
+        -int requirementId
+        -string jurusan
+    }
+
+    class RequirementCompetency {
+        -int id
+        -int requirementId
+        -string kompetensi
+    }
+
+    class InternshipGroup {
+        -int id
+        -string nama
+        -int companyId
+        -int guruId
+        -string status
+        +getMembers() list
+    }
+
+    class GroupMember {
+        -int id
+        -int groupId
+        -int studentId
+    }
+
+    class Placement {
+        -int id
+        -int studentId
+        -int companyId
+        -string status
+        +getJournals() list
+        +updateStatus(status) void
+    }
+
+    class Journal {
+        -int id
+        -int placementId
+        -int studentId
+        -date tanggal
+        -string kegiatan
+        -string status
+        +approve() void
+    }
+
+    class MatchingEngine {
+        <<service>>
+        +computeMatchScore(Student, Company) MatchingResult
+        +rankRecommendations(Student) list
+    }
+
+    class MatchingResult {
+        -int id
+        -int studentId
+        -int companyId
+        -decimal totalScore
+        -string category
+        +categoryFromScore(score)$ string
+    }
+
+    class Recommendation {
+        -int id
+        -int matchingId
+        -int rank
+    }
+
+    User "1" --> "*" AuthToken
+    User "1" --> "0..1" Student : akun
+    User "1" --> "*" InternshipGroup : guru
+    User "1" --> "*" Placement : guru
+
+    Student "1" --> "*" StudentInterest
+    Student "1" --> "*" StudentExperience
+    Student "1" --> "*" StudentCompetency
+    Competency "1" --> "*" StudentCompetency
+
+    Company "1" --> "*" CompanyRequirement
+    CompanyRequirement "1" --> "*" RequirementMajor
+    CompanyRequirement "1" --> "*" RequirementCompetency
+
+    Company "1" --> "*" InternshipGroup
+    InternshipGroup "1" --> "*" GroupMember
+    Student "1" --> "*" GroupMember
+
+    Student "1" --> "*" Placement
+    Company "1" --> "*" Placement
+    InternshipGroup "1" --> "*" Placement
+
+    Placement "1" --> "*" Journal
+    Student "1" --> "*" Journal
+
+    MatchingEngine ..> Student : reads
+    MatchingEngine ..> Company : reads
+    MatchingEngine ..> Keyword : reads
+    MatchingEngine ..> BidangJurusanMap : reads
+    MatchingEngine ..> MatchingResult : creates
+
+    CompanyRequirement "1" --> "*" MatchingResult
+    MatchingResult "1" --> "*" Recommendation

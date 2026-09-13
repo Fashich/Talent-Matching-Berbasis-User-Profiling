@@ -1,0 +1,197 @@
+erDiagram
+    USERS ||--o{ AUTH_TOKENS : "generates"
+    USERS ||--o| STUDENTS : "punya akun"
+    USERS ||--o{ INTERNSHIP_GROUPS : "membimbing (guru)"
+    USERS ||--o{ PLACEMENTS : "membimbing (guru)"
+
+    STUDENTS ||--o{ STUDENT_INTERESTS : "punya"
+    STUDENTS ||--o{ STUDENT_EXPERIENCES : "punya"
+    STUDENTS ||--o{ STUDENT_COMPETENCIES : "punya"
+    COMPETENCIES ||--o{ STUDENT_COMPETENCIES : "direferensikan"
+
+    COMPANIES ||--o{ COMPANY_REQUIREMENTS : "membuka"
+    COMPANY_REQUIREMENTS ||--o{ REQUIREMENT_MAJORS : "target jurusan"
+    COMPANY_REQUIREMENTS ||--o{ REQUIREMENT_COMPETENCIES : "butuh kompetensi"
+
+    COMPANIES ||--o{ INTERNSHIP_GROUPS : "menampung"
+    INTERNSHIP_GROUPS ||--o{ GROUP_MEMBERS : "beranggota"
+    STUDENTS ||--o{ GROUP_MEMBERS : "tergabung"
+
+    STUDENTS ||--o{ PLACEMENTS : "ditempatkan"
+    COMPANIES ||--o{ PLACEMENTS : "menerima"
+    INTERNSHIP_GROUPS ||--o{ PLACEMENTS : "mengelompokkan"
+
+    PLACEMENTS ||--o{ JOURNALS : "mencatat"
+    STUDENTS ||--o{ JOURNALS : "menulis"
+
+    STUDENTS ||--o{ MATCHING_RESULTS : "dinilai"
+    COMPANIES ||--o{ MATCHING_RESULTS : "dinilai"
+    COMPANY_REQUIREMENTS ||--o{ MATCHING_RESULTS : "dicocokkan"
+    MATCHING_RESULTS ||--o{ RECOMMENDATIONS : "diurutkan jadi"
+
+    USERS {
+        int id PK
+        string username UK
+        string password "bcrypt hash"
+        string nama
+        string email UK
+        string role "Administrator|Petugas|Guru|Siswa"
+        string status
+    }
+
+    AUTH_TOKENS {
+        int id PK
+        int user_id FK
+        string token UK
+        datetime expires_at
+    }
+
+    KEYWORDS {
+        int id PK
+        string jurusan "17 nilai, CD-4 5.2"
+        string keyword
+    }
+
+    BIDANG_JURUSAN_MAP {
+        int id PK
+        string bidang_usaha "11 baris, CD-4 5.3"
+        string jurusan
+    }
+
+    STUDENTS {
+        int id PK
+        int user_id FK "nullable"
+        string nisn UK
+        string nama
+        string jenis_kelamin
+        string kelas
+        string jurusan
+        string alamat
+        string no_hp
+        string email
+        string pendidikan
+        string preferensi
+        string portofolio
+        string status
+    }
+
+    STUDENT_INTERESTS {
+        int id PK
+        int student_id FK
+        string minat
+    }
+
+    STUDENT_EXPERIENCES {
+        int id PK
+        int student_id FK
+        string judul
+        string deskripsi
+    }
+
+    COMPETENCIES {
+        int id PK
+        string nama UK
+        string kategori
+        string deskripsi
+    }
+
+    STUDENT_COMPETENCIES {
+        int id PK
+        int student_id FK
+        int competency_id FK
+        string tingkat
+        string pengalaman_terkait
+        string sertifikasi
+    }
+
+    COMPANIES {
+        int id PK
+        string nama
+        string bidang_usaha
+        string alamat
+        string telepon
+        string email
+        string penanggung_jawab
+        int kuota
+        string status
+    }
+
+    COMPANY_REQUIREMENTS {
+        int id PK
+        int company_id FK
+        string posisi
+        string pendidikan_dibutuhkan
+        string tingkat_pengalaman
+        string kriteria_lain
+    }
+
+    REQUIREMENT_MAJORS {
+        int id PK
+        int requirement_id FK
+        string jurusan
+    }
+
+    REQUIREMENT_COMPETENCIES {
+        int id PK
+        int requirement_id FK
+        string kompetensi
+    }
+
+    INTERNSHIP_GROUPS {
+        int id PK
+        string nama
+        int company_id FK
+        int guru_pembimbing_id FK
+        date periode_mulai
+        date periode_selesai
+        string status
+    }
+
+    GROUP_MEMBERS {
+        int id PK
+        int group_id FK
+        int student_id FK
+    }
+
+    PLACEMENTS {
+        int id PK
+        int student_id FK
+        int company_id FK
+        int group_id FK
+        int guru_pembimbing_id FK
+        date tanggal_mulai
+        date tanggal_selesai
+        string status
+    }
+
+    JOURNALS {
+        int id PK
+        int placement_id FK
+        int student_id FK
+        date tanggal
+        string kegiatan
+        string kendala
+        string status
+        string catatan_pembimbing
+    }
+
+    MATCHING_RESULTS {
+        int id PK
+        int student_id FK
+        int company_id FK
+        int requirement_id FK
+        decimal competency_score
+        decimal experience_score
+        decimal education_score
+        decimal interest_score
+        decimal preference_score
+        decimal total_score
+        string category "Sangat Sesuai|Sesuai|Cukup Sesuai|Kurang Sesuai"
+    }
+
+    RECOMMENDATIONS {
+        int id PK
+        int matching_id FK
+        int rank
+        date recommendation_date
+    }
