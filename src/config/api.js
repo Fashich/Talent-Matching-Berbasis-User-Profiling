@@ -30,10 +30,20 @@ export class ApiError extends Error {
   }
 }
 
+// Pub-sub sederhana ke ConnectionContext (src/context/ConnectionContext.jsx) —
+// dipisah dari React supaya apiFetch (plain function, dipanggil dari mana saja
+// termasuk luar komponen) bisa memberi tahu status koneksi tanpa perlu hook.
+let connectionHandlers = { onOffline: () => {}, onOnline: () => {} };
+export function setConnectionHandlers(handlers) {
+  connectionHandlers = handlers;
+}
+
 /**
  * Wrapper fetch ke backend — otomatis nyisipin header Authorization: Bearer
  * kalau ada token tersimpan, dan otomatis json-encode/decode body.
  * Melempar ApiError kalau response.success === false atau HTTP gagal.
+ * Kegagalan JARINGAN (server tak terjangkau) beda dari respons error biasa —
+ * memicu ConnectionContext supaya UI bisa nampilin state "Lost Signal".
  */
 export async function apiFetch(path, { method = 'GET', body, skipAuth = false } = {}) {
   const headers = { 'Content-Type': 'application/json' };
@@ -47,9 +57,14 @@ export async function apiFetch(path, { method = 'GET', body, skipAuth = false } 
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
-  } catch (err) {
+  } catch {
+    connectionHandlers.onOffline();
     throw new ApiError('Tidak bisa terhubung ke server. Periksa koneksi/backend menyala atau tidak.', 0, null);
   }
+
+  // Response (apapun status HTTP-nya) berarti server terjangkau — bukan
+  // masalah koneksi, jadi bersihkan status offline kalau sebelumnya aktif.
+  connectionHandlers.onOnline();
 
   let json = null;
   try {
@@ -66,21 +81,13 @@ export async function apiFetch(path, { method = 'GET', body, skipAuth = false } 
   return json?.data ?? null;
 }
 
-/**
- * Cek cepat apakah backend bisa dijangkau — dipakai ConnectionContext untuk
- * fitur "No Connection/Lost Signal" (task #18). Sengaja tidak lewat
- * apiFetch supaya tidak ikut nyisipin header Authorization dan tidak
- * melempar ApiError, cukup balikin true/false.
- */
-export async function checkHealth(timeoutMs = 5000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+/** Test konektivitas ke backend tanpa perlu login — dipakai tombol "Coba Lagi". */
+export async function pingBackend() {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/health`, { signal: controller.signal });
-    return res.ok;
-  } catch {
+    await apiFetch('/api/auth/me');
+  } catch (err) {
+    if (!(err instanceof ApiError) || err.status !== 0) return true; // server menjawab (walau 401/dst) = online
     return false;
-  } finally {
-    clearTimeout(timer);
   }
+  return true;
 }

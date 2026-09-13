@@ -108,7 +108,6 @@ const GuruDashboard = () => {
 const SiswaDashboard = () => {
   const { siswa, perusahaan, kompetensi, jurnal, penempatan, kelompokMagang } = useData();
   const { user } = useAuth();
-  const data = findById(siswa, user.linkedId);
   const myPenempatan = scopedPenempatan(user, penempatan);
   const active = myPenempatan.find((p) => p.status === 'Berlangsung') || myPenempatan[0];
   const c = active ? findById(perusahaan, active.perusahaanId) : null;

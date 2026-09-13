@@ -2,8 +2,8 @@
 // controllers/CompetencyController.php
 // Modul Competency Profiling — master daftar kompetensi (kontrak CD-4 §4.2,
 // bagian dari "Administration: manage data/config, master"). Semua role login
-// boleh baca (buat dropdown input profil siswa/lowongan), Administrator saja
-// yang boleh tambah/ubah/hapus master ini.
+// boleh baca & tambah entri baru (kosakata terbuka, siswa bisa menambah lewat
+// Kompetensi.jsx); update/hapus master tetap Administrator-only.
 
 class CompetencyController
 {
@@ -32,8 +32,13 @@ class CompetencyController
 
     public static function store(): void
     {
-        $user = Auth::requireLogin();
-        Auth::requireRole($user, ['Administrator']);
+        // Semua role login boleh menambah entri master baru (bukan cuma
+        // Administrator) — daftar ini memang dirancang sebagai kosakata
+        // terbuka (lihat catatan di schema.sql: "boleh ditambah lewat
+        // aplikasi, bukan daftar tertutup"), karena siswa yang mengisi
+        // Kompetensi.jsx dengan nama baru butuh bisa membuat entri master-nya
+        // sendiri. Update/hapus master tetap Administrator-only di bawah.
+        Auth::requireLogin();
 
         $data = Request::body();
         if (empty($data['nama'])) {

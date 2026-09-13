@@ -1,30 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { GraduationCap, LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { menuForRole } from '../config/menu';
-
-// Logo asli SMKS Rajasa Surabaya belum tersedia di repo — taruh filenya di
-// public/logo-rajasa-192.png kalau sudah ada, sidebar otomatis pakai itu.
-// Selama file belum ada, jatuh ke ikon generik (GraduationCap).
-function SidebarLogo() {
-  const [logoError, setLogoError] = useState(false);
-  if (logoError) {
-    return (
-      <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white">
-        <GraduationCap size={18} />
-      </div>
-    );
-  }
-  return (
-    <img
-      src="/logo-rajasa-192.png"
-      alt="Logo SMKS Rajasa Surabaya"
-      className="w-8 h-8 rounded object-contain bg-white"
-      onError={() => setLogoError(true)}
-    />
-  );
-}
 
 const ROLE_BADGE_CLASS = {
   Administrator: 'bg-blue-100 text-blue-700',
@@ -49,7 +27,7 @@ const DashboardLayout = () => {
     <>
       <div className="h-16 flex items-center px-6 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <SidebarLogo />
+          <img src="/logo-rajasa-192.png" alt="Logo SMKS Rajasa Surabaya" className="w-8 h-8 rounded" />
           <span className="text-white font-semibold text-lg tracking-wide">EduPKL</span>
         </div>
       </div>

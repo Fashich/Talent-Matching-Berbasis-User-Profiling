@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { apiFetch, ApiError, getToken, setToken } from '../config/api';
 import { useConnection } from './ConnectionContext';
 
@@ -23,45 +23,42 @@ function toFrontendUser(apiUser) {
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const { online } = useConnection();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { online } = useConnection();
 
-  const fetchMe = useCallback(async () => {
+  useEffect(() => {
     if (!getToken()) {
       setLoading(false);
       return;
     }
-    try {
-      const me = await apiFetch('/api/auth/me');
-      setUser(toFrontendUser(me));
-    } catch (err) {
-      // Kalau gagalnya karena server tidak terjangkau (status 0 = network
-      // error dari apiFetch), JANGAN hapus token/sesi — RootGate yang akan
-      // menampilkan layar Lost Signal, dan efek di bawah otomatis nyoba
-      // muat ulang profil begitu koneksi pulih. Token hanya dihapus kalau
-      // server benar-benar bilang tokennya invalid/expired.
-      if (!(err instanceof ApiError) || err.status !== 0) {
+    // Belum ada koneksi ke backend — LostSignal overlay yang nangani UI-nya
+    // (lihat App.jsx). Sengaja TIDAK menganggap ini "token invalid" (jangan
+    // sampai user ke-logout paksa cuma gara-gara jaringan sempat putus) —
+    // efek ini otomatis dicoba ulang begitu `online` balik jadi true.
+    if (!online) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const me = await apiFetch('/api/auth/me');
+        if (cancelled) return;
+        setUser(toFrontendUser(me));
+        setLoading(false);
+      } catch (err) {
+        if (cancelled) return;
+        if (err instanceof ApiError && err.status === 0) {
+          return; // masalah koneksi, bukan token invalid — biarkan loading=true
+        }
         setToken(null);
         setUser(null);
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    })();
 
-  useEffect(() => {
-    fetchMe();
-  }, [fetchMe]);
-
-  // Begitu koneksi balik dan ada token tersimpan tapi profil belum berhasil
-  // dimuat (gagal sebelumnya karena network), coba muat ulang — ini yang
-  // bikin sesi login "otomatis pulih" tanpa perlu login ulang.
-  useEffect(() => {
-    if (online && getToken() && !user) {
-      fetchMe();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      cancelled = true;
+    };
   }, [online]);
 
   const login = async (username, password) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
-import { GraduationCap, LogIn, ArrowLeft } from 'lucide-react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { LogIn } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
@@ -43,9 +43,7 @@ const Login = () => {
         <div className="hidden md:flex flex-col justify-between bg-slate-900 text-white p-10">
           <div>
             <div className="flex items-center gap-2 mb-8">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <GraduationCap size={22} />
-              </div>
+              <img src="/logo-rajasa-192.png" alt="Logo SMKS Rajasa Surabaya" className="w-10 h-10 rounded-lg bg-white p-1" />
               <span className="font-bold text-xl tracking-wide">EduPKL</span>
             </div>
             <h1 className="text-2xl font-bold leading-snug mb-3">
@@ -62,23 +60,13 @@ const Login = () => {
 
         {/* Panel kanan: form login */}
         <div className="p-8 sm:p-10">
-          <div className="flex items-center justify-between mb-6">
-            <div className="md:hidden flex items-center gap-2">
-              <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                <GraduationCap size={20} />
-              </div>
-              <span className="font-bold text-lg text-gray-800">EduPKL</span>
-            </div>
-            <Link
-              to="/"
-              className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-gray-600 transition"
-            >
-              <ArrowLeft size={14} /> Kembali ke beranda
-            </Link>
+          <div className="md:hidden flex items-center gap-2 mb-6">
+            <img src="/logo-rajasa-192.png" alt="Logo SMKS Rajasa Surabaya" className="w-9 h-9 rounded-lg" />
+            <span className="font-bold text-lg text-gray-800">EduPKL</span>
           </div>
 
           <h2 className="text-xl font-bold text-gray-800 mb-1">Masuk ke akun kamu</h2>
-          <p className="text-sm text-gray-500 mb-6">Prototipe — masukkan username atau pilih akun demo di bawah.</p>
+          <p className="text-sm text-gray-500 mb-6">Masukkan username dan password akunmu.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

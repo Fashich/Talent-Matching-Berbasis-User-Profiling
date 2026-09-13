@@ -17,18 +17,32 @@ export const keywordJurusan = {
   TBSM: ["Sepeda Motor", "Kelistrikan Otomotif", "Perbaikan Mesin", "Perawatan Kendaraan"],
 };
 
-// Mapping Bidang Usaha → Jurusan Relevan (dipakai sebagai skor cadangan/parsial
-// pada komponen "Pendidikan/Jurusan" jika jurusan siswa tidak match langsung).
+// Mapping Bidang Usaha → Jurusan Relevan (CD-4 §5.3, 11 bidang usaha resmi —
+// dipakai sebagai skor cadangan/parsial pada komponen "Pendidikan/Jurusan"
+// jika jurusan siswa tidak match langsung; sudah sinkron dengan tabel
+// bidang_jurusan_map di backend/database/schema.sql).
 export const bidangJurusanMap = {
-  TIK: ["RPL", "TKJ", "MM", "Animasi", "Broadcasting"],
+  "Teknologi Informasi dan Komunikasi (TIK)": ["RPL", "TKJ", "MM", "Animasi", "Broadcasting"],
   "Service Komputer": ["TKJ"],
-  CCTV: ["TKJ"],
+  "Pemasangan CCTV": ["TKJ"],
+  "Penarikan Kabel Jaringan dan Fiber optic": ["TKJ"],
   "Bisnis dan Manajemen": ["BDP", "MP", "AKL"],
   Otomotif: ["TBSM", "TPM"],
+  Ketenagalistrikan: ["TITL"],
+  "Seni dan Desain": ["DKV", "Tata Busana"],
+  "Pariwisata dan Kuliner": ["Perhotelan", "Tata Boga"],
+  Kesehatan: ["Farmasi", "Keperawatan"],
+  "Industri Kreatif": ["MM", "Animasi", "Broadcasting", "DKV"],
 };
 
 export const daftarBidangUsaha = Object.keys(bidangJurusanMap);
-export const daftarJurusan = ["RPL", "TKJ", "MM", "TBSM", "BDP", "MP", "AKL", "TPM"];
+
+// 17 jurusan resmi (Kamus Keyword Jurusan, CD-4 §5.2) — sinkron dengan tabel
+// keywords di backend.
+export const daftarJurusan = [
+  "RPL", "TKJ", "MM", "MP", "AKL", "BDP", "TBSM", "TPM", "TITL", "DKV",
+  "Perhotelan", "Tata Boga", "Tata Busana", "Farmasi", "Keperawatan", "Animasi", "Broadcasting",
+];
 
 // --- Data siswa (User Profiling) ---------------------------------------------------
 

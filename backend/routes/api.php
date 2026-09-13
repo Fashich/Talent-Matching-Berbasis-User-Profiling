@@ -13,13 +13,6 @@ require_once __DIR__ . '/../controllers/JournalController.php';
 require_once __DIR__ . '/../controllers/CompetencyController.php';
 require_once __DIR__ . '/../controllers/UserController.php';
 
-// ---- Health Check ----
-// Dipakai fitur "No Connection/Lost Signal" (task #18) di frontend buat
-// ngecek apakah backend nyala — publik, tanpa auth, tanpa sentuh DB.
-$router->get('/api/health', function () {
-    Response::success(['status' => 'ok', 'time' => date('c')], 'Server aktif.');
-});
-
 // ---- Authentication ----
 $router->post('/api/auth/login', [AuthController::class, 'login']);
 $router->post('/api/auth/logout', [AuthController::class, 'logout']);
