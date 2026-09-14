@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import ThemeToggle from '../../components/ThemeToggle';
 
 const Login = () => {
   const { user, loading, login } = useAuth();
@@ -37,8 +38,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl border border-gray-100 bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 flex items-center justify-center p-4">
+      <div className="fixed top-4 right-4">
+        <ThemeToggle />
+      </div>
+      <div className="w-full max-w-4xl grid md:grid-cols-2 rounded-2xl overflow-hidden shadow-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900">
         {/* Panel kiri: branding */}
         <div className="hidden md:flex flex-col justify-between bg-slate-900 text-white p-10">
           <div>
@@ -62,33 +66,33 @@ const Login = () => {
         <div className="p-8 sm:p-10">
           <div className="md:hidden flex items-center gap-2 mb-6">
             <img src="/logo-rajasa-192.png" alt="Logo SMKS Rajasa Surabaya" className="w-9 h-9 rounded-lg" />
-            <span className="font-bold text-lg text-gray-800">EduPKL</span>
+            <span className="font-bold text-lg text-gray-800 dark:text-slate-100">EduPKL</span>
           </div>
 
-          <h2 className="text-xl font-bold text-gray-800 mb-1">Masuk ke akun kamu</h2>
-          <p className="text-sm text-gray-500 mb-6">Masukkan username dan password akunmu.</p>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-slate-100 mb-1">Masuk ke akun kamu</h2>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">Masukkan username dan password akunmu.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Username</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="contoh: admin"
                 autoComplete="username"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 autoComplete="current-password"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}

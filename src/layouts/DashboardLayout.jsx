@@ -3,12 +3,13 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { LogOut, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { menuForRole } from '../config/menu';
+import ThemeToggle from '../components/ThemeToggle';
 
 const ROLE_BADGE_CLASS = {
-  Administrator: 'bg-blue-100 text-blue-700',
-  Petugas: 'bg-indigo-100 text-indigo-700',
-  Guru: 'bg-purple-100 text-purple-700',
-  Siswa: 'bg-green-100 text-green-700',
+  Administrator: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
+  Petugas: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300',
+  Guru: 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300',
+  Siswa: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300',
 };
 
 const DashboardLayout = () => {
@@ -67,7 +68,7 @@ const DashboardLayout = () => {
   );
 
   return (
-    <div className="flex h-screen bg-gray-50 font-sans">
+    <div className="flex h-screen bg-gray-50 dark:bg-slate-950 font-sans">
       {/* Sidebar desktop */}
       <aside className="hidden md:flex w-64 bg-slate-900 text-slate-300 flex-col transition-all duration-300">
         {SidebarContent}
@@ -86,22 +87,23 @@ const DashboardLayout = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Navbar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 z-10 shadow-sm">
+        <header className="h-16 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 z-10 shadow-sm">
           <div className="flex items-center gap-4">
             <button
-              className="md:hidden text-gray-500 hover:text-gray-700"
+              className="md:hidden text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200"
               onClick={() => setMobileOpen(true)}
               aria-label="Buka menu"
             >
               <Menu size={22} />
             </button>
-            <span className="text-gray-500 font-medium hidden sm:block">Talent Matching Berbasis User Profiling</span>
+            <span className="text-gray-500 dark:text-slate-400 font-medium hidden sm:block">Talent Matching Berbasis User Profiling</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-              <span className="text-sm font-medium text-gray-700">{user?.nama}</span>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ROLE_BADGE_CLASS[user?.role] || 'bg-gray-100 text-gray-700'}`}>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <ThemeToggle />
+            <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-gray-100 dark:border-slate-700">
+              <span className="text-sm font-medium text-gray-700 dark:text-slate-200">{user?.nama}</span>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${ROLE_BADGE_CLASS[user?.role] || 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-slate-200'}`}>
                 {user?.role}
               </span>
             </div>
@@ -109,7 +111,7 @@ const DashboardLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-slate-950 p-4 sm:p-6">
           <Outlet />
         </main>
       </div>
