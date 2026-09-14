@@ -449,14 +449,20 @@ CREATE TABLE recommendations (
 ) ENGINE=InnoDB;
 
 -- =====================================================================
--- SEED: 1 akun Administrator (WAJIB ada supaya bisa login pertama kali)
--- Username: admin | Password sementara: Admin123!
+-- SEED: 4 akun demo, 1 per role (WAJIB ada supaya bisa login pertama
+-- kali & demo tiap role: Administrator, Petugas, Guru, Siswa).
+-- Kredensial awal ADA di dokumen internal project (tidak dituliskan di
+-- sini karena file ini publik di GitHub) — WAJIB login & ganti password
+-- lewat aplikasi SEBELUM hosting publik/demo ke pihak luar.
 -- GANTI PASSWORD INI SEGERA setelah deploy pertama kali — jangan
 -- pernah dipakai di lingkungan produksi/live domain tanpa diganti.
--- Nama dibuat GENERIK ("Administrator Sistem"), BUKAN nama orang asli
--- — lihat catatan project_capstone_status.md soal isu ini di demo lama.
+-- Nama dibuat GENERIK, BUKAN nama orang asli — lihat catatan
+-- project_capstone_status.md soal isu ini di demo lama.
 -- =====================================================================
 INSERT INTO users (username, password, nama, email, role, status) VALUES
-('admin', '$2b$10$i2PrzJjQfRbDIaYKkKksy.YMeIwInHNDypOWqxvk2l4OdvjHou1yy', 'Administrator Sistem', 'admin@edupkl.sch.id', 'Administrator', 'Aktif');
+('admin', '$2b$10$i2PrzJjQfRbDIaYKkKksy.YMeIwInHNDypOWqxvk2l4OdvjHou1yy', 'Administrator Sistem', 'admin@edupkl.sch.id', 'Administrator', 'Aktif'),
+('petugas1', '$2y$10$oAF0CJgNqZQLx8eRCnFPrOdai8n2z79hZOvTEfVD3DQDoF9ZW2tQe', 'Petugas Demo', 'petugas1@edupkl.sch.id', 'Petugas', 'Aktif'),
+('guru1', '$2y$10$rdJYYmBWVlX/gl1AmZME/uFzUivww2wOsd9Y8KDf6kG2ruibIWfP2', 'Guru Demo', 'guru1@edupkl.sch.id', 'Guru', 'Aktif'),
+('siswa1', '$2y$10$qeEDu9L8b0V6P0GaNjQhVexjOx7NsY4oSJ0E8ERQ/wQFkdgNNjDka', 'Siswa Demo', 'siswa1@edupkl.sch.id', 'Siswa', 'Aktif');
 
 SET FOREIGN_KEY_CHECKS = 1;
