@@ -53,12 +53,30 @@ function scrollToId(id) {
   };
 }
 
+// Breakpoint sama persis dengan yang dipakai layout nav (min-[860px]) di
+// bawah — di bawah ini dianggap "mobile".
+const MOBILE_QUERY = '(max-width: 859px)';
+
 const Landing = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [stats, setStats] = useState(null);
   const [counts, setCounts] = useState([0, 0, 0, 0]);
+  // Scene 3D (SchoolScene) sengaja TIDAK di-render sama sekali di mobile
+  // (bukan cuma disembunyikan via CSS) — scene-nya berat (generate tekstur
+  // prosedural + animasi WebGL terus-menerus), jadi di mobile mending nggak
+  // usah dipasang ke DOM biar nggak boros baterai/CPU HP pengunjung.
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(MOBILE_QUERY).matches
+  );
   const startedRef = useRef(false);
   const statsSectionRef = useRef(null);
+
+  useEffect(() => {
+    const mql = window.matchMedia(MOBILE_QUERY);
+    const handleChange = (e) => setIsMobile(e.matches);
+    mql.addEventListener('change', handleChange);
+    return () => mql.removeEventListener('change', handleChange);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -274,9 +292,11 @@ const Landing = () => {
           </div>
         </div>
 
-        <div className="relative w-full h-[480px]">
-          <SchoolScene />
-        </div>
+        {!isMobile && (
+          <div className="relative w-full h-[480px]">
+            <SchoolScene />
+          </div>
+        )}
       </main>
 
       <section id="stats-section" ref={statsSectionRef} className="max-w-[1180px] mx-auto px-6 pt-5 pb-[60px] relative z-[1]">
