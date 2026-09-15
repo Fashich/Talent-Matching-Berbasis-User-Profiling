@@ -166,7 +166,7 @@ const Login = () => {
                     <ArrowRight size={13} strokeWidth={2.6} color="#25D366" />
                   </span>
                   <span className="block text-[0.72rem] leading-[1.5]" style={{ color: '#a2acc4' }}>
-                    Tidak bisa login? Chat admin lewat WhatsApp — pesannya sudah siap kirim.
+                    Tidak bisa Login? Silakan hubungi Admin sekarang
                   </span>
                 </span>
               </a>
