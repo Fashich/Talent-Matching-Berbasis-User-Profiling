@@ -50,8 +50,14 @@ class Router
         }
         $path = $path === '' ? '/' : $path;
 
+        // HEAD diperlakukan sama seperti GET (standar HTTP) — dibutuhkan
+        // supaya monitoring tool seperti UptimeRobot (yang default kirim
+        // request HEAD, bukan GET) tidak dianggap 404 padahal endpoint-nya
+        // ada.
+        $lookupMethod = $method === 'HEAD' ? 'GET' : $method;
+
         foreach ($this->routes as $route) {
-            if ($route['method'] === $method && preg_match($route['pattern'], $path, $matches)) {
+            if ($route['method'] === $lookupMethod && preg_match($route['pattern'], $path, $matches)) {
                 array_shift($matches); // buang full match, sisain capture groups {id} dst.
                 call_user_func_array($route['handler'], $matches);
                 return;
