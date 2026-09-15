@@ -10,6 +10,118 @@ body {
   @apply bg-gray-50 text-gray-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200;
 }
 
+/* =====================================================================
+   Design tokens — Landing & Login redesign (design_handoff_landing_login/)
+   Custom properties (bukan @theme) karena nilainya berubah tergantung
+   class .dark di <html>, sedangkan @theme Tailwind v4 untuk token statis.
+   Referensi: design_handoff_landing_login/README.md bagian "Design Tokens".
+   ===================================================================== */
+:root {
+  /* Aksen — sama di kedua tema */
+  --lp-accent-gradient: linear-gradient(135deg, #5B8DEF, #35C4C9);
+  --lp-blue: #5B8DEF;
+  --lp-cyan: #35C4C9;
+  --lp-cyan-text: #1fa7ae; /* dipakai utk teks kecil di atas background terang — kontras cukup */
+  --lp-on-accent: #04060c;
+  --lp-whatsapp-gradient: linear-gradient(135deg, #25D366, #128C7E);
+  --lp-error: #f87171;
+  --lp-success: #4ade80;
+
+  /* Light mode */
+  --lp-page-bg: linear-gradient(180deg, #eef3fe 0%, #f7fafd 55%, #eef2f9 100%);
+  --lp-text-primary: #151b2e;
+  --lp-text-secondary: #334155;
+  --lp-text-muted: #64748b;
+  --lp-nav-bg: rgba(255, 255, 255, 0.78);
+  --lp-nav-border: rgba(15, 23, 42, 0.08);
+  --lp-mobile-panel-bg: rgba(255, 255, 255, 0.97);
+  --lp-surface-bg: #ffffff;
+  --lp-surface-border: rgba(15, 23, 42, 0.08);
+  --lp-ghost-btn-bg: rgba(15, 23, 42, 0.05);
+  --lp-ghost-btn-border: rgba(15, 23, 42, 0.12);
+  --lp-pill-bg: rgba(91, 141, 239, 0.1);
+  --lp-pill-border: rgba(91, 141, 239, 0.25);
+  --lp-pill-text: #3457c9;
+  --lp-icon-box-blue: rgba(91, 141, 239, 0.12);
+  --lp-icon-box-cyan: rgba(53, 196, 201, 0.12);
+  --lp-stats-divider: rgba(15, 23, 42, 0.08);
+  --lp-footer-border: rgba(15, 23, 42, 0.08);
+  --lp-card-border: rgba(15, 23, 42, 0.08);
+  --lp-panel-bg: #ffffff;
+  --lp-input-bg: #f8fafc;
+  --lp-input-border: #e2e8f0;
+  --lp-chip-bg: #f1f5f9;
+  --lp-chip-border: #e2e8f0;
+}
+
+:root.dark {
+  --lp-page-bg: linear-gradient(180deg, #050710 0%, #090d19 45%, #0c1122 100%);
+  --lp-text-primary: #f1f3f9;
+  --lp-text-secondary: #dbe1f3;
+  --lp-text-muted: #8892ac;
+  --lp-nav-bg: rgba(6, 8, 16, 0.72);
+  --lp-nav-border: rgba(255, 255, 255, 0.07);
+  --lp-mobile-panel-bg: rgba(6, 8, 16, 0.96);
+  --lp-surface-bg: rgba(255, 255, 255, 0.03);
+  --lp-surface-border: rgba(255, 255, 255, 0.08);
+  --lp-ghost-btn-bg: rgba(255, 255, 255, 0.06);
+  --lp-ghost-btn-border: rgba(255, 255, 255, 0.12);
+  --lp-pill-bg: rgba(91, 141, 239, 0.1);
+  --lp-pill-border: rgba(91, 141, 239, 0.28);
+  --lp-pill-text: #9db8f5;
+  --lp-icon-box-blue: rgba(91, 141, 239, 0.16);
+  --lp-icon-box-cyan: rgba(53, 196, 201, 0.16);
+  --lp-stats-divider: rgba(255, 255, 255, 0.08);
+  --lp-footer-border: rgba(255, 255, 255, 0.08);
+  --lp-card-border: rgba(255, 255, 255, 0.08);
+  --lp-panel-bg: #0f1424;
+  --lp-input-bg: #161c30;
+  --lp-input-border: rgba(255, 255, 255, 0.12);
+  --lp-chip-bg: rgba(255, 255, 255, 0.05);
+  --lp-chip-border: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes lp-float-orb {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-26px) translateX(14px); }
+}
+@keyframes lp-float-orb-2 {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(20px) translateX(-18px); }
+}
+@keyframes lp-float-orb-l {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-22px) translateX(16px); }
+}
+@keyframes lp-float-orb-l2 {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(18px) translateX(-14px); }
+}
+@keyframes lp-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+@keyframes lp-grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 40px 40px, 0 0; }
+}
+@keyframes lp-twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+@keyframes lp-rotate-rays {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-orb,
+  .lp-grid-drift,
+  .lp-pulse-dot {
+    animation: none !important;
+  }
+}
+
 /* Cetak sertifikat: sembunyikan seluruh halaman kecuali kartu sertifikat */
 @media print {
   body * {

@@ -18,6 +18,10 @@ $router->post('/api/auth/login', [AuthController::class, 'login']);
 $router->post('/api/auth/logout', [AuthController::class, 'logout']);
 $router->get('/api/auth/me', [AuthController::class, 'me']);
 
+// ---- Public Stats (Landing Page, tanpa auth) ----
+require_once __DIR__ . '/../controllers/PublicStatsController.php';
+$router->get('/api/stats/public', [PublicStatsController::class, 'index']);
+
 // ---- Student Management (Siswa) ----
 $router->get('/api/siswa', [StudentController::class, 'index']);
 $router->post('/api/siswa', [StudentController::class, 'store']);

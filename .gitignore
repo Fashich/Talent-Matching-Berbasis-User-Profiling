@@ -30,3 +30,9 @@ dist-ssr
 CLAUDE.md
 RIWAYAT_PERCAKAPAN_CAPSTONE.md
 CATATAN_PENGINGAT_CAPSTONE.txt
+
+# Paket handoff desain (prototipe .dc.html referensi) — bukan kode produksi,
+# sudah diimplementasikan ke src/pages/Landing, src/pages/Login, dan
+# src/components/SchoolScene. Lihat design_handoff_landing_login/README.md.
+design_handoff_landing_login/
+Edupkl Capstone Web Redesign.zip
