@@ -1,0 +1,31 @@
+# render.yaml — Render Blueprint buat backend EduPKL.
+# Frontend (Vercel) di-deploy terpisah, bukan lewat file ini.
+#
+# CARA PAKAI:
+# 1. Push file ini + backend/Dockerfile + backend/nginx-render.conf +
+#    backend/supervisord.conf ke branch (lihat git command yang dikasih Claude).
+# 2. Di dashboard Render: New > Blueprint > connect ke repo GitHub ini.
+# 3. Render otomatis baca file ini dan bikin service "edupkl-backend".
+# 4. Isi env var yang DISENGAJA TIDAK ditaruh di file ini (lihat komentar di
+#    bawah) langsung lewat Render dashboard > service > Environment.
+
+services:
+  - type: web
+    name: edupkl-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: DB_PORT
+        value: 4000
+      - key: DB_NAME
+        value: EDUPKL_CapstoneProject
+      - key: DB_SSL
+        value: true
+      # === ISI MANUAL DI RENDER DASHBOARD (JANGAN taruh kredensial di sini) ===
+      # FRONTEND_URL  → https://nama-app-kamu.vercel.app  (domain Vercel produksi)
+      # DB_HOST       → dari TiDB Cloud (Connect > Public endpoint)
+      # DB_USER       → dari TiDB Cloud (biasanya format xxxxx.root)
+      # DB_PASSWORD   → dari TiDB Cloud (di-generate pas bikin cluster)
