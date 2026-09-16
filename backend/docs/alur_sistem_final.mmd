@@ -1,0 +1,104 @@
+---
+title: Arsitektur & Alur Sistem EduPKL - Talent Matching Berbasis User Profiling
+---
+flowchart TD
+    subgraph L0["Lapisan Deployment (Opsi B)"]
+        direction LR
+        U["Pengguna (Browser)"] --> FE["Vercel<br/>React 19 + Vite (Frontend)"]
+        FE <-->|"REST API<br/>Bearer Token"| BE["Render - Docker<br/>PHP-FPM + Nginx (Backend)"]
+        BE <-->|"PDO + SSL (port 4000)"| DB[("TiDB Cloud<br/>MySQL-compatible")]
+        UP["UptimeRobot"] -. "ping tiap 5 menit" .-> BE
+    end
+
+    FE --> LP{"Sudah login?"}
+    LP -- Belum --> LOGIN["Halaman Login"]
+    LOGIN --> AUTH{"Verifikasi username<br/>+ password (bcrypt)"}
+    AUTH -- Salah --> LOGIN
+    AUTH -- Benar --> TOKEN["Generate token<br/>random_bytes(32), simpan<br/>ke tabel auth_tokens"]
+    TOKEN --> DASH["Dashboard"]
+    LP -- Sudah --> CHECK{"Token valid?<br/>belum expired &<br/>status akun Aktif"}
+    CHECK -- Tidak --> LOGIN
+    CHECK -- Ya --> DASH
+    DASH -.-> LOGOUT["Logout"] -.-> DELTOKEN["Hapus token dari<br/>auth_tokens"] -.-> LOGIN
+
+    DASH --> ROLE{"Role user?"}
+
+    subgraph ADMIN["Administrator"]
+        A1["Kelola Siswa"]
+        A2["Kelola Perusahaan"]
+        A3["Kelola Kelompok Magang"]
+        A4["Penempatan & Penerimaan"]
+        A5["Kelola Jurnal"]
+        A6["Laporan"]
+        A7["Kelola User"]
+        A8["Pengaturan"]
+    end
+
+    subgraph PETUGAS["Petugas"]
+        P1["Kelola Siswa"]
+        P2["Kelola Perusahaan"]
+        P3["Kelola Kelompok Magang"]
+        P4["Penempatan & Penerimaan"]
+    end
+
+    subgraph GURU["Guru"]
+        G1["Monitoring Siswa (read-only)"]
+        G2["Lihat Perusahaan"]
+        G3["Lihat Kelompok Magang"]
+    end
+
+    subgraph SISWA["Siswa"]
+        S1["Profil"]
+        S2["Kompetensi & Minat"]
+        S3["Lihat Perusahaan"]
+        S4["Lihat Kelompok Magang"]
+        S5["Isi Jurnal"]
+        S6["Lihat Rekomendasi"]
+    end
+
+    ROLE -- Administrator --> ADMIN
+    ROLE -- Petugas --> PETUGAS
+    ROLE -- Guru --> GURU
+    ROLE -- Siswa --> SISWA
+
+    S2 --> ME
+    A4 --> ME
+    P4 --> ME
+
+    subgraph ME["Matching Engine (Rule-Based)"]
+        M0["Input: Profil Siswa vs<br/>Kebutuhan Perusahaan"]
+        M1["Kompetensi (40%)"]
+        M2["Pengalaman (20%)"]
+        M3["Pendidikan/Jurusan (15%)"]
+        M4["Bidang/Minat (15%)"]
+        M5["Preferensi lain (10%)"]
+        M0 --> M1 & M2 & M3 & M4 & M5
+        M1 & M2 & M3 & M4 & M5 --> SUM["Total Match Score"]
+        SUM --> KAT{"Kategori skor"}
+        KAT -->|"80-100%"| K1["Sangat Sesuai"]
+        KAT -->|"65-79%"| K2["Sesuai"]
+        KAT -->|"50-64%"| K3["Cukup Sesuai"]
+        KAT -->|"< 50%"| K4["Kurang Sesuai"]
+    end
+
+    K1 & K2 & K3 & K4 --> S6
+    K1 & K2 & K3 & K4 --> A4
+    KAT -. "hanya rekomendasi,<br/>keputusan akhir tetap di<br/>Petugas & Perusahaan (BR-10)" .-> NOTE["Bukan keputusan otomatis"]
+
+    classDef infra fill:#e0f2fe,stroke:#0369a1,color:#0c4a6e,stroke-width:1px;
+    classDef auth fill:#fef9c3,stroke:#a16207,color:#713f12,stroke-width:1px;
+    classDef admin fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d,stroke-width:1px;
+    classDef petugas fill:#dcfce7,stroke:#15803d,color:#14532d,stroke-width:1px;
+    classDef guru fill:#ede9fe,stroke:#6d28d9,color:#4c1d95,stroke-width:1px;
+    classDef siswa fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a,stroke-width:1px;
+    classDef engine fill:#fce7f3,stroke:#be185d,color:#831843,stroke-width:1px;
+    classDef note fill:#f1f5f9,stroke:#64748b,color:#334155,stroke-dasharray: 4 3;
+
+    class U,FE,BE,DB,UP infra;
+    class LP,LOGIN,AUTH,TOKEN,CHECK,LOGOUT,DELTOKEN auth;
+    class A1,A2,A3,A4,A5,A6,A7,A8 admin;
+    class P1,P2,P3,P4 petugas;
+    class G1,G2,G3 guru;
+    class S1,S2,S3,S4,S5,S6 siswa;
+    class M0,M1,M2,M3,M4,M5,SUM,KAT,K1,K2,K3,K4 engine;
+    class NOTE note;
