@@ -1,0 +1,60 @@
+---
+title: Alur Navigasi Fitur per Role - EduPKL
+---
+flowchart TD
+    DASH["Dashboard (setelah login)"] --> ROLE{"Role user?"}
+
+    subgraph ADMIN["Administrator"]
+        A1["Kelola Siswa"]
+        A2["Kelola Perusahaan"]
+        A3["Kelola Kelompok Magang"]
+        A4["Penempatan & Penerimaan"]
+        A5["Kelola Jurnal"]
+        A6["Laporan"]
+        A7["Kelola User"]
+        A8["Pengaturan"]
+    end
+
+    subgraph PETUGAS["Petugas"]
+        P1["Kelola Siswa"]
+        P2["Kelola Perusahaan"]
+        P3["Kelola Kelompok Magang"]
+        P4["Penempatan & Penerimaan"]
+    end
+
+    subgraph GURU["Guru"]
+        G1["Monitoring Siswa (read-only)"]
+        G2["Lihat Perusahaan"]
+        G3["Lihat Kelompok Magang"]
+    end
+
+    subgraph SISWA["Siswa"]
+        S1["Profil"]
+        S2["Kompetensi & Minat"]
+        S3["Lihat Perusahaan"]
+        S4["Lihat Kelompok Magang"]
+        S5["Isi Jurnal"]
+        S6["Lihat Rekomendasi"]
+    end
+
+    ROLE -- Administrator --> ADMIN
+    ROLE -- Petugas --> PETUGAS
+    ROLE -- Guru --> GURU
+    ROLE -- Siswa --> SISWA
+
+    A4 -.->|"trigger"| ME(["Matching Engine"])
+    P4 -.->|"trigger"| ME
+    S2 -.->|"trigger"| ME
+    ME -.-> S6
+    ME -.-> A4
+
+    classDef admin fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d,stroke-width:1px;
+    classDef petugas fill:#dcfce7,stroke:#15803d,color:#14532d,stroke-width:1px;
+    classDef guru fill:#ede9fe,stroke:#6d28d9,color:#4c1d95,stroke-width:1px;
+    classDef siswa fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a,stroke-width:1px;
+    classDef engine fill:#fce7f3,stroke:#be185d,color:#831843,stroke-width:1px;
+    class A1,A2,A3,A4,A5,A6,A7,A8 admin;
+    class P1,P2,P3,P4 petugas;
+    class G1,G2,G3 guru;
+    class S1,S2,S3,S4,S5,S6 siswa;
+    class ME engine;
