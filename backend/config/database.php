@@ -51,11 +51,15 @@ class Database
             try {
                 self::$connection = new PDO($dsn, $user, $password, $options);
             } catch (PDOException $e) {
+                // Pesan error PDO asli ($e->getMessage()) bisa memuat detail
+                // internal (host, nama database, dsb.) — dicatat ke log
+                // server saja, JANGAN dikirim balik ke response publik.
+                error_log('Koneksi database gagal: ' . $e->getMessage());
                 http_response_code(500);
                 header('Content-Type: application/json; charset=utf-8');
                 echo json_encode([
                     'success' => false,
-                    'message' => 'Koneksi database gagal: ' . $e->getMessage(),
+                    'message' => 'Server sedang mengalami gangguan. Coba lagi beberapa saat.',
                 ]);
                 exit;
             }
