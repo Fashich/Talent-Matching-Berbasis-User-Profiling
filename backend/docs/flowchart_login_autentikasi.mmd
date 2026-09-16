@@ -1,0 +1,19 @@
+---
+title: Alur Login & Autentikasi - EduPKL
+---
+flowchart TD
+    U["Pengguna (Browser)"] --> LP{"Sudah login?"}
+    LP -- Belum --> LOGIN["Halaman Login"]
+    LOGIN --> AUTH{"Verifikasi username<br/>+ password (bcrypt)"}
+    AUTH -- Salah --> LOGIN
+    AUTH -- Benar --> TOKEN["Generate token<br/>random_bytes(32), simpan<br/>ke tabel auth_tokens"]
+    TOKEN --> DASH["Dashboard (sesuai role)"]
+    LP -- Sudah --> CHECK{"Token valid?<br/>belum expired &<br/>status akun Aktif"}
+    CHECK -- Tidak --> LOGIN
+    CHECK -- Ya --> DASH
+    DASH -.-> LOGOUT["Logout"] -.-> DELTOKEN["Hapus token dari<br/>auth_tokens"] -.-> LOGIN
+
+    classDef auth fill:#fef9c3,stroke:#a16207,color:#713f12,stroke-width:1px;
+    classDef infra fill:#e0f2fe,stroke:#0369a1,color:#0c4a6e,stroke-width:1px;
+    class U,DASH infra;
+    class LP,LOGIN,AUTH,TOKEN,CHECK,LOGOUT,DELTOKEN auth;

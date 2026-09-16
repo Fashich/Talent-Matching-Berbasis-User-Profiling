@@ -1,0 +1,27 @@
+---
+title: Alur Matching Engine (Rule-Based) - EduPKL
+---
+flowchart TD
+    TRIGGER["Trigger: Siswa lengkapi Kompetensi & Minat<br/>ATAU Petugas/Admin proses Penempatan"] --> M0["Input: Profil Siswa vs<br/>Kebutuhan Perusahaan"]
+    M0 --> M1["Kompetensi (40%)"]
+    M0 --> M2["Pengalaman (20%)"]
+    M0 --> M3["Pendidikan/Jurusan (15%)"]
+    M0 --> M4["Bidang/Minat (15%)"]
+    M0 --> M5["Preferensi lain (10%)"]
+    M1 & M2 & M3 & M4 & M5 --> SUM["Total Match Score<br/>(dibulatkan)"]
+    SUM --> KAT{"Kategori skor"}
+    KAT -->|"80-100%"| K1["Sangat Sesuai"]
+    KAT -->|"65-79%"| K2["Sesuai"]
+    KAT -->|"50-64%"| K3["Cukup Sesuai"]
+    KAT -->|"< 50%"| K4["Kurang Sesuai"]
+    K1 & K2 & K3 & K4 --> SIMPAN["Simpan ke matching_results"]
+    SIMPAN --> OUT1["Tampil ke Siswa<br/>(Lihat Rekomendasi)"]
+    SIMPAN --> OUT2["Tampil ke Petugas/Admin<br/>(Penempatan & Penerimaan)"]
+    KAT -. "hanya rekomendasi,<br/>keputusan akhir tetap di<br/>Petugas & Perusahaan (BR-10)" .-> NOTE["Bukan keputusan otomatis"]
+
+    classDef engine fill:#fce7f3,stroke:#be185d,color:#831843,stroke-width:1px;
+    classDef note fill:#f1f5f9,stroke:#64748b,color:#334155,stroke-dasharray: 4 3;
+    classDef out fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a,stroke-width:1px;
+    class TRIGGER,M0,M1,M2,M3,M4,M5,SUM,KAT,K1,K2,K3,K4,SIMPAN engine;
+    class OUT1,OUT2 out;
+    class NOTE note;

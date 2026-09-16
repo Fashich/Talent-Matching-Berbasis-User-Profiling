@@ -1,0 +1,56 @@
+---
+title: Use Case Diagram - EduPKL Talent Matching Berbasis User Profiling
+---
+flowchart LR
+    Administrator(["👤 Administrator"])
+    Petugas(["👤 Petugas"])
+    Guru(["👤 Guru"])
+    Siswa(["👤 Siswa"])
+
+    subgraph SYS["Sistem EduPKL"]
+        direction TB
+        UC0(("Login"))
+        UC00(("Logout"))
+        UC1(("Kelola Data Siswa"))
+        UC2(("Kelola Data Perusahaan"))
+        UC3(("Kelola Kelompok Magang"))
+        UC4(("Kelola Penempatan & Penerimaan"))
+        UC5(("Kelola Jurnal Semua Siswa"))
+        UC6(("Lihat Laporan"))
+        UC7(("Kelola Akun User"))
+        UC8(("Kelola Pengaturan Sistem"))
+        UC9(("Monitoring Data Siswa - Read Only"))
+        UC10(("Lihat Data Perusahaan"))
+        UC11(("Lihat Kelompok Magang"))
+        UC12(("Kelola Profil"))
+        UC13(("Kelola Kompetensi & Minat"))
+        UC14(("Lihat Perusahaan (Siswa)"))
+        UC15(("Lihat Kelompok Magang (Siswa)"))
+        UC16(("Isi Jurnal Harian"))
+        UC17(("Lihat Rekomendasi Matching"))
+        UCENGINE(("Hitung Match Score"))
+    end
+
+    Administrator --> UC0 & UC00 & UC1 & UC2 & UC3 & UC4 & UC5 & UC6 & UC7 & UC8
+    Petugas --> UC0 & UC00 & UC1 & UC2 & UC3 & UC4
+    Guru --> UC0 & UC00 & UC9 & UC10 & UC11
+    Siswa --> UC0 & UC00 & UC12 & UC13 & UC14 & UC15 & UC16 & UC17
+
+    UC4 -.->|"&lt;&lt;include&gt;&gt;"| UCENGINE
+    UC17 -.->|"&lt;&lt;include&gt;&gt;"| UCENGINE
+
+    classDef actor fill:#f1f5f9,stroke:#334155,color:#0f172a,stroke-width:1px;
+    classDef auth fill:#fef9c3,stroke:#a16207,color:#713f12,stroke-width:1px;
+    classDef admin fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d,stroke-width:1px;
+    classDef shared fill:#ffedd5,stroke:#c2410c,color:#7c2d12,stroke-width:1px;
+    classDef guru fill:#ede9fe,stroke:#6d28d9,color:#4c1d95,stroke-width:1px;
+    classDef siswa fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a,stroke-width:1px;
+    classDef engine fill:#fce7f3,stroke:#be185d,color:#831843,stroke-width:1px;
+
+    class Administrator,Petugas,Guru,Siswa actor;
+    class UC0,UC00 auth;
+    class UC1,UC2,UC3,UC4 shared;
+    class UC5,UC6,UC7,UC8 admin;
+    class UC9,UC10,UC11 guru;
+    class UC12,UC13,UC14,UC15,UC16,UC17 siswa;
+    class UCENGINE engine;
