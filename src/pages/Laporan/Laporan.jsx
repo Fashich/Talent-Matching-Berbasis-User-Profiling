@@ -41,19 +41,19 @@ const Laporan = () => {
   const handlePrint = () => window.print();
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4 text-gray-900">
+    <div className="max-w-6xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div>
-        <h1 className="text-xl font-bold text-gray-800">Laporan & Sertifikat PKL</h1>
-        <p className="text-sm text-gray-500 mt-0.5">Rekap seluruh penempatan siswa, Match Score, dan cetak sertifikat bagi yang telah menyelesaikan program.</p>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Laporan & Sertifikat PKL</h1>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Rekap seluruh penempatan siswa, Match Score, dan cetak sertifikat bagi yang telah menyelesaikan program.</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
         {penempatan.length === 0 ? (
           <EmptyState icon={<FileBarChart size={28} />} title="Belum ada data untuk direkap" />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
+              <thead className="bg-gray-50 dark:bg-slate-800 text-gray-600 dark:text-slate-400 font-medium border-b border-gray-100 dark:border-slate-800">
                 <tr>
                   <th className="py-3 px-6">SISWA</th>
                   <th className="py-3 px-6">PERUSAHAAN</th>
@@ -63,30 +63,30 @@ const Laporan = () => {
                   <th className="py-3 px-6 text-center">SERTIFIKAT</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
                 {penempatan.map((p) => {
                   const s = findById(siswa, p.siswaId);
                   const c = findById(perusahaan, p.perusahaanId);
                   const match = matchFor(p.siswaId, p.perusahaanId);
                   return (
-                    <tr key={p.id} className="hover:bg-gray-50/50 transition">
+                    <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-slate-800/50 transition">
                       <td className="py-3 px-6">
-                        <p className="text-gray-800 font-medium">{s?.nama}</p>
-                        <p className="text-xs text-gray-400">{s?.kelas}</p>
+                        <p className="text-gray-800 dark:text-slate-100 font-medium">{s?.nama}</p>
+                        <p className="text-xs text-gray-400 dark:text-slate-500">{s?.kelas}</p>
                       </td>
-                      <td className="py-3 px-6 text-gray-600">{c?.nama}</td>
-                      <td className="py-3 px-6 text-gray-500 whitespace-nowrap">{p.tanggalMulai} s/d {p.tanggalSelesai}</td>
+                      <td className="py-3 px-6 text-gray-600 dark:text-slate-400">{c?.nama}</td>
+                      <td className="py-3 px-6 text-gray-500 dark:text-slate-400 whitespace-nowrap">{p.tanggalMulai} s/d {p.tanggalSelesai}</td>
                       <td className="py-3 px-6"><Badge status={p.status} /></td>
                       <td className="py-3 px-6">
                         {match ? (
-                          <span className="text-gray-700 font-medium">{match.total}% <Badge status={match.kategori} /></span>
+                          <span className="text-gray-700 dark:text-slate-300 font-medium">{match.total}% <Badge status={match.kategori} /></span>
                         ) : '—'}
                       </td>
                       <td className="py-3 px-6 text-center">
                         <button
                           onClick={() => setCertTarget({ p, s, c, match })}
                           disabled={p.status !== 'Selesai'}
-                          className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-50 transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                          className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-500/20 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                           title={p.status !== 'Selesai' ? 'Sertifikat tersedia setelah PKL berstatus Selesai' : undefined}
                         >
                           <Award size={14} />
@@ -107,28 +107,28 @@ const Laporan = () => {
           <div>
             <div id="certificate-print" className="border-4 border-double border-blue-200 rounded-xl p-10 text-center bg-gradient-to-b from-blue-50/40 to-white">
               <Award size={40} className="mx-auto text-blue-500" />
-              <p className="text-xs tracking-[0.3em] text-gray-400 mt-4 uppercase">Sertifikat Praktik Kerja Lapangan</p>
-              <h2 className="text-2xl font-bold text-gray-800 mt-3">{certTarget.s?.nama}</h2>
-              <p className="text-sm text-gray-500 mt-1">NISN {certTarget.s?.nisn} · {certTarget.s?.kelas}</p>
-              <p className="text-sm text-gray-600 mt-6 leading-relaxed max-w-md mx-auto">
+              <p className="text-xs tracking-[0.3em] text-gray-400 dark:text-slate-500 mt-4 uppercase">Sertifikat Praktik Kerja Lapangan</p>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mt-3">{certTarget.s?.nama}</h2>
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">NISN {certTarget.s?.nisn} · {certTarget.s?.kelas}</p>
+              <p className="text-sm text-gray-600 dark:text-slate-400 mt-6 leading-relaxed max-w-md mx-auto">
                 Telah menyelesaikan Praktik Kerja Lapangan di{' '}
-                <span className="font-semibold text-gray-800">{certTarget.c?.nama}</span> pada periode{' '}
-                <span className="font-semibold text-gray-800">{certTarget.p.tanggalMulai}</span> s/d{' '}
-                <span className="font-semibold text-gray-800">{certTarget.p.tanggalSelesai}</span> dengan tingkat kesesuaian{' '}
-                <span className="font-semibold text-gray-800">
+                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.c?.nama}</span> pada periode{' '}
+                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalMulai}</span> s/d{' '}
+                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalSelesai}</span> dengan tingkat kesesuaian{' '}
+                <span className="font-semibold text-gray-800 dark:text-slate-100">
                   {certTarget.match ? `${certTarget.match.kategori} (${certTarget.match.total}%)` : '—'}
                 </span>.
               </p>
-              <div className="flex items-center justify-between mt-10 px-6 text-sm text-gray-600">
+              <div className="flex items-center justify-between mt-10 px-6 text-sm text-gray-600 dark:text-slate-400">
                 <div>
                   <p>{settings.alamatSekolah?.split(',').slice(-1)[0]?.trim()}, {certTarget.p.tanggalSelesai}</p>
-                  <p className="mt-8 font-semibold text-gray-800">{settings.kepalaSekolah}</p>
-                  <p className="text-xs text-gray-400">Kepala {settings.namaSekolah}</p>
+                  <p className="mt-8 font-semibold text-gray-800 dark:text-slate-100">{settings.kepalaSekolah}</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500">Kepala {settings.namaSekolah}</p>
                 </div>
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setCertTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 border border-gray-200 hover:bg-gray-50 transition">
+              <button onClick={() => setCertTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
                 Tutup
               </button>
               <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">

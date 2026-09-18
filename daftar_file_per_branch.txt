@@ -1,0 +1,379 @@
+﻿==============================================
+BRANCH: fe/app-scaffold  (commit 504c315)
+==============================================
+commit 504c31572981e0a82ff31a81c44a0fe3a3cfb4c7
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:06:24 2026 +0700
+
+    feat(frontend): scaffold awal React+Vite+Tailwind, layout dashboard dan halaman dasar tiap modul
+
+ .gitignore                                  |   26 +
+ .oxlintrc.json                              |    8 +
+ README.md                                   |   59 +
+ index.html                                  |   15 +
+ package-lock.json                           | 2175 +++++++++++++++++++++++++++
+ package.json                                |   29 +
+ postcss.config.js                           |    6 +
+ public/favicon.svg                          |    1 +
+ public/icons.svg                            |   24 +
+ src/App.jsx                                 |  135 ++
+ src/components/ui/Badge.jsx                 |   38 +
+ src/components/ui/ConfirmDialog.jsx         |   37 +
+ src/components/ui/EmptyState.jsx            |   14 +
+ src/components/ui/Modal.jsx                 |   47 +
+ src/config/menu.js                          |   38 +
+ src/index.css                               |   23 +
+ src/layouts/DashboardLayout.jsx             |  142 ++
+ src/main.jsx                                |   10 +
+ src/pages/Jurnal/Jurnal.jsx                 |  205 +++
+ src/pages/KelompokMagang/KelompokMagang.jsx |  201 +++
+ src/pages/Kompetensi/Kompetensi.jsx         |  153 ++
+ src/pages/Perusahaan/Perusahaan.jsx         |  288 ++++
+ src/pages/Profil/Profil.jsx                 |  167 ++
+ src/pages/Siswa/Siswa.jsx                   |  246 +++
+ src/utils/matching.js                       |  139 ++
+ src/utils/scope.js                          |   46 +
+ tailwind.config.js                          |   11 +
+ vite.config.js                              |    7 +
+ 28 files changed, 4290 insertions(+)
+
+==============================================
+BRANCH: be/database-design  (commit 676fdee)
+==============================================
+commit 676fdee4894a683b5bf7a213ada8f62f38c7ddde
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:32:40 2026 +0700
+
+    feat(backend): desain skema database 19-tabel + ERD & Class Diagram final
+
+ backend/database/schema.sql          | 462 +++++++++++++++++++++++++++++++++++
+ backend/docs/class_diagram_final.mmd | 195 +++++++++++++++
+ backend/docs/class_diagram_final.png | Bin 0 -> 582721 bytes
+ backend/docs/erd_final.mmd           | 197 +++++++++++++++
+ backend/docs/erd_final.png           | Bin 0 -> 342140 bytes
+ 5 files changed, 854 insertions(+)
+
+==============================================
+BRANCH: be/api-skeleton-auth  (commit eb451eb)
+==============================================
+commit eb451eb9e4111143fc1bb4725f5349bdcae9925b
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:39:58 2026 +0700
+
+    feat(backend): scaffold PHP API skeleton (Router, Request, Response, Auth) + modul Authentication
+
+ backend/.htaccess                      |  8 +++
+ backend/config/database.php            | 48 ++++++++++++++++++
+ backend/controllers/AuthController.php | 65 ++++++++++++++++++++++++
+ backend/core/Auth.php                  | 90 ++++++++++++++++++++++++++++++++++
+ backend/core/Request.php               | 59 ++++++++++++++++++++++
+ backend/core/Response.php              | 33 +++++++++++++
+ backend/core/Router.php                | 63 ++++++++++++++++++++++++
+ backend/index.php                      | 26 ++++++++++
+ 8 files changed, 392 insertions(+)
+
+==============================================
+BRANCH: be/crud-siswa  (commit 8277701)
+==============================================
+commit 82777013479b3e4fee3c4cd4da98f6c364fa5713
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:14 2026 +0700
+
+    feat(backend): implementasi CRUD modul Siswa
+
+ backend/controllers/StudentController.php | 291 ++++++++++++++++++++++++++++++
+ 1 file changed, 291 insertions(+)
+
+==============================================
+BRANCH: be/crud-perusahaan  (commit d511833)
+==============================================
+commit d511833f4184222c79250bbcf0d7214a8198a070
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:16 2026 +0700
+
+    feat(backend): implementasi CRUD modul Perusahaan
+
+ backend/controllers/CompanyController.php | 235 ++++++++++++++++++++++++++++++
+ 1 file changed, 235 insertions(+)
+
+==============================================
+BRANCH: be/crud-kelompok-magang  (commit b81dcef)
+==============================================
+commit b81dcefc29d707c9bbc1d047380e0e01842f4219
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:18 2026 +0700
+
+    feat(backend): implementasi CRUD modul Kelompok Magang
+
+ backend/controllers/InternshipGroupController.php | 212 ++++++++++++++++++++++
+ 1 file changed, 212 insertions(+)
+
+==============================================
+BRANCH: be/crud-penempatan  (commit 27eb8eb)
+==============================================
+commit 27eb8ebd59aef94a83e56d06d0a310609e0c6814
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:21 2026 +0700
+
+    feat(backend): implementasi CRUD modul Penempatan & Penerimaan
+
+ backend/controllers/PlacementController.php | 199 ++++++++++++++++++++++++++++
+ 1 file changed, 199 insertions(+)
+
+==============================================
+BRANCH: be/crud-jurnal  (commit db9c8f4)
+==============================================
+commit db9c8f442059c2de9e80f8f362f970ead94b62e7
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:23 2026 +0700
+
+    feat(backend): implementasi CRUD modul Jurnal
+
+ backend/controllers/JournalController.php | 223 ++++++++++++++++++++++++++++++
+ 1 file changed, 223 insertions(+)
+
+==============================================
+BRANCH: be/crud-kompetensi  (commit 83a5521)
+==============================================
+commit 83a5521a62bd8d1c9fcb3384d337af4cea1a640f
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:26 2026 +0700
+
+    feat(backend): implementasi CRUD master Kompetensi
+
+ backend/controllers/CompetencyController.php | 118 +++++++++++++++++++++++++++
+ 1 file changed, 118 insertions(+)
+
+==============================================
+BRANCH: be/crud-user  (commit 3187108)
+==============================================
+commit 3187108feade766ee0f034040fab7f2d9146f040
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:28 2026 +0700
+
+    feat(backend): implementasi CRUD modul User beserta endpoint reset-password
+
+ backend/controllers/UserController.php | 207 +++++++++++++++++++++++++++++++++
+ 1 file changed, 207 insertions(+)
+
+==============================================
+BRANCH: be/matching-engine  (commit 2e23a7d)
+==============================================
+commit 2e23a7df0803e548c7bb496ee2402633c5936e1e
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:32 2026 +0700
+
+    feat(backend): implementasi Matching Engine rule-based (Match Score & Recommendation) dan routing lengkap semua endpoint
+
+ backend/controllers/MatchingController.php | 278 +++++++++++++++++++++++++++++
+ backend/routes/api.php                     |  81 +++++++++
+ 2 files changed, 359 insertions(+)
+
+==============================================
+BRANCH: fe/integration-core  (commit 1db7987)
+==============================================
+commit 1db7987d0c2547b19e2caa914ec34dcf1ff2a84e
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:40:43 2026 +0700
+
+    feat: infrastruktur integrasi API bersama (fetch client, adapter 7 modul, ProtectedRoute, seed) ΓÇö ganti localStorage jadi backend sungguhan
+
+ src/components/ProtectedRoute.jsx |  29 ++
+ src/config/api.js                 |  86 ++++++
+ src/context/DataContext.jsx       | 560 ++++++++++++++++++++++++++++++++++++++
+ src/data/seed.js                  | 172 ++++++++++++
+ 4 files changed, 847 insertions(+)
+
+==============================================
+BRANCH: fe/integration-auth  (commit 5f723a7)
+==============================================
+commit 5f723a7f05408e9cde4e2862c216273b586c59fe
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:41:18 2026 +0700
+
+    feat: halaman Login + AuthContext terhubung ke backend sungguhan
+
+ src/context/AuthContext.jsx | 103 +++++++++++++++++++++++++++++++++++++
+ src/pages/Login/Login.jsx   | 122 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 225 insertions(+)
+
+==============================================
+BRANCH: fe/integration-user  (commit 32c20e6)
+==============================================
+commit 32c20e61c332e693da3115ba42ad17b85f900276
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:41:23 2026 +0700
+
+    feat: halaman User (manajemen akun + reset password) terhubung ke backend
+
+ src/pages/User/User.jsx | 202 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
+
+==============================================
+BRANCH: fe/integration-penempatan  (commit 1686a2e)
+==============================================
+commit 1686a2e6c828b38d745e4d2719501c88a9fa0911
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:41:25 2026 +0700
+
+    feat: halaman Penempatan & Penerimaan terhubung ke backend
+
+ src/pages/Penempatan/Penempatan.jsx | 198 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 198 insertions(+)
+
+==============================================
+BRANCH: fe/integration-recommendation  (commit 5060415)
+==============================================
+commit 50604153239b7ba18e993bcb26d8f1da1a483fb9
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:41:27 2026 +0700
+
+    feat: halaman Recommendation terhubung ke Matching Engine
+
+ src/pages/Recommendation/Recommendation.jsx | 123 ++++++++++++++++++++++++++++
+ 1 file changed, 123 insertions(+)
+
+==============================================
+BRANCH: fe/integration-laporan  (commit 04805e3)
+==============================================
+commit 04805e3552dad1fdab4256622e3e54fb377d0bbc
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:41:30 2026 +0700
+
+    feat: halaman Laporan terhubung ke data backend
+
+ src/pages/Laporan/Laporan.jsx | 146 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 146 insertions(+)
+
+==============================================
+BRANCH: fe/integration-dashboard  (commit 363d628)
+==============================================
+commit 363d6282b8310d92cb4c69f57225ce41bf7970f3
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:41:33 2026 +0700
+
+    feat: halaman Dashboard terhubung ke data backend
+
+ src/pages/Dashboard/DashboardHome.jsx | 202 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 202 insertions(+)
+
+==============================================
+BRANCH: fe/integration-pengaturan  (commit f65b405)
+==============================================
+commit f65b405c6fd6e62160c062a44f463c3e9b12b125
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 01:41:37 2026 +0700
+
+    feat: halaman Pengaturan terhubung ke data backend
+
+ src/pages/Pengaturan/Pengaturan.jsx | 97 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
+
+==============================================
+BRANCH: fe/landing-lost-signal  (commit 9483114)
+==============================================
+commit 9483114168d383681e4fc654e2e7b391427cbf35
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 06:38:22 2026 +0700
+
+    feat(fe): landing page + status koneksi (no connection/lost signal) - task #18
+    
+    Tambah Landing Page publik sebelum Login; tambah ConnectionContext+RootGate+LostSignal buat deteksi otomatis saat backend tidak terjangkau; src/config/api.js kirim status koneksi via pub-sub + pingBackend() untuk tombol Coba Lagi; hapus endpoint publik GET /api/health (tidak dipakai lagi, diganti pendekatan di atas); CompetencyController: semua role login boleh tambah entri kompetensi baru (kosakata terbuka sesuai schema.sql), update/hapus tetap Administrator-only; tambah logo asli SMKS Rajasa Surabaya; wiring ke App.jsx, AuthContext.jsx, Login.jsx, DashboardLayout.jsx, index.html.
+
+ .gitignore                                   |   1 +
+ backend/controllers/CompetencyController.php |  13 +-
+ backend/routes/api.php                       |   7 -
+ index.html                                   |   4 +-
+ public/logo-rajasa-192.png                   | Bin 0 -> 36438 bytes
+ public/logo-rajasa-512.png                   | Bin 0 -> 194729 bytes
+ src/App.jsx                                  | 195 +++++++++++++--------------
+ src/components/LostSignal.jsx                |  38 ++++++
+ src/components/RootGate.jsx                  |  32 +++++
+ src/config/api.js                            |  37 ++---
+ src/context/AuthContext.jsx                  |  55 ++++----
+ src/context/ConnectionContext.jsx            |  42 ++++++
+ src/data/seed.js                             |  24 +++-
+ src/layouts/DashboardLayout.jsx              |  26 +---
+ src/pages/Dashboard/DashboardHome.jsx        |   1 -
+ src/pages/Landing/Landing.jsx                |  92 +++++++++++++
+ src/pages/Login/Login.jsx                    |  26 +---
+ src/pages/Recommendation/Recommendation.jsx  |   2 +-
+ 18 files changed, 386 insertions(+), 209 deletions(-)
+
+==============================================
+BRANCH: fe/dark-mode-toggle  (commit 7b37257)
+==============================================
+commit 7b37257591180b1049e12a634a1b31a8323e3d9f
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Mon Sep 14 15:58:51 2026 +0700
+
+    feat(frontend): tambah toggle light/dark theme
+    
+    - ThemeContext.jsx: state theme + persist localStorage (key edupkl-theme) + toggle class dark di <html>
+    - ThemeToggle.jsx: tombol Sun/Moon (lucide-react)
+    - index.css: custom variant dark (Tailwind v4) + dark bg/text default body
+    - App.jsx: bungkus app dengan ThemeProvider
+    - DashboardLayout.jsx: toggle di header + varian dark di shell
+    - Login.jsx: toggle pojok kanan atas + varian dark di card login
+    
+    Scope: app shell doang (dashboard layout + login) - halaman modul (Siswa, Perusahaan, dst.) belum di-dark-mode-in.
+    
+    Verified: npm run lint 0 error, npm run build sukses, toggle diuji manual di browser (light<->dark + persist refresh).
+
+ src/App.jsx                     |  3 +++
+ src/components/ThemeToggle.jsx  | 24 ++++++++++++++++++++++++
+ src/context/ThemeContext.jsx    | 39 +++++++++++++++++++++++++++++++++++++++
+ src/index.css                   |  7 ++++++-
+ src/layouts/DashboardLayout.jsx | 28 +++++++++++++++-------------
+ src/pages/Login/Login.jsx       | 22 +++++++++++++---------
+ 6 files changed, 100 insertions(+), 23 deletions(-)
+
+==============================================
+BRANCH: fe/landing-login-redesign  (commit 4aa541e)
+==============================================
+commit 4aa541eec589fa9f71e3967774e358673cfa961c
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Tue Sep 15 11:58:47 2026 +0700
+
+    feat(fe): redesign Landing Page & Login + toggle tema baru
+    
+    - Landing.jsx: hero baru dengan SchoolScene 3D (three.js), stats counter animasi dari GET /api/stats/public, section fitur & cara kerja, desain via CSS var token (index.css).
+    
+    - Login.jsx: layout split panel (brand kiri gelap permanen + form kanan), demo akun quick-fill, tombol kontak WhatsApp admin (src/config/contact.js, baru).
+    
+    - ThemeToggle.jsx: didesain ulang total jadi ikon SVG kustom (belah diagonal malam/siang), dipakai di Landing & Login dengan ukuran berbeda.
+    
+    - Backend: tambah PublicStatsController + route GET /api/stats/public (tanpa auth) untuk data statistik Landing Page.
+    
+    - Tambah dependency three.js untuk SchoolScene, font Sora & Plus Jakarta Sans (Google Fonts) di index.html.
+    
+    - Referensi desain (design_handoff_landing_login/, file zip) dimasukkan ke .gitignore, bukan bagian kode produksi.
+
+ .gitignore                                    |   6 +
+ backend/controllers/PublicStatsController.php |  24 +
+ backend/routes/api.php                        |   4 +
+ index.html                                    |   6 +
+ package-lock.json                             |   9 +-
+ package.json                                  |   3 +-
+ src/components/SchoolScene/SchoolScene.jsx    | 969 ++++++++++++++++++++++++++
+ src/components/ThemeToggle.jsx                |  84 ++-
+ src/config/contact.js                         |  20 +
+ src/index.css                                 | 112 +++
+ src/pages/Landing/Landing.jsx                 | 398 +++++++++--
+ src/pages/Login/Login.jsx                     | 284 ++++++--
+ 12 files changed, 1812 insertions(+), 107 deletions(-)
+
+==============================================
+BRANCH: fe/login-whatsapp-copy-fix  (commit 21d231b)
+==============================================
+commit 21d231b38c5cd3f5f8d4b673412e603a5eeabb58
+Author: Fashich <thalassaaddict@gmail.com>
+Date:   Tue Sep 15 12:27:26 2026 +0700
+
+    fix(fe): ubah copy teks WhatsApp di halaman Login
+    
+    Teks di bawah tombol 'Hubungi Admin' diganti jadi 'Tidak bisa Login? Silakan hubungi Admin sekarang' ΓÇö lebih ringkas dari copy sebelumnya.
+
+ src/pages/Login/Login.jsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+

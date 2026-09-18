@@ -27,18 +27,18 @@ const Modal = ({ open, onClose, title, children, size = 'md' }) => {
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className={`relative bg-white rounded-xl shadow-xl w-full ${sizeClass} max-h-[90vh] flex flex-col`}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+      <div className={`relative bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full ${sizeClass} max-h-[90vh] flex flex-col`}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-800">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-slate-100">{title}</h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-1.5 transition"
+            className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-slate-800 rounded-lg p-1.5 transition"
             aria-label="Tutup"
           >
             <X size={18} />
           </button>
         </div>
-        <div className="px-6 py-5 overflow-y-auto">{children}</div>
+        <div className="px-6 py-5 overflow-y-auto text-gray-700 dark:text-slate-300">{children}</div>
       </div>
     </div>
   );

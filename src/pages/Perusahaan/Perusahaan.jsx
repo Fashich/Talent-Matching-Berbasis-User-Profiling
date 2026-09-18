@@ -78,11 +78,11 @@ const Perusahaan = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4 text-gray-900">
+    <div className="max-w-7xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-800">Perusahaan</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Profil perusahaan/DU-DI beserta Company Requirement — dasar perhitungan Match Score.</p>
+          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Perusahaan</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Profil perusahaan/DU-DI beserta Company Requirement — dasar perhitungan Match Score.</p>
         </div>
         <div className="flex items-center gap-3">
           {canManage && (
@@ -93,12 +93,12 @@ const Perusahaan = () => {
           )}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search size={16} className="text-gray-400" />
+              <Search size={16} className="text-gray-400 dark:text-slate-500" />
             </div>
             <input
               type="text"
               placeholder="Cari nama/bidang/posisi"
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-56"
+              className="pl-10 pr-4 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-56"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -107,27 +107,27 @@ const Perusahaan = () => {
       </div>
 
       {list.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
           <EmptyState icon={<Building2 size={28} />} title="Belum ada data perusahaan" description="Tambahkan mitra DU/DI untuk mulai menempatkan siswa PKL." />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {list.map((p) => (
-            <div key={p.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col">
+            <div key={p.id} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-5 flex flex-col">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                     <Building2 size={20} />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-gray-800 leading-tight">{p.nama}</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">{p.bidang} · {p.posisi || 'Posisi belum diisi'}</p>
+                    <h3 className="font-semibold text-gray-800 dark:text-slate-100 leading-tight">{p.nama}</h3>
+                    <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">{p.bidang} · {p.posisi || 'Posisi belum diisi'}</p>
                   </div>
                 </div>
                 <Badge status={p.status} />
               </div>
 
-              <div className="mt-4 space-y-1.5 text-sm text-gray-500">
+              <div className="mt-4 space-y-1.5 text-sm text-gray-500 dark:text-slate-400">
                 <div className="flex items-start gap-2">
                   <MapPin size={14} className="mt-0.5 shrink-0" />
                   <span className="truncate">{p.alamat}</span>
@@ -142,26 +142,26 @@ const Perusahaan = () => {
                 </div>
               </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-100">
-                <p className="text-xs font-medium text-gray-500 mb-1.5 flex items-center gap-1.5">
+              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800">
+                <p className="text-xs font-medium text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
                   <ListChecks size={13} />
                   Kebutuhan Kompetensi
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {(p.kompetensiDibutuhkan || []).map((k) => (
-                    <span key={k} className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs">{k}</span>
+                    <span key={k} className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 text-xs">{k}</span>
                   ))}
-                  {(p.kompetensiDibutuhkan || []).length === 0 && <span className="text-xs text-gray-400">Belum ditentukan</span>}
+                  {(p.kompetensiDibutuhkan || []).length === 0 && <span className="text-xs text-gray-400 dark:text-slate-500">Belum ditentukan</span>}
                 </div>
-                <p className="text-xs text-gray-400 mt-2">Jurusan relevan: {(p.jurusanRelevan || []).join(', ') || '-'} · Pengalaman: {p.tingkatPengalaman}</p>
+                <p className="text-xs text-gray-400 dark:text-slate-500 mt-2">Jurusan relevan: {(p.jurusanRelevan || []).join(', ') || '-'} · Pengalaman: {p.tingkatPengalaman}</p>
               </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm">
-                <span className="text-gray-500">PJ: <span className="text-gray-700 font-medium">{p.penanggungJawab}</span></span>
-                <span className="text-gray-500" title="Kuota terisi dihitung dari Penempatan berstatus Diterima/Berlangsung, bukan dari anggota Kelompok Magang.">Kuota: <span className="text-gray-800 font-semibold">{terisiCount(p.id)}/{p.kuota}</span></span>
+              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between text-sm">
+                <span className="text-gray-500 dark:text-slate-400">PJ: <span className="text-gray-700 dark:text-slate-300 font-medium">{p.penanggungJawab}</span></span>
+                <span className="text-gray-500 dark:text-slate-400" title="Kuota terisi dihitung dari Penempatan berstatus Diterima/Berlangsung, bukan dari anggota Kelompok Magang.">Kuota: <span className="text-gray-800 dark:text-slate-100 font-semibold">{terisiCount(p.id)}/{p.kuota}</span></span>
               </div>
               {kelompokCount(p.id) > 0 && (
-                <p className="text-xs text-gray-400 mt-1">{kelompokCount(p.id)} kelompok magang aktif — kuota naik setelah anggotanya dibuatkan Penempatan berstatus Diterima/Berlangsung.</p>
+                <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{kelompokCount(p.id)} kelompok magang aktif — kuota naik setelah anggotanya dibuatkan Penempatan berstatus Diterima/Berlangsung.</p>
               )}
 
               {canManage && (
@@ -185,61 +185,61 @@ const Perusahaan = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nama Perusahaan</label>
-              <input required value={form.nama} onChange={set('nama')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nama Perusahaan</label>
+              <input required value={form.nama} onChange={set('nama')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bidang Usaha</label>
-              <select value={form.bidang} onChange={set('bidang')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Bidang Usaha</label>
+              <select value={form.bidang} onChange={set('bidang')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {daftarBidangUsaha.map((b) => <option key={b} value={b}>{b}</option>)}
               </select>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
-            <input value={form.alamat} onChange={set('alamat')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Alamat</label>
+            <input value={form.alamat} onChange={set('alamat')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
-              <input value={form.telepon} onChange={set('telepon')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Telepon</label>
+              <input value={form.telepon} onChange={set('telepon')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" value={form.email} onChange={set('email')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Email</label>
+              <input type="email" value={form.email} onChange={set('email')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Penanggung Jawab</label>
-              <input value={form.penanggungJawab} onChange={set('penanggungJawab')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Penanggung Jawab</label>
+              <input value={form.penanggungJawab} onChange={set('penanggungJawab')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Kuota Siswa</label>
-              <input type="number" min="0" value={form.kuota} onChange={set('kuota')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kuota Siswa</label>
+              <input type="number" min="0" value={form.kuota} onChange={set('kuota')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-            <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Status</label>
+            <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="Aktif">Aktif</option>
               <option value="Tidak Aktif">Tidak Aktif</option>
             </select>
           </div>
 
-          <div className="pt-2 border-t border-gray-100">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 mt-3">Company Requirement (untuk Matching)</p>
+          <div className="pt-2 border-t border-gray-100 dark:border-slate-800">
+            <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-3 mt-3">Company Requirement (untuk Matching)</p>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Posisi yang Dibutuhkan</label>
-                <input placeholder="mis. Web Developer" value={form.posisi} onChange={set('posisi')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Posisi yang Dibutuhkan</label>
+                <input placeholder="mis. Web Developer" value={form.posisi} onChange={set('posisi')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Kompetensi Dibutuhkan (pisahkan dengan koma)</label>
-                <input placeholder="mis. Programming, JavaScript, Web" value={form.kompetensiDibutuhkan} onChange={set('kompetensiDibutuhkan')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kompetensi Dibutuhkan (pisahkan dengan koma)</label>
+                <input placeholder="mis. Programming, JavaScript, Web" value={form.kompetensiDibutuhkan} onChange={set('kompetensiDibutuhkan')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Jurusan Relevan</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Jurusan Relevan</label>
                 <div className="flex flex-wrap gap-2">
                   {daftarJurusan.map((j) => (
                     <button
@@ -247,7 +247,7 @@ const Perusahaan = () => {
                       key={j}
                       onClick={() => toggleJurusan(j)}
                       className={`px-3 py-1 rounded-full text-xs font-medium border transition ${
-                        form.jurusanRelevan.includes(j) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        form.jurusanRelevan.includes(j) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       {j}
@@ -257,27 +257,27 @@ const Perusahaan = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tingkat Pengalaman</label>
-                  <select value={form.tingkatPengalaman} onChange={set('tingkatPengalaman')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tingkat Pengalaman</label>
+                  <select value={form.tingkatPengalaman} onChange={set('tingkatPengalaman')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="Tidak Diperlukan">Tidak Diperlukan</option>
                     <option value="Pemula">Pemula</option>
                     <option value="Menengah">Menengah</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Pendidikan Dibutuhkan</label>
-                  <input placeholder="mis. SMK/Sederajat Jurusan TKJ" value={form.pendidikanDibutuhkan} onChange={set('pendidikanDibutuhkan')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Pendidikan Dibutuhkan</label>
+                  <input placeholder="mis. SMK/Sederajat Jurusan TKJ" value={form.pendidikanDibutuhkan} onChange={set('pendidikanDibutuhkan')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Kriteria Lainnya</label>
-                <input value={form.kriteriaLain} onChange={set('kriteriaLain')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kriteria Lainnya</label>
+                <input value={form.kriteriaLain} onChange={set('kriteriaLain')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
             </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 border border-gray-200 hover:bg-gray-50 transition">
+            <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
               Batal
             </button>
             <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">

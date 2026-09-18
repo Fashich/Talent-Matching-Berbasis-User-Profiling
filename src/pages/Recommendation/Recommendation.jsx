@@ -37,51 +37,51 @@ const Recommendation = () => {
   const profilKurangLengkap = data && (!data.jurusan || (data.minat || []).length === 0 || kompetensi.filter((k) => k.siswaId === data.id).length === 0);
 
   if (!data) {
-    return <div className="max-w-4xl mx-auto text-sm text-gray-500">Data siswa tidak ditemukan.</div>;
+    return <div className="max-w-4xl mx-auto text-sm text-gray-500 dark:text-slate-400">Data siswa tidak ditemukan.</div>;
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4 text-gray-900">
+    <div className="max-w-4xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div>
-        <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
           <Sparkles size={20} className="text-blue-600" />
           Rekomendasi Perusahaan
         </h1>
-        <p className="text-sm text-gray-500 mt-0.5">
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
           Diurutkan berdasarkan Match Score — hasil pencocokan profil, kompetensi, jurusan, minat, dan preferensimu dengan kebutuhan tiap perusahaan.
         </p>
       </div>
 
       {profilKurangLengkap && (
-        <div className="bg-amber-50 border border-amber-100 text-amber-700 text-sm rounded-lg px-4 py-3">
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 text-amber-700 dark:text-amber-300 text-sm rounded-lg px-4 py-3">
           Profil & kompetensimu belum lengkap sepenuhnya — lengkapi di halaman <span className="font-semibold">Profil</span> dan{' '}
           <span className="font-semibold">Kompetensi</span> supaya Match Score lebih akurat.
         </div>
       )}
 
       {loadingHasil ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center text-sm text-gray-400">Menghitung rekomendasi...</div>
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-8 text-center text-sm text-gray-400 dark:text-slate-500">Menghitung rekomendasi...</div>
       ) : error ? (
-        <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg px-4 py-3">{error}</div>
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm rounded-lg px-4 py-3">{error}</div>
       ) : hasil.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
           <EmptyState icon={<Building2 size={28} />} title="Belum ada perusahaan aktif untuk dicocokkan" />
         </div>
       ) : (
         <div className="space-y-3">
           {hasil.map((r, idx) => (
-            <div key={r.matching_id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div key={r.matching_id} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
               <button
                 onClick={() => setExpanded(expanded === r.matching_id ? null : r.matching_id)}
-                className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-gray-50/50 transition"
+                className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-gray-50 dark:hover:bg-slate-800/50 transition"
               >
                 <div className="flex items-center gap-4 min-w-0">
-                  <span className="w-7 h-7 rounded-full bg-gray-100 text-gray-500 text-xs font-bold flex items-center justify-center shrink-0">
+                  <span className="w-7 h-7 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 text-xs font-bold flex items-center justify-center shrink-0">
                     {idx + 1}
                   </span>
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-gray-800 truncate">{r.company_nama}</h3>
-                    <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                    <h3 className="font-semibold text-gray-800 dark:text-slate-100 truncate">{r.company_nama}</h3>
+                    <p className="text-xs text-gray-400 dark:text-slate-500 flex items-center gap-1 mt-0.5">
                       <MapPin size={11} />
                       {r.posisi}
                     </p>
@@ -89,25 +89,25 @@ const Recommendation = () => {
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <div className="text-right">
-                    <p className="text-lg font-bold text-gray-800 leading-none">{r.total_score}%</p>
+                    <p className="text-lg font-bold text-gray-800 dark:text-slate-100 leading-none">{r.total_score}%</p>
                     <Badge status={r.category} />
                   </div>
-                  <ChevronDown size={18} className={`text-gray-400 transition-transform ${expanded === r.matching_id ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={18} className={`text-gray-400 dark:text-slate-500 transition-transform ${expanded === r.matching_id ? 'rotate-180' : ''}`} />
                 </div>
               </button>
 
               {expanded === r.matching_id && (
-                <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-3">
+                <div className="px-5 pb-5 border-t border-gray-100 dark:border-slate-800 pt-4 space-y-3">
                   {r.breakdown.map((b) => (
                     <div key={b.label}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-gray-600">{b.label} <span className="text-gray-400">({b.bobot}%)</span></span>
-                        <span className="text-xs font-semibold text-gray-700">{b.skor}%</span>
+                        <span className="text-xs font-medium text-gray-600 dark:text-slate-400">{b.label} <span className="text-gray-400 dark:text-slate-500">({b.bobot}%)</span></span>
+                        <span className="text-xs font-semibold text-gray-700 dark:text-slate-300">{b.skor}%</span>
                       </div>
-                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden">
                         <div className="h-full bg-blue-500 rounded-full" style={{ width: `${b.skor}%` }} />
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">{b.detail}</p>
+                      <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{b.detail}</p>
                     </div>
                   ))}
                 </div>

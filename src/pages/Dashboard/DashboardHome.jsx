@@ -9,11 +9,11 @@ import Badge from '../../components/ui/Badge';
 
 const SummaryCard = ({ title, value, icon, colorClass, to }) => {
   const content = (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center hover:border-blue-100 transition">
+    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 flex items-center hover:border-blue-100 dark:hover:border-blue-900/50 transition">
       <div className={`p-4 rounded-lg ${colorClass}`}>{icon}</div>
       <div className="ml-5">
-        <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
-        <p className="text-3xl font-bold text-gray-800 mt-1">{value}</p>
+        <h3 className="text-gray-500 dark:text-slate-400 text-sm font-medium">{title}</h3>
+        <p className="text-3xl font-bold text-gray-800 dark:text-slate-100 mt-1">{value}</p>
       </div>
     </div>
   );
@@ -27,18 +27,18 @@ const AdminDashboard = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <SummaryCard title="Total Siswa" value={siswa.length} icon={<Users size={28} className="text-blue-600" />} colorClass="bg-blue-50" to="/siswa" />
-      <SummaryCard title="Perusahaan Mitra" value={perusahaan.length} icon={<Building2 size={28} className="text-indigo-600" />} colorClass="bg-indigo-50" to="/perusahaan" />
-      <SummaryCard title="Kelompok Magang" value={kelompokMagang.length} icon={<UsersRound size={28} className="text-purple-600" />} colorClass="bg-purple-50" to="/kelompok-magang" />
-      <SummaryCard title="Jurnal Menunggu Tinjau" value={jurnalMenunggu} icon={<NotebookPen size={28} className="text-amber-600" />} colorClass="bg-amber-50" to="/jurnal" />
+      <SummaryCard title="Total Siswa" value={siswa.length} icon={<Users size={28} className="text-blue-600 dark:text-blue-300" />} colorClass="bg-blue-50 dark:bg-blue-500/10" to="/siswa" />
+      <SummaryCard title="Perusahaan Mitra" value={perusahaan.length} icon={<Building2 size={28} className="text-indigo-600 dark:text-indigo-300" />} colorClass="bg-indigo-50 dark:bg-indigo-500/10" to="/perusahaan" />
+      <SummaryCard title="Kelompok Magang" value={kelompokMagang.length} icon={<UsersRound size={28} className="text-purple-600 dark:text-purple-300" />} colorClass="bg-purple-50 dark:bg-purple-500/10" to="/kelompok-magang" />
+      <SummaryCard title="Jurnal Menunggu Tinjau" value={jurnalMenunggu} icon={<NotebookPen size={28} className="text-amber-600 dark:text-amber-300" />} colorClass="bg-amber-50 dark:bg-amber-500/10" to="/jurnal" />
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:col-span-2 xl:col-span-4">
-        <h3 className="text-gray-500 text-sm font-medium mb-4">Status Penempatan & Penerimaan</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 md:col-span-2 xl:col-span-4">
+        <h3 className="text-gray-500 dark:text-slate-400 text-sm font-medium mb-4">Status Penempatan & Penerimaan</h3>
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
           {['Diajukan', 'Diterima', 'Berlangsung', 'Selesai', 'Ditolak'].map((st) => (
-            <div key={st} className="text-center p-3 rounded-lg bg-gray-50">
-              <span className="block text-xs text-gray-500 font-semibold">{st}</span>
-              <span className="block text-xl font-bold text-gray-800 mt-1">{statusCount(st)}</span>
+            <div key={st} className="text-center p-3 rounded-lg bg-gray-50 dark:bg-slate-800">
+              <span className="block text-xs text-gray-500 dark:text-slate-400 font-semibold">{st}</span>
+              <span className="block text-xl font-bold text-gray-800 dark:text-slate-100 mt-1">{statusCount(st)}</span>
             </div>
           ))}
         </div>
@@ -54,12 +54,12 @@ const PetugasDashboard = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <SummaryCard title="Total Siswa" value={siswa.length} icon={<Users size={28} className="text-blue-600" />} colorClass="bg-blue-50" to="/siswa" />
-      <SummaryCard title="Perusahaan Mitra" value={perusahaan.length} icon={<Building2 size={28} className="text-indigo-600" />} colorClass="bg-indigo-50" to="/perusahaan" />
-      <SummaryCard title="Kelompok Magang" value={kelompokMagang.length} icon={<UsersRound size={28} className="text-purple-600" />} colorClass="bg-purple-50" to="/kelompok-magang" />
-      <SummaryCard title="Penempatan Berlangsung" value={berlangsung} icon={<Briefcase size={28} className="text-green-600" />} colorClass="bg-green-50" to="/penempatan" />
+      <SummaryCard title="Total Siswa" value={siswa.length} icon={<Users size={28} className="text-blue-600 dark:text-blue-300" />} colorClass="bg-blue-50 dark:bg-blue-500/10" to="/siswa" />
+      <SummaryCard title="Perusahaan Mitra" value={perusahaan.length} icon={<Building2 size={28} className="text-indigo-600 dark:text-indigo-300" />} colorClass="bg-indigo-50 dark:bg-indigo-500/10" to="/perusahaan" />
+      <SummaryCard title="Kelompok Magang" value={kelompokMagang.length} icon={<UsersRound size={28} className="text-purple-600 dark:text-purple-300" />} colorClass="bg-purple-50 dark:bg-purple-500/10" to="/kelompok-magang" />
+      <SummaryCard title="Penempatan Berlangsung" value={berlangsung} icon={<Briefcase size={28} className="text-green-600 dark:text-green-300" />} colorClass="bg-green-50 dark:bg-green-500/10" to="/penempatan" />
       {diajukan > 0 && (
-        <div className="bg-amber-50 border border-amber-100 text-amber-700 text-sm rounded-lg px-4 py-3 md:col-span-2 xl:col-span-4">
+        <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 text-amber-700 dark:text-amber-300 text-sm rounded-lg px-4 py-3 md:col-span-2 xl:col-span-4">
           Ada <span className="font-semibold">{diajukan}</span> pengajuan penempatan yang menunggu diproses.
         </div>
       )}
@@ -78,27 +78,27 @@ const GuruDashboard = () => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <SummaryCard title="Siswa Bimbingan" value={siswaCount} icon={<Users size={28} className="text-blue-600" />} colorClass="bg-blue-50" to="/siswa" />
-        <SummaryCard title="Kelompok Magang Dibina" value={scopedK.length} icon={<UsersRound size={28} className="text-purple-600" />} colorClass="bg-purple-50" to="/kelompok-magang" />
-        <SummaryCard title="PKL Berlangsung" value={berlangsung} icon={<Briefcase size={28} className="text-green-600" />} colorClass="bg-green-50" to="/perusahaan" />
+        <SummaryCard title="Siswa Bimbingan" value={siswaCount} icon={<Users size={28} className="text-blue-600 dark:text-blue-300" />} colorClass="bg-blue-50 dark:bg-blue-500/10" to="/siswa" />
+        <SummaryCard title="Kelompok Magang Dibina" value={scopedK.length} icon={<UsersRound size={28} className="text-purple-600 dark:text-purple-300" />} colorClass="bg-purple-50 dark:bg-purple-500/10" to="/kelompok-magang" />
+        <SummaryCard title="PKL Berlangsung" value={berlangsung} icon={<Briefcase size={28} className="text-green-600 dark:text-green-300" />} colorClass="bg-green-50 dark:bg-green-500/10" to="/perusahaan" />
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-gray-800 font-semibold mb-4">Siswa Bimbingan Kamu</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6">
+        <h3 className="text-gray-800 dark:text-slate-100 font-semibold mb-4">Siswa Bimbingan Kamu</h3>
         <div className="space-y-2">
           {scopedP.slice(0, 6).map((p) => {
             const s = findById(siswa, p.siswaId);
             return (
-              <div key={p.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+              <div key={p.id} className="flex items-center justify-between py-2 border-b border-gray-50 dark:border-slate-800 last:border-0">
                 <div>
-                  <p className="text-sm font-medium text-gray-800">{s?.nama}</p>
-                  <p className="text-xs text-gray-400">{s?.kelas}</p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-slate-100">{s?.nama}</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500">{s?.kelas}</p>
                 </div>
                 <Badge status={p.status} />
               </div>
             );
           })}
-          {scopedP.length === 0 && <p className="text-sm text-gray-400 py-4 text-center">Belum ada siswa bimbingan.</p>}
+          {scopedP.length === 0 && <p className="text-sm text-gray-400 dark:text-slate-500 py-4 text-center">Belum ada siswa bimbingan.</p>}
         </div>
       </div>
     </div>
@@ -125,47 +125,47 @@ const SiswaDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 bg-gradient-to-r from-blue-50 to-white">
-        <h1 className="text-xl font-bold text-gray-800">Halo, {user.nama.split(' ')[0]} 👋</h1>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-8 bg-gradient-to-r from-blue-50 to-white dark:from-blue-950/30 dark:to-slate-900">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Halo, {user.nama.split(' ')[0]} 👋</h1>
         {active ? (
           <>
-            <p className="text-gray-600 mt-2">
-              Kamu sedang PKL di <span className="font-semibold text-gray-800">{c?.nama}</span>, periode{' '}
+            <p className="text-gray-600 dark:text-slate-300 mt-2">
+              Kamu sedang PKL di <span className="font-semibold text-gray-800 dark:text-slate-100">{c?.nama}</span>, periode{' '}
               {active.tanggalMulai} s/d {active.tanggalSelesai}
-              {kelompok[0] ? <> — bergabung di <span className="font-semibold text-gray-800">{kelompok[0].nama}</span></> : null}.
+              {kelompok[0] ? <> — bergabung di <span className="font-semibold text-gray-800 dark:text-slate-100">{kelompok[0].nama}</span></> : null}.
             </p>
             <div className="mt-4"><Badge status={active.status} /></div>
           </>
         ) : (
-          <p className="text-gray-600 mt-2">Kamu belum memiliki data penempatan PKL. Lengkapi Profil & Kompetensi supaya Petugas mudah menemukan perusahaan yang sesuai.</p>
+          <p className="text-gray-600 dark:text-slate-300 mt-2">Kamu belum memiliki data penempatan PKL. Lengkapi Profil & Kompetensi supaya Petugas mudah menemukan perusahaan yang sesuai.</p>
         )}
         <div className="mt-6 flex flex-wrap gap-3">
           <Link to="/profil" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">Lengkapi Profil</Link>
-          <Link to="/kompetensi" className="bg-white text-gray-700 border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition">Kompetensi</Link>
-          <Link to="/recommendation" className="bg-white text-gray-700 border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition">Lihat Rekomendasi</Link>
+          <Link to="/kompetensi" className="bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 transition">Kompetensi</Link>
+          <Link to="/recommendation" className="bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 border border-gray-200 dark:border-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-slate-700 transition">Lihat Rekomendasi</Link>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <SummaryCard title="Kompetensi Terdaftar" value={kompetensiCount} icon={<Target size={28} className="text-blue-600" />} colorClass="bg-blue-50" to="/kompetensi" />
-        <SummaryCard title="Jurnal Ditulis" value={jurnalCount} icon={<NotebookPen size={28} className="text-green-600" />} colorClass="bg-green-50" to="/jurnal" />
-        <SummaryCard title="Kelompok Magang" value={kelompok.length} icon={<UserRound size={28} className="text-purple-600" />} colorClass="bg-purple-50" to="/kelompok-magang" />
+        <SummaryCard title="Kompetensi Terdaftar" value={kompetensiCount} icon={<Target size={28} className="text-blue-600 dark:text-blue-300" />} colorClass="bg-blue-50 dark:bg-blue-500/10" to="/kompetensi" />
+        <SummaryCard title="Jurnal Ditulis" value={jurnalCount} icon={<NotebookPen size={28} className="text-green-600 dark:text-green-300" />} colorClass="bg-green-50 dark:bg-green-500/10" to="/jurnal" />
+        <SummaryCard title="Kelompok Magang" value={kelompok.length} icon={<UserRound size={28} className="text-purple-600 dark:text-purple-300" />} colorClass="bg-purple-50 dark:bg-purple-500/10" to="/kelompok-magang" />
       </div>
 
       {topRekomendasi && (
-        <Link to="/recommendation" className="block bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:border-blue-100 transition">
+        <Link to="/recommendation" className="block bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 hover:border-blue-100 dark:hover:border-blue-900/50 transition">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-lg bg-blue-50 text-blue-600">
+              <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-300">
                 <Sparkles size={22} />
               </div>
               <div>
-                <p className="text-xs text-gray-400">Rekomendasi teratas untukmu</p>
-                <p className="font-semibold text-gray-800">{topRekomendasi.company_nama}</p>
+                <p className="text-xs text-gray-400 dark:text-slate-500">Rekomendasi teratas untukmu</p>
+                <p className="font-semibold text-gray-800 dark:text-slate-100">{topRekomendasi.company_nama}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-gray-800">{topRekomendasi.total_score}%</p>
+              <p className="text-2xl font-bold text-gray-800 dark:text-slate-100">{topRekomendasi.total_score}%</p>
               <Badge status={topRekomendasi.category} />
             </div>
           </div>
@@ -179,11 +179,11 @@ const DashboardHome = () => {
   const { user } = useAuth();
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 text-gray-900">
+    <div className="max-w-7xl mx-auto space-y-6 text-gray-900 dark:text-slate-100">
       {user.role !== 'Siswa' && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 bg-gradient-to-r from-blue-50 to-white">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Selamat datang, {user.nama}</h1>
-          <p className="text-gray-600">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-8 bg-gradient-to-r from-blue-50 to-white dark:from-blue-950/30 dark:to-slate-900">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mb-2">Selamat datang, {user.nama}</h1>
+          <p className="text-gray-600 dark:text-slate-300">
             EduPKL mencocokkan profil & kompetensi siswa dengan kebutuhan perusahaan secara otomatis —
             dari penempatan, jurnal, hingga Match Score dan rekomendasi — dalam satu sistem yang rapi.
           </p>
