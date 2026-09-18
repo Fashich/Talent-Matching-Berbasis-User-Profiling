@@ -266,7 +266,7 @@ const Perusahaan = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Pendidikan Dibutuhkan</label>
-                  <input placeholder="mis. SMK/Sederajat Jurusan RPL" value={form.pendidikanDibutuhkan} onChange={set('pendidikanDibutuhkan')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                  <input placeholder="mis. SMK/Sederajat Jurusan TKJ" value={form.pendidikanDibutuhkan} onChange={set('pendidikanDibutuhkan')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
               </div>
               <div>

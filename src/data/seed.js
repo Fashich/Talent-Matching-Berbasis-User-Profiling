@@ -10,38 +10,47 @@
 
 // Kamus Keyword Jurusan: dipakai mesin matching untuk mencocokkan kompetensi siswa
 // dengan kebutuhan kompetensi perusahaan berdasarkan jurusan.
+// 6 jurusan ini adalah jurusan RESMI yang benar-benar ada di SMKS Rajasa
+// Surabaya (studi kasus capstone ini) — bukan daftar generik seluruh
+// jurusan SMK se-Indonesia, jadi sengaja TIDAK memuat jurusan sekolah lain
+// (RPL/Multimedia/Perhotelan/dsb).
 export const keywordJurusan = {
-  RPL: ["Programming", "Coding", "Database", "Web", "Frontend", "Backend", "API", "JavaScript", "PHP", "Python"],
+  AKL: ["Akuntansi", "Pembukuan", "Keuangan", "Kas", "Laporan Keuangan", "Pajak", "Neraca", "Jurnal Akuntansi", "Administrasi Keuangan", "Excel"],
+  MP: ["Administrasi", "Kearsipan", "Surat Menyurat", "Kesekretariatan", "Microsoft Office", "Korespondensi", "Filing", "Resepsionis", "Pelayanan Prima"],
+  TITL: ["Instalasi Listrik", "Kelistrikan", "Panel Listrik", "Wiring", "Rangkaian Listrik", "Motor Listrik", "K3 Listrik", "PLC"],
+  TKRO: ["Perbaikan Mesin", "Kelistrikan Otomotif", "Perawatan Kendaraan", "Tune Up", "Sistem Rem", "Transmisi", "Mesin Kendaraan Ringan"],
   TKJ: ["Jaringan", "Networking", "Router", "Switch", "Troubleshooting", "Server", "Mikrotik", "Hardware", "Maintenance", "CCTV"],
-  MM: ["Desain Grafis", "Multimedia", "Editing Video", "Animasi", "Adobe", "Fotografi", "Broadcasting"],
-  TBSM: ["Sepeda Motor", "Kelistrikan Otomotif", "Perbaikan Mesin", "Perawatan Kendaraan"],
+  TPM: ["Pemesinan", "Bubut", "Frais", "CNC", "Gambar Teknik", "Pengelasan", "Perkakas", "Toleransi Ukur"],
 };
 
-// Mapping Bidang Usaha → Jurusan Relevan (CD-4 §5.3, 11 bidang usaha resmi —
-// dipakai sebagai skor cadangan/parsial pada komponen "Pendidikan/Jurusan"
-// jika jurusan siswa tidak match langsung; sudah sinkron dengan tabel
-// bidang_jurusan_map di backend/database/schema.sql).
+// Mapping Bidang Usaha → Jurusan Relevan (CD-4 §5.3) — dipakai sebagai skor
+// cadangan/parsial pada komponen "Pendidikan/Jurusan" jika jurusan siswa
+// tidak match langsung ke jurusanRelevan perusahaan; sudah sinkron dengan
+// tabel bidang_jurusan_map di backend/database/schema.sql. Key di sini
+// HARUS persis sama dengan field `bidang` pada seedPerusahaan (dipakai
+// sebagai lookup langsung di src/utils/matching.js).
 export const bidangJurusanMap = {
-  "Teknologi Informasi dan Komunikasi (TIK)": ["RPL", "TKJ", "MM", "Animasi", "Broadcasting"],
+  "Teknologi Informasi dan Komunikasi (TIK)": ["TKJ"],
   "Service Komputer": ["TKJ"],
   "Pemasangan CCTV": ["TKJ"],
-  "Penarikan Kabel Jaringan dan Fiber optic": ["TKJ"],
-  "Bisnis dan Manajemen": ["BDP", "MP", "AKL"],
-  Otomotif: ["TBSM", "TPM"],
+  "Penarikan Kabel Jaringan dan Fiber Optic": ["TKJ"],
+  "Bisnis dan Manajemen": ["MP", "AKL"],
+  Otomotif: ["TKRO"],
   Ketenagalistrikan: ["TITL"],
-  "Seni dan Desain": ["DKV", "Tata Busana"],
-  "Pariwisata dan Kuliner": ["Perhotelan", "Tata Boga"],
-  Kesehatan: ["Farmasi", "Keperawatan"],
-  "Industri Kreatif": ["MM", "Animasi", "Broadcasting", "DKV"],
+  "Manufaktur dan Permesinan": ["TPM"],
 };
 
 export const daftarBidangUsaha = Object.keys(bidangJurusanMap);
 
-// 17 jurusan resmi (Kamus Keyword Jurusan, CD-4 §5.2) — sinkron dengan tabel
-// keywords di backend.
+// 6 jurusan resmi SMKS Rajasa Surabaya (Kamus Keyword Jurusan, CD-4 §5.2) —
+// sinkron dengan tabel keywords di backend.
 export const daftarJurusan = [
-  "RPL", "TKJ", "MM", "MP", "AKL", "BDP", "TBSM", "TPM", "TITL", "DKV",
-  "Perhotelan", "Tata Boga", "Tata Busana", "Farmasi", "Keperawatan", "Animasi", "Broadcasting",
+  "AKL",  // Akuntansi dan Keuangan Lembaga
+  "MP",   // Manajemen Perkantoran (sebelumnya OTKP)
+  "TITL", // Teknik Instalasi Tenaga Listrik
+  "TKRO", // Teknik Kendaraan Ringan Otomotif
+  "TKJ",  // Teknik Komputer dan Jaringan
+  "TPM",  // Teknik Pemesinan
 ];
 
 // --- Data siswa (User Profiling) ---------------------------------------------------
@@ -63,15 +72,15 @@ export const seedSiswa = [
   { id: "s4", nisn: "0093452750", nama: "Ade Kurnia Putra", kelas: "XI TKJ 1", jurusan: "TKJ", jenisKelamin: "L", alamat: "Banyuurip Wetan Gg 4 No 36", hp: "085607875848", email: "ade.kurnia@smk.sch.id", status: "Belum PKL", pendidikan: "SMK Kelas XI — Teknik Komputer dan Jaringan", pengalaman: [], minat: [], preferensi: "", portofolio: "" },
   { id: "s5", nisn: "0093602684", nama: "Adi Sanjaya Putra", kelas: "XI TKJ 1", jurusan: "TKJ", jenisKelamin: "L", alamat: "Simo Kalangan No 232", hp: "081234567890", email: "adi.sanjaya@smk.sch.id", status: "Selesai", pendidikan: "SMK Kelas XI — Teknik Komputer dan Jaringan", pengalaman: [{ judul: "PKL di PT Kreasi Media Interaktif", deskripsi: "Membantu tim multimedia menyiapkan aset digital." }], minat: ["Multimedia"], preferensi: "", portofolio: "" },
   {
-    id: "s6", nisn: "0087734521", nama: "Cindy Amelia Putri", kelas: "XI RPL 1", jurusan: "RPL", jenisKelamin: "P",
+    id: "s6", nisn: "0087734521", nama: "Cindy Amelia Putri", kelas: "XI TKJ 3", jurusan: "TKJ", jenisKelamin: "P",
     alamat: "Jl. Kertajaya Indah No.12", hp: "082234455667", email: "cindy.amelia@smk.sch.id", status: "Berlangsung",
-    pendidikan: "SMK Kelas XI — Rekayasa Perangkat Lunak",
-    pengalaman: [{ judul: "Tugas Sekolah: Website Sederhana", deskripsi: "Membuat website portofolio kelas menggunakan HTML, CSS, dan JavaScript." }],
-    minat: ["Pemrograman Web", "Basis Data"],
-    preferensi: "Lokasi Surabaya, jenis pekerjaan Junior Web Developer",
+    pendidikan: "SMK Kelas XI — Teknik Komputer dan Jaringan",
+    pengalaman: [{ judul: "Praktik Instalasi Jaringan LAN Sekolah", deskripsi: "Membantu pemasangan dan konfigurasi jaringan LAN di laboratorium komputer sekolah." }],
+    minat: ["Jaringan Komputer", "Instalasi Hardware"],
+    preferensi: "Lokasi Surabaya, jenis pekerjaan Teknisi Jaringan/IT Support",
     portofolio: "",
   },
-  { id: "s7", nisn: "0091122334", nama: "Dewi Anggraini", kelas: "XI RPL 1", jurusan: "RPL", jenisKelamin: "P", alamat: "Jl. Manyar Sabrangan No.5", hp: "081345678990", email: "dewi.anggraini@smk.sch.id", status: "Selesai", pendidikan: "SMK Kelas XI — Rekayasa Perangkat Lunak", pengalaman: [{ judul: "PKL di PT Nusantara Digital Teknologi", deskripsi: "Membantu tim developer memperbaiki tampilan aplikasi internal." }], minat: ["Pemrograman Web"], preferensi: "", portofolio: "" },
+  { id: "s7", nisn: "0091122334", nama: "Dewi Anggraini", kelas: "XI TKJ 3", jurusan: "TKJ", jenisKelamin: "P", alamat: "Jl. Manyar Sabrangan No.5", hp: "081345678990", email: "dewi.anggraini@smk.sch.id", status: "Selesai", pendidikan: "SMK Kelas XI — Teknik Komputer dan Jaringan", pengalaman: [{ judul: "PKL di PT Nusantara Digital Teknologi", deskripsi: "Membantu tim IT memelihara infrastruktur jaringan dan perangkat kantor." }], minat: ["Jaringan Komputer"], preferensi: "", portofolio: "" },
   { id: "s8", nisn: "0095566778", nama: "Farrel Ramadhan", kelas: "XII TKJ 2", jurusan: "TKJ", jenisKelamin: "L", alamat: "Jl. Gubeng Kertajaya VII/2", hp: "085711223344", email: "farrel.ramadhan@smk.sch.id", status: "Belum PKL", pendidikan: "SMK Kelas XII — Teknik Komputer dan Jaringan", pengalaman: [], minat: [], preferensi: "", portofolio: "" },
 ];
 
@@ -90,10 +99,10 @@ export const seedKompetensi = [
 
 export const seedPerusahaan = [
   {
-    id: "p1", nama: "PT Nusantara Digital Teknologi", bidang: "TIK", alamat: "Jl. Raya Darmo No.45, Surabaya",
+    id: "p1", nama: "PT Nusantara Digital Teknologi", bidang: "Teknologi Informasi dan Komunikasi (TIK)", alamat: "Jl. Raya Darmo No.45, Surabaya",
     telepon: "0315678901", email: "hrd@nusantaradigital.co.id", penanggungJawab: "Rudi Hartono", kuota: 4, status: "Aktif",
-    posisi: "Web Developer", kompetensiDibutuhkan: ["Programming", "JavaScript", "Web", "Frontend"],
-    jurusanRelevan: ["RPL"], tingkatPengalaman: "Pemula", pendidikanDibutuhkan: "SMK/Sederajat Jurusan RPL", kriteriaLain: "Mampu bekerja dalam tim",
+    posisi: "Teknisi Jaringan & IT Support", kompetensiDibutuhkan: ["Jaringan", "Troubleshooting", "Hardware", "Maintenance"],
+    jurusanRelevan: ["TKJ"], tingkatPengalaman: "Pemula", pendidikanDibutuhkan: "SMK/Sederajat Jurusan TKJ", kriteriaLain: "Mampu bekerja dalam tim",
   },
   {
     id: "p2", nama: "CV Jaringan Prima Solusi", bidang: "Service Komputer", alamat: "Jl. HR Muhammad No.12, Surabaya",
@@ -102,22 +111,40 @@ export const seedPerusahaan = [
     jurusanRelevan: ["TKJ"], tingkatPengalaman: "Tidak Diperlukan", pendidikanDibutuhkan: "SMK/Sederajat Jurusan TKJ", kriteriaLain: "Teliti dan disiplin",
   },
   {
-    id: "p3", nama: "PT Kreasi Media Interaktif", bidang: "TIK", alamat: "Jl. Ngagel Jaya No.88, Surabaya",
+    id: "p3", nama: "PT Kreasi Media Interaktif", bidang: "Bisnis dan Manajemen", alamat: "Jl. Ngagel Jaya No.88, Surabaya",
     telepon: "0315544332", email: "hr@kreasimedia.co.id", penanggungJawab: "Bagus Wicaksono", kuota: 2, status: "Aktif",
-    posisi: "Desainer Multimedia", kompetensiDibutuhkan: ["Desain Grafis", "Multimedia", "Editing Video"],
-    jurusanRelevan: ["MM"], tingkatPengalaman: "Pemula", pendidikanDibutuhkan: "SMK/Sederajat Jurusan Multimedia", kriteriaLain: "Kreatif",
+    posisi: "Staff Administrasi & Dokumentasi Proyek", kompetensiDibutuhkan: ["Administrasi", "Kearsipan", "Microsoft Office"],
+    jurusanRelevan: ["MP"], tingkatPengalaman: "Pemula", pendidikanDibutuhkan: "SMK/Sederajat Jurusan MP", kriteriaLain: "Teliti dan rapi dalam pengarsipan dokumen",
   },
   {
-    id: "p4", nama: "PT Teknologi Data Mandiri", bidang: "TIK", alamat: "Jl. Kenjeran No.200, Surabaya",
+    id: "p4", nama: "PT Teknologi Data Mandiri", bidang: "Teknologi Informasi dan Komunikasi (TIK)", alamat: "Jl. Kenjeran No.200, Surabaya",
     telepon: "0316677889", email: "recruitment@tekdatamandiri.co.id", penanggungJawab: "Yuni Kartika", kuota: 3, status: "Aktif",
-    posisi: "Junior Database Developer", kompetensiDibutuhkan: ["Database", "Programming", "Backend"],
-    jurusanRelevan: ["RPL"], tingkatPengalaman: "Menengah", pendidikanDibutuhkan: "SMK/Sederajat Jurusan RPL", kriteriaLain: "Memahami dasar basis data",
+    posisi: "Teknisi Infrastruktur Server", kompetensiDibutuhkan: ["Server", "Maintenance", "Troubleshooting", "Hardware"],
+    jurusanRelevan: ["TKJ"], tingkatPengalaman: "Menengah", pendidikanDibutuhkan: "SMK/Sederajat Jurusan TKJ", kriteriaLain: "Memahami dasar administrasi server",
   },
   {
     id: "p5", nama: "Bengkel Otomotif Mandiri Jaya", bidang: "Otomotif", alamat: "Jl. Kedung Cowek No.77, Surabaya",
     telepon: "0313344556", email: "kontak@otomotifmandiri.co.id", penanggungJawab: "Hendra Saputra", kuota: 2, status: "Tidak Aktif",
-    posisi: "Teknisi Otomotif", kompetensiDibutuhkan: ["Perbaikan Mesin", "Kelistrikan Otomotif"],
-    jurusanRelevan: ["TBSM"], tingkatPengalaman: "Tidak Diperlukan", pendidikanDibutuhkan: "SMK/Sederajat Jurusan TBSM", kriteriaLain: "",
+    posisi: "Teknisi Kendaraan Ringan", kompetensiDibutuhkan: ["Perbaikan Mesin", "Kelistrikan Otomotif"],
+    jurusanRelevan: ["TKRO"], tingkatPengalaman: "Tidak Diperlukan", pendidikanDibutuhkan: "SMK/Sederajat Jurusan TKRO", kriteriaLain: "",
+  },
+  {
+    id: "p6", nama: "KSP Sejahtera Bersama", bidang: "Bisnis dan Manajemen", alamat: "Jl. Diponegoro No.150, Surabaya",
+    telepon: "0315123456", email: "hrd@ksp-sejahtera.co.id", penanggungJawab: "Ratna Kusuma", kuota: 3, status: "Aktif",
+    posisi: "Staff Pembukuan & Keuangan", kompetensiDibutuhkan: ["Akuntansi", "Pembukuan", "Kas", "Excel"],
+    jurusanRelevan: ["AKL"], tingkatPengalaman: "Tidak Diperlukan", pendidikanDibutuhkan: "SMK/Sederajat Jurusan AKL", kriteriaLain: "Teliti dengan angka",
+  },
+  {
+    id: "p7", nama: "CV Cahaya Listrik Utama", bidang: "Ketenagalistrikan", alamat: "Jl. Kedung Baruk No.20, Surabaya",
+    telepon: "0318899001", email: "info@cahayalistrik.co.id", penanggungJawab: "Agus Setiawan", kuota: 2, status: "Aktif",
+    posisi: "Teknisi Instalasi Listrik", kompetensiDibutuhkan: ["Instalasi Listrik", "Kelistrikan", "Panel Listrik"],
+    jurusanRelevan: ["TITL"], tingkatPengalaman: "Tidak Diperlukan", pendidikanDibutuhkan: "SMK/Sederajat Jurusan TITL", kriteriaLain: "Memahami K3 kelistrikan",
+  },
+  {
+    id: "p8", nama: "PT Presisi Logam Nusantara", bidang: "Manufaktur dan Permesinan", alamat: "Jl. Rungkut Industri No.9, Surabaya",
+    telepon: "0318712345", email: "recruitment@presisilogam.co.id", penanggungJawab: "Sutrisno", kuota: 3, status: "Aktif",
+    posisi: "Operator Mesin Bubut/CNC", kompetensiDibutuhkan: ["Pemesinan", "Bubut", "CNC", "Gambar Teknik"],
+    jurusanRelevan: ["TPM"], tingkatPengalaman: "Pemula", pendidikanDibutuhkan: "SMK/Sederajat Jurusan TPM", kriteriaLain: "Mengikuti prosedur K3 bengkel",
   },
 ];
 
@@ -149,13 +176,15 @@ export const seedJurnal = [
   { id: "j2", penempatanId: "pl1", siswaId: "s1", tanggal: "2026-09-08", kegiatan: "Membantu memperbaiki tampilan halaman login pada aplikasi internal.", kendala: "", status: "Disetujui", catatanPembimbing: "Kerja rapi." },
   { id: "j3", penempatanId: "pl1", siswaId: "s1", tanggal: "2026-09-09", kegiatan: "Ikut meeting daily standup tim dan mencatat task baru.", kendala: "", status: "Menunggu", catatanPembimbing: "" },
   { id: "j4", penempatanId: "pl2", siswaId: "s3", tanggal: "2026-09-08", kegiatan: "Konfigurasi router dan switch untuk jaringan kantor cabang baru.", kendala: "Kabel UTP terbatas, menunggu pengadaan.", status: "Disetujui", catatanPembimbing: "Catat kendala di laporan mingguan." },
-  { id: "j5", penempatanId: "pl4", siswaId: "s6", tanggal: "2026-09-09", kegiatan: "Membuat query laporan penjualan bulanan menggunakan SQL.", kendala: "", status: "Menunggu", catatanPembimbing: "" },
+  { id: "j5", penempatanId: "pl4", siswaId: "s6", tanggal: "2026-09-09", kegiatan: "Melakukan maintenance rutin dan backup data pada server perusahaan.", kendala: "", status: "Menunggu", catatanPembimbing: "" },
 ];
 
 // --- Users (Authentication & Role-Based Access) ----------------------------------------
 
 export const seedUsers = [
-  { id: "u1", nama: "Wahyu Firo", username: "admin", email: "admin@edupkl.sch.id", role: "Administrator", linkedId: null, status: "Aktif" },
+  // CATATAN: "nama" di sini WAJIB nama fiktif/generik (bukan nama orang asli
+  // narasumber/kontak lapangan) — lihat aturan anonimisasi di CLAUDE.md.
+  { id: "u1", nama: "Eko Prasetyo", username: "admin", email: "admin@edupkl.sch.id", role: "Administrator", linkedId: null, status: "Aktif" },
   { id: "u2", nama: "Siti Rahmawati", username: "petugas.s", email: "siti.rahmawati@edupkl.sch.id", role: "Petugas", linkedId: null, status: "Aktif" },
   { id: "u3", nama: "Drs. Bambang Supriyadi", username: "guru.b", email: "bambang.supriyadi@edupkl.sch.id", role: "Guru", linkedId: null, status: "Aktif" },
   { id: "u4", nama: "Dra. Yuliati Ningsih", username: "guru.y", email: "yuliati.ningsih@edupkl.sch.id", role: "Guru", linkedId: null, status: "Aktif" },

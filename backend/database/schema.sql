@@ -73,7 +73,9 @@ CREATE TABLE auth_tokens (
 -- 3. KEYWORDS — Kamus Keyword Jurusan (CD-4 §5.2, Lampiran resmi)
 -- Dipakai Matching Engine untuk overlap kompetensi siswa vs kebutuhan
 -- perusahaan. Data referensi resmi — bukan data pribadi, aman diisi
--- penuh. 17 jurusan (frontend lama baru implementasi 4 dari 17 ini).
+-- penuh. 6 jurusan RESMI yang benar-benar ada di SMKS Rajasa Surabaya
+-- (studi kasus capstone ini) — bukan daftar generik seluruh jurusan SMK
+-- se-Indonesia, jadi sengaja TIDAK memuat jurusan sekolah lain.
 -- =====================================================================
 DROP TABLE IF EXISTS keywords;
 CREATE TABLE keywords (
@@ -85,42 +87,19 @@ CREATE TABLE keywords (
 ) ENGINE=InnoDB;
 
 INSERT INTO keywords (jurusan, keyword) VALUES
-('RPL','programming'),('RPL','coding'),('RPL','software'),('RPL','database'),('RPL','web'),
-('RPL','mobile'),('RPL','API'),('RPL','frontend'),('RPL','backend'),('RPL','python'),
-('RPL','java'),('RPL','php'),('RPL','javascript'),('RPL','html'),('RPL','css'),
+('AKL','akuntansi'),('AKL','keuangan'),('AKL','jurnal'),('AKL','pembukuan'),('AKL','neraca'),
+('AKL','pajak'),('AKL','audit'),('AKL','excel'),('AKL','laporan keuangan'),('AKL','administrasi keuangan'),
+('MP','administrasi'),('MP','perkantoran'),('MP','dokumen'),('MP','arsip'),('MP','surat'),
+('MP','kearsipan'),('MP','layanan'),('MP','komunikasi'),('MP','agenda'),('MP','kesekretariatan'),
+('TITL','instalasi listrik'),('TITL','tenaga listrik'),('TITL','panel'),('TITL','arus'),
+('TITL','kontrol'),('TITL','rangkaian'),('TITL','kelistrikan'),('TITL','wiring'),('TITL','plc'),
+('TKRO','kendaraan ringan'),('TKRO','otomotif'),('TKRO','servis'),('TKRO','mesin'),
+('TKRO','kelistrikan otomotif'),('TKRO','mekanik'),('TKRO','tune up'),('TKRO','transmisi'),('TKRO','sistem rem'),
 ('TKJ','jaringan'),('TKJ','router'),('TKJ','switch'),('TKJ','server'),('TKJ','LAN'),
 ('TKJ','WAN'),('TKJ','mikrotik'),('TKJ','cisco'),('TKJ','subnet'),('TKJ','firewall'),
 ('TKJ','DNS'),('TKJ','DHCP'),('TKJ','proxy'),('TKJ','CCTV'),('TKJ','service komputer'),('TKJ','input data'),
-('MM','multimedia'),('MM','grafis'),('MM','video'),('MM','editing'),('MM','animasi'),
-('MM','fotografi'),('MM','desain'),('MM','coreldraw'),('MM','photoshop'),('MM','premiere'),('MM','aftereffects'),
-('MP','administrasi'),('MP','perkantoran'),('MP','dokumen'),('MP','arsip'),('MP','surat'),
-('MP','kearsipan'),('MP','layanan'),('MP','komunikasi'),('MP','agenda'),
-('AKL','akuntansi'),('AKL','keuangan'),('AKL','jurnal'),('AKL','pembukuan'),('AKL','neraca'),
-('AKL','pajak'),('AKL','audit'),('AKL','SAP'),('AKL','excel'),
-('BDP','bisnis'),('BDP','marketing'),('BDP','penjualan'),('BDP','iklan'),('BDP','produk'),
-('BDP','branding'),('BDP','negosiasi'),('BDP','digital marketing'),
-('TBSM','sepeda motor'),('TBSM','otomotif'),('TBSM','servis'),('TBSM','mesin'),('TBSM','injeksi'),
-('TBSM','mekanik'),('TBSM','tune up'),
 ('TPM','pemesinan'),('TPM','bubut'),('TPM','frais'),('TPM','las'),('TPM','cnc'),
-('TPM','produksi'),('TPM','teknik mesin'),
-('TITL','instalasi listrik'),('TITL','tenaga listrik'),('TITL','panel'),('TITL','arus'),
-('TITL','kontrol'),('TITL','rangkaian'),('TITL','kelistrikan'),
-('DKV','desain'),('DKV','komunikasi visual'),('DKV','branding'),('DKV','poster'),('DKV','logo'),
-('DKV','tipografi'),('DKV','layout'),('DKV','grafis'),
-('Perhotelan','front office'),('Perhotelan','housekeeping'),('Perhotelan','reservasi'),
-('Perhotelan','tamu'),('Perhotelan','pelayanan'),('Perhotelan','hospitality'),
-('Tata Boga','memasak'),('Tata Boga','resep'),('Tata Boga','hidangan'),('Tata Boga','restoran'),
-('Tata Boga','katering'),('Tata Boga','kuliner'),('Tata Boga','makanan'),
-('Tata Busana','menjahit'),('Tata Busana','pola'),('Tata Busana','desain busana'),('Tata Busana','fashion'),
-('Tata Busana','kain'),('Tata Busana','model'),('Tata Busana','tata busana'),
-('Farmasi','obat'),('Farmasi','apotek'),('Farmasi','resep'),('Farmasi','dosis'),
-('Farmasi','farmakologi'),('Farmasi','kesehatan'),
-('Keperawatan','perawatan'),('Keperawatan','pasien'),('Keperawatan','kesehatan'),
-('Keperawatan','rumah sakit'),('Keperawatan','p3k'),('Keperawatan','vital sign'),
-('Animasi','animasi 2D'),('Animasi','animasi 3D'),('Animasi','rigging'),('Animasi','rendering'),
-('Animasi','motion graphic'),('Animasi','storyboard'),
-('Broadcasting','video'),('Broadcasting','siaran'),('Broadcasting','radio'),('Broadcasting','televisi'),
-('Broadcasting','kamera'),('Broadcasting','editing'),('Broadcasting','sutradara');
+('TPM','produksi'),('TPM','teknik mesin'),('TPM','gambar teknik'),('TPM','toleransi ukur');
 
 -- =====================================================================
 -- 4. BIDANG_JURUSAN_MAP — Mapping Bidang Usaha–Jurusan (CD-4 §5.3)
@@ -136,30 +115,15 @@ CREATE TABLE bidang_jurusan_map (
 ) ENGINE=InnoDB;
 
 INSERT INTO bidang_jurusan_map (bidang_usaha, jurusan) VALUES
-('Teknologi Informasi dan Komunikasi (TIK)','RPL'),
 ('Teknologi Informasi dan Komunikasi (TIK)','TKJ'),
-('Teknologi Informasi dan Komunikasi (TIK)','MM'),
-('Teknologi Informasi dan Komunikasi (TIK)','Animasi'),
-('Teknologi Informasi dan Komunikasi (TIK)','Broadcasting'),
 ('Service Komputer','TKJ'),
 ('Pemasangan CCTV','TKJ'),
-('Penarikan Kabel Jaringan dan Fiber optic','TKJ'),
-('Bisnis dan Manajemen','BDP'),
+('Penarikan Kabel Jaringan dan Fiber Optic','TKJ'),
 ('Bisnis dan Manajemen','MP'),
 ('Bisnis dan Manajemen','AKL'),
-('Otomotif','TBSM'),
-('Otomotif','TPM'),
+('Otomotif','TKRO'),
 ('Ketenagalistrikan','TITL'),
-('Seni dan Desain','DKV'),
-('Seni dan Desain','Tata Busana'),
-('Pariwisata dan Kuliner','Perhotelan'),
-('Pariwisata dan Kuliner','Tata Boga'),
-('Kesehatan','Farmasi'),
-('Kesehatan','Keperawatan'),
-('Industri Kreatif','MM'),
-('Industri Kreatif','Animasi'),
-('Industri Kreatif','Broadcasting'),
-('Industri Kreatif','DKV');
+('Manufaktur dan Permesinan','TPM');
 
 -- =====================================================================
 -- 5. STUDENTS (siswa) — User Profiling
@@ -237,16 +201,11 @@ INSERT INTO competencies (nama, kategori) VALUES
 ('Konfigurasi Jaringan (Router/Switch)','Teknis'),
 ('Troubleshooting Jaringan','Teknis'),
 ('Instalasi & Perawatan Hardware Komputer','Teknis'),
-('Pemrograman Web (HTML/CSS/JavaScript)','Teknis'),
-('Basis Data (SQL)','Teknis'),
-('Pemrograman Backend (PHP/Python/Java)','Teknis'),
-('Desain Grafis','Teknis'),
-('Editing Video','Teknis'),
 ('Administrasi Perkantoran','Teknis'),
 ('Akuntansi & Pembukuan','Teknis'),
-('Pemasaran Digital','Teknis'),
-('Perbaikan Mesin Otomotif','Teknis'),
+('Perbaikan Mesin Kendaraan Ringan','Teknis'),
 ('Instalasi Kelistrikan','Teknis'),
+('Pengoperasian Mesin Bubut/Frais/CNC','Teknis'),
 ('Komunikasi & Kerja Tim','Non-Teknis'),
 ('Manajemen Waktu','Non-Teknis');
 -- Daftar awal ini BOLEH ditambah lewat aplikasi (bukan daftar tertutup);
