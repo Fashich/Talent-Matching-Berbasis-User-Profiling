@@ -1,6 +1,5 @@
 import React from 'react';
 import LegalPageLayout, { LegalSection } from '../../components/LegalPageLayout';
-import { buildWhatsAppLink } from '../../config/contact';
 
 // Kebijakan Privasi EduPKL.
 // Konten ini adalah implementasi dari draft
@@ -12,15 +11,11 @@ import { buildWhatsAppLink } from '../../config/contact';
 // kepatuhan Pasal 25 UU PDP otomatis terpenuhi hanya karena kalimat ini ada
 // di halaman.
 //
-// Kontak resmi tim juga BELUM final — sementara (atas persetujuan eksplisit
-// Fashich) pakai nomor WA pribadinya (src/config/contact.js, awalnya cuma
-// buat tombol demo "Hubungi Admin"). GANTI ke kontak resmi tim/kelompok
-// begitu sudah diputuskan — lihat catatan sama di TermsOfService.jsx.
-const KONTAK_RESMI_LABEL = '0881-0365-01919 (sementara)';
-const KONTAK_RESMI_HREF = buildWhatsAppLink(
-  undefined,
-  'Halo, saya ada pertanyaan terkait Kebijakan Privasi / Syarat & Ketentuan EduPKL.'
-);
+// CATATAN: Bagian "Kontak" (termasuk channel pengajuan hak subjek data di
+// Pasal 10) sengaja DIHAPUS sementara — satu-satunya kontak yang ada adalah
+// nomor WA pribadi Fashich (src/config/contact.js), bukan kontak resmi
+// tim/kelompok. TAMBAHKAN KEMBALI begitu ada kontak resmi (email/WA
+// kelompok) — lihat catatan sama di TermsOfService.jsx.
 
 const PrivacyPolicy = () => {
   return (
@@ -37,11 +32,6 @@ const PrivacyPolicy = () => {
       <LegalSection heading="2. Pengendali Data">
         <p>
           Pengendali data untuk Layanan ini adalah <strong>Kelompok 1 Capstone S1 Sistem Informasi Unesa</strong>.
-          Kontak: WhatsApp{' '}
-          <a href={KONTAK_RESMI_HREF} target="_blank" rel="noopener noreferrer" className="underline font-semibold">
-            {KONTAK_RESMI_LABEL}
-          </a>
-          .
         </p>
       </LegalSection>
 
@@ -160,13 +150,6 @@ const PrivacyPolicy = () => {
           <li>Menarik persetujuan yang telah diberikan.</li>
           <li>Mengajukan keberatan atas pemrosesan tertentu.</li>
         </ul>
-        <p>
-          Permintaan dapat diajukan melalui WhatsApp{' '}
-          <a href={KONTAK_RESMI_HREF} target="_blank" rel="noopener noreferrer" className="underline font-semibold">
-            {KONTAK_RESMI_LABEL}
-          </a>
-          .
-        </p>
       </LegalSection>
 
       <LegalSection heading="11. Cookie & Penyimpanan Lokal">
@@ -181,17 +164,6 @@ const PrivacyPolicy = () => {
         <p>
           Kebijakan Privasi ini dapat diperbarui sewaktu-waktu. Perubahan material akan diinformasikan
           melalui halaman Layanan sebelum berlaku efektif.
-        </p>
-      </LegalSection>
-
-      <LegalSection heading="13. Kontak">
-        <p>
-          Pertanyaan, keberatan, atau permintaan terkait data pribadi dapat disampaikan melalui WhatsApp{' '}
-          <a href={KONTAK_RESMI_HREF} target="_blank" rel="noopener noreferrer" className="underline font-semibold">
-            {KONTAK_RESMI_LABEL}
-          </a>
-          . Lihat juga{' '}
-          <a href="#/terms" className="underline font-semibold">Syarat &amp; Ketentuan Penggunaan</a>.
         </p>
       </LegalSection>
     </LegalPageLayout>
