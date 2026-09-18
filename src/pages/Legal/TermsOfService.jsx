@@ -1,22 +1,16 @@
 import React from 'react';
 import LegalPageLayout, { LegalSection } from '../../components/LegalPageLayout';
-import { buildWhatsAppLink } from '../../config/contact';
 
 // Syarat & Ketentuan Penggunaan EduPKL.
 // Konten ini adalah implementasi dari draft
 // "SYARAT_KETENTUAN_EDUPKL_DRAFT.md" (folder documents capstone) — kalau
 // draft itu direvisi, sinkronkan juga isi di sini secara manual.
 //
-// CATATAN: kontak resmi tim BELUM final. Sementara (atas persetujuan
-// eksplisit Fashich) pakai nomor WA pribadi Fashich di src/config/contact.js
-// (yang tadinya cuma buat tombol demo "Hubungi Admin") sebagai kontak legal
-// sementara. GANTI ke kontak resmi tim/kelompok begitu sudah diputuskan —
-// jangan biarkan nomor pribadi ini permanen di dokumen legal publik.
-const KONTAK_RESMI_LABEL = '0881-0365-01919 (sementara)';
-const KONTAK_RESMI_HREF = buildWhatsAppLink(
-  undefined,
-  'Halo, saya ada pertanyaan terkait Syarat & Ketentuan / Kebijakan Privasi EduPKL.'
-);
+// CATATAN: Bagian "Kontak" sengaja DIHAPUS sementara — satu-satunya kontak
+// yang ada adalah nomor WA pribadi Fashich (src/config/contact.js, awalnya
+// cuma buat tombol demo "Hubungi Admin" di halaman Login), bukan kontak
+// resmi tim/kelompok. TAMBAHKAN KEMBALI begitu ada kontak resmi (email/WA
+// kelompok) — lihat catatan sama di PrivacyPolicy.jsx.
 
 const TermsOfService = () => {
   return (
@@ -156,16 +150,6 @@ const TermsOfService = () => {
         <p>
           S&amp;K ini tunduk pada hukum Republik Indonesia, termasuk namun tidak terbatas pada Undang-Undang
           Nomor 27 Tahun 2022 tentang Perlindungan Data Pribadi.
-        </p>
-      </LegalSection>
-
-      <LegalSection heading="14. Kontak">
-        <p>
-          Pertanyaan terkait S&amp;K ini dapat disampaikan melalui WhatsApp{' '}
-          <a href={KONTAK_RESMI_HREF} target="_blank" rel="noopener noreferrer" className="underline font-semibold">
-            {KONTAK_RESMI_LABEL}
-          </a>
-          .
         </p>
       </LegalSection>
     </LegalPageLayout>
