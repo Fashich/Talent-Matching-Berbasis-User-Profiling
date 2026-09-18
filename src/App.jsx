@@ -8,6 +8,8 @@ import RootGate from './components/RootGate';
 import LostSignal from './components/LostSignal';
 import DashboardLayout from './layouts/DashboardLayout';
 import Login from './pages/Login/Login';
+import TermsOfService from './pages/Legal/TermsOfService';
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 import DashboardHome from './pages/Dashboard/DashboardHome';
 import Siswa from './pages/Siswa/Siswa';
 import Perusahaan from './pages/Perusahaan/Perusahaan';
@@ -31,6 +33,8 @@ function App() {
             <LostSignal />
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
 
               <Route
                 path="/"
