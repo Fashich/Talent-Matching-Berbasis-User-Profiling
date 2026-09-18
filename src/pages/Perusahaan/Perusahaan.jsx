@@ -14,7 +14,7 @@ const emptyForm = {
 };
 
 const Perusahaan = () => {
-  const { perusahaan, penempatan, addItem, updateItem, removeItem } = useData();
+  const { perusahaan, penempatan, kelompokMagang, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
   const canManage = user?.role === 'Administrator' || user?.role === 'Petugas';
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,7 +28,17 @@ const Perusahaan = () => {
     return perusahaan.filter((p) => p.nama.toLowerCase().includes(q) || p.bidang.toLowerCase().includes(q) || (p.posisi || '').toLowerCase().includes(q));
   }, [perusahaan, searchTerm]);
 
+  // Kuota terisi dihitung dari Penempatan berstatus Diterima/Berlangsung —
+  // BUKAN dari jumlah anggota Kelompok Magang. Sebelumnya ini bikin bingung
+  // (dilaporkan sbg bug 17 Sept 2026: "buat kelompok magang, kuota tetap 0")
+  // karena kelompok magang cuma pengelompokan siswa+guru+perusahaan, belum
+  // tentu berarti siswanya sudah resmi "diterima PKL". Alur yang benar:
+  // Kelompok Magang dibuat -> buat Penempatan utk tiap anggotanya (form
+  // Penempatan sekarang otomatis mempersempit siswa & isi guru/perusahaan
+  // dari kelompok yang dipilih) -> set status Diterima/Berlangsung -> kuota
+  // baru naik. kelompokCount() di bawah cuma info tambahan biar jelas.
   const terisiCount = (perusahaanId) => penempatan.filter((p) => p.perusahaanId === perusahaanId && ['Diterima', 'Berlangsung'].includes(p.status)).length;
+  const kelompokCount = (perusahaanId) => kelompokMagang.filter((k) => k.perusahaanId === perusahaanId && k.status === 'Aktif').length;
 
   const openAdd = () => {
     setEditingId(null);
@@ -68,7 +78,7 @@ const Perusahaan = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4">
+    <div className="max-w-7xl mx-auto space-y-4 text-gray-900">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Perusahaan</h1>
@@ -148,8 +158,11 @@ const Perusahaan = () => {
 
               <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm">
                 <span className="text-gray-500">PJ: <span className="text-gray-700 font-medium">{p.penanggungJawab}</span></span>
-                <span className="text-gray-500">Kuota: <span className="text-gray-800 font-semibold">{terisiCount(p.id)}/{p.kuota}</span></span>
+                <span className="text-gray-500" title="Kuota terisi dihitung dari Penempatan berstatus Diterima/Berlangsung, bukan dari anggota Kelompok Magang.">Kuota: <span className="text-gray-800 font-semibold">{terisiCount(p.id)}/{p.kuota}</span></span>
               </div>
+              {kelompokCount(p.id) > 0 && (
+                <p className="text-xs text-gray-400 mt-1">{kelompokCount(p.id)} kelompok magang aktif — kuota naik setelah anggotanya dibuatkan Penempatan berstatus Diterima/Berlangsung.</p>
+              )}
 
               {canManage && (
                 <div className="mt-4 flex items-center gap-2">

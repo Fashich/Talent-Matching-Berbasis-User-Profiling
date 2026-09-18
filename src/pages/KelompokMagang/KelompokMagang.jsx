@@ -14,12 +14,19 @@ import EmptyState from '../../components/ui/EmptyState';
 const emptyForm = { nama: '', perusahaanId: '', pembimbingGuru: '', anggotaSiswaIds: [], periodeMulai: '', periodeSelesai: '', status: 'Aktif' };
 
 const KelompokMagang = () => {
-  const { siswa, perusahaan, kelompokMagang, addItem, updateItem, removeItem } = useData();
+  const { siswa, perusahaan, kelompokMagang, users, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
   const canManage = user.role === 'Administrator' || user.role === 'Petugas';
 
   const list = useMemo(() => scopedKelompokMagang(user, kelompokMagang), [user, kelompokMagang]);
-  const guruList = useMemo(() => Array.from(new Set(kelompokMagang.map((k) => k.pembimbingGuru))).filter(Boolean), [kelompokMagang]);
+  // FIX bug "tidak bisa memilih guru pembimbing" (17 Sept 2026): sebelumnya
+  // datalist ini sumbernya dari nama guru yang PERNAH diketik di kelompok
+  // magang lain (bukan dari akun Guru asli) — jadi kosong kalau belum pernah
+  // ada kelompok magang sebelumnya, dan akun Guru baru tidak pernah muncul.
+  // Sekarang sumbernya akun User asli ber-role Guru (DataContext.users, dari
+  // /api/users?role=Guru), konsisten dengan resolveGuruId() di DataContext
+  // yang memang mengharuskan pembimbingGuru cocok dengan akun Guru terdaftar.
+  const guruList = useMemo(() => users.filter((u) => u.role === 'Guru'), [users]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -57,7 +64,7 @@ const KelompokMagang = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4">
+    <div className="max-w-6xl mx-auto space-y-4 text-gray-900">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Kelompok Magang</h1>
@@ -141,10 +148,13 @@ const KelompokMagang = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Pembimbing Guru</label>
-              <input required list="guru-list" value={form.pembimbingGuru} onChange={set('pembimbingGuru')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              <datalist id="guru-list">
-                {guruList.map((g) => <option key={g} value={g} />)}
-              </datalist>
+              <select required value={form.pembimbingGuru} onChange={set('pembimbingGuru')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Pilih guru pembimbing</option>
+                {guruList.map((g) => <option key={g.id} value={g.nama}>{g.nama}</option>)}
+              </select>
+              {guruList.length === 0 && (
+                <p className="text-xs text-red-500 mt-1">Belum ada akun Guru terdaftar. Tambahkan dulu di menu User (peran Guru).</p>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
