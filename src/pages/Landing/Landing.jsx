@@ -394,15 +394,58 @@ const Landing = () => {
         </div>
       </section>
 
+      <section id="studi-kasus" className="max-w-[1180px] mx-auto px-6 pt-5 pb-[90px] relative z-[1]">
+        <div
+          className="rounded-2xl border p-9 flex flex-col min-[720px]:flex-row items-center gap-8 text-center min-[720px]:text-left"
+          style={{ background: 'var(--lp-surface-bg)', borderColor: 'var(--lp-surface-border)' }}
+        >
+          <img
+            src="/logo-rajasa-192.png"
+            alt="Logo SMKS Rajasa Surabaya"
+            className="w-[84px] h-[84px] shrink-0"
+          />
+          <div>
+            <div className="text-[0.76rem] font-bold tracking-[0.08em] mb-2.5" style={{ color: '#35C4C9' }}>
+              STUDI KASUS
+            </div>
+            <h2 className="font-[Sora,sans-serif] font-extrabold tracking-[-0.01em] text-[clamp(1.4rem,2.6vw,1.9rem)] mb-3">
+              Dikembangkan sebagai Studi Kasus untuk SMKS Rajasa Surabaya
+            </h2>
+            <p className="text-[0.9rem] leading-[1.7] max-w-[680px]" style={{ color: 'var(--lp-text-muted)' }}>
+              EduPKL dirancang dan dikembangkan oleh Kelompok 1 Capstone Program Studi S1 Sistem Informasi
+              Unesa, menjadikan alur penempatan PKL di SMKS Rajasa Surabaya sebagai studi kasus penelitian.
+              Sistem dikembangkan secara independen melalui observasi dan wawancara langsung dengan pihak
+              sekolah, atas izin SMKS Rajasa Surabaya.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <footer className="border-t relative z-[1]" style={{ borderColor: 'var(--lp-footer-border)' }}>
-        <div className="max-w-[1180px] mx-auto px-6 py-7 flex flex-wrap gap-3 items-center justify-between">
+        <div className="max-w-[1180px] mx-auto px-6 py-7 flex flex-wrap gap-4 items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img src="/logo-rajasa-192.png" alt="Logo SMKS Rajasa Surabaya" className="w-[26px] h-[26px]" />
             <span className="font-[Sora,sans-serif] font-bold text-[0.9rem]">EduPKL</span>
           </div>
-          <p className="text-[0.78rem]" style={{ color: 'var(--lp-text-muted)' }}>
-            © {new Date().getFullYear()} EduPKL — Capstone Project, Prodi Sistem Informasi, Unesa.
-          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link
+              to="/terms"
+              className="text-[0.78rem] font-medium underline-offset-2 hover:underline"
+              style={{ color: 'var(--lp-text-muted)' }}
+            >
+              Syarat & Ketentuan
+            </Link>
+            <Link
+              to="/privacy"
+              className="text-[0.78rem] font-medium underline-offset-2 hover:underline"
+              style={{ color: 'var(--lp-text-muted)' }}
+            >
+              Kebijakan Privasi
+            </Link>
+            <p className="text-[0.78rem]" style={{ color: 'var(--lp-text-muted)' }}>
+              © {new Date().getFullYear()} EduPKL — Capstone Project, Prodi Sistem Informasi, Unesa.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
