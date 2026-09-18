@@ -50,7 +50,7 @@ const Profil = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-4">
+    <div className="max-w-3xl mx-auto space-y-4 text-gray-900">
       <div>
         <h1 className="text-xl font-bold text-gray-800">Profil Saya</h1>
         <p className="text-sm text-gray-500 mt-0.5">Lengkapi profil ini supaya rekomendasi perusahaan lebih akurat.</p>

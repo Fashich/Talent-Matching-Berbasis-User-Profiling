@@ -179,7 +179,7 @@ const DashboardHome = () => {
   const { user } = useAuth();
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6 text-gray-900">
       {user.role !== 'Siswa' && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 bg-gradient-to-r from-blue-50 to-white">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Selamat datang, {user.nama}</h1>

@@ -292,6 +292,24 @@ export function DataProvider({ children }) {
     refreshAll();
   }, [refreshAll]);
 
+  // FIX bug "data tidak sinkron real-time di Vercel" (17 Sept 2026): SPA ini
+  // cuma fetch data sekali pas mount/login (efek di atas), jadi kalau ada
+  // perubahan dari user/tab/device lain selagi tab ini dibiarkan terbuka,
+  // datanya jadi basi sampai reload manual/login ulang. Refetch otomatis
+  // tiap kali tab/window ini kembali aktif (habis pindah tab/app lalu balik
+  // lagi) supaya data selalu fresh tanpa perlu reload manual.
+  useEffect(() => {
+    const handleRefocus = () => {
+      if (document.visibilityState === 'visible') refreshAll();
+    };
+    document.addEventListener('visibilitychange', handleRefocus);
+    window.addEventListener('focus', handleRefocus);
+    return () => {
+      document.removeEventListener('visibilitychange', handleRefocus);
+      window.removeEventListener('focus', handleRefocus);
+    };
+  }, [refreshAll]);
+
   useEffect(() => {
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));

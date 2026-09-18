@@ -41,7 +41,7 @@ const Recommendation = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="max-w-4xl mx-auto space-y-4 text-gray-900">
       <div>
         <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
           <Sparkles size={20} className="text-blue-600" />

@@ -12,7 +12,7 @@ const emptyForm = { siswaId: '', perusahaanId: '', kelompokMagangId: '', guruPem
 const STATUS_OPTIONS = ['Diajukan', 'Diterima', 'Berlangsung', 'Selesai', 'Ditolak'];
 
 const Penempatan = () => {
-  const { siswa, perusahaan, kelompokMagang, penempatan, addItem, updateItem, removeItem } = useData();
+  const { siswa, perusahaan, kelompokMagang, penempatan, users, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
   const canManage = user?.role === 'Administrator' || user?.role === 'Petugas';
   const [modalOpen, setModalOpen] = useState(false);
@@ -26,10 +26,38 @@ const Penempatan = () => {
     return statusFilter === 'Semua' ? scoped : scoped.filter((p) => p.status === statusFilter);
   }, [penempatan, user, statusFilter]);
 
-  const guruList = useMemo(
-    () => Array.from(new Set(penempatan.map((p) => p.guruPembimbing))).filter(Boolean),
-    [penempatan]
-  );
+  // FIX bug "guru pembimbing tidak muncul pilihan lain" (17 Sept 2026):
+  // sebelumnya datalist ini sumbernya dari nama guru yang PERNAH diketik di
+  // penempatan lain — akun Guru baru yang dibuat lewat menu User tidak
+  // pernah muncul. Sekarang sumbernya akun User asli ber-role Guru, sama
+  // seperti fix di KelompokMagang.jsx.
+  const guruList = useMemo(() => users.filter((u) => u.role === 'Guru'), [users]);
+
+  // FIX bug "siswa dari kelompok magang tidak muncul" (17 Sept 2026): dulu
+  // dropdown Siswa selalu menampilkan SEMUA siswa tanpa peduli Kelompok
+  // Magang yang dipilih. Sekarang kalau sebuah kelompok dipilih, daftar
+  // siswa dipersempit ke anggota kelompok itu saja.
+  const availableSiswa = useMemo(() => {
+    if (!form.kelompokMagangId) return siswa;
+    const kelompok = kelompokMagang.find((k) => String(k.id) === String(form.kelompokMagangId));
+    if (!kelompok) return siswa;
+    return siswa.filter((s) => (kelompok.anggotaSiswaIds || []).includes(s.id));
+  }, [form.kelompokMagangId, kelompokMagang, siswa]);
+
+  // Pilih Kelompok Magang -> otomatis isi Perusahaan & Guru Pembimbing dari
+  // kelompok itu (konsisten dengan anggotanya), dan reset pilihan Siswa
+  // kalau siswa yang sebelumnya dipilih bukan anggota kelompok baru ini.
+  const handleKelompokChange = (e) => {
+    const kelompokMagangId = e.target.value;
+    const kelompok = kelompokMagang.find((k) => String(k.id) === String(kelompokMagangId));
+    setForm((f) => ({
+      ...f,
+      kelompokMagangId,
+      perusahaanId: kelompok ? kelompok.perusahaanId : f.perusahaanId,
+      guruPembimbing: kelompok ? kelompok.pembimbingGuru : f.guruPembimbing,
+      siswaId: kelompok && !(kelompok.anggotaSiswaIds || []).includes(f.siswaId) ? '' : f.siswaId,
+    }));
+  };
 
   const openAdd = () => {
     setEditingId(null);
@@ -54,7 +82,7 @@ const Penempatan = () => {
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4">
+    <div className="max-w-7xl mx-auto space-y-4 text-gray-900">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Penempatan & Penerimaan</h1>
@@ -133,7 +161,7 @@ const Penempatan = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Siswa</label>
             <select required value={form.siswaId} onChange={set('siswaId')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">Pilih siswa</option>
-              {siswa.map((s) => <option key={s.id} value={s.id}>{s.nama} — {s.kelas}</option>)}
+              {availableSiswa.map((s) => <option key={s.id} value={s.id}>{s.nama} — {s.kelas}</option>)}
             </select>
           </div>
           <div>
@@ -145,17 +173,21 @@ const Penempatan = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Kelompok Magang (opsional)</label>
-            <select value={form.kelompokMagangId} onChange={set('kelompokMagangId')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select value={form.kelompokMagangId} onChange={handleKelompokChange} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">Tidak terkait kelompok</option>
               {kelompokMagang.map((k) => <option key={k.id} value={k.id}>{k.nama}</option>)}
             </select>
+            <p className="text-xs text-gray-400 mt-1">Pilih kelompok untuk otomatis mempersempit daftar siswa & mengisi perusahaan/guru pembimbing.</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Guru Pembimbing</label>
-            <input required list="guru-pembimbing-list" value={form.guruPembimbing} onChange={set('guruPembimbing')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <datalist id="guru-pembimbing-list">
-              {guruList.map((n) => <option key={n} value={n} />)}
-            </datalist>
+            <select required value={form.guruPembimbing} onChange={set('guruPembimbing')} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Pilih guru pembimbing</option>
+              {guruList.map((g) => <option key={g.id} value={g.nama}>{g.nama}</option>)}
+            </select>
+            {guruList.length === 0 && (
+              <p className="text-xs text-red-500 mt-1">Belum ada akun Guru terdaftar. Tambahkan dulu di menu User (peran Guru).</p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
