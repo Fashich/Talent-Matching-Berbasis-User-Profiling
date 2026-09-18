@@ -1,0 +1,69 @@
+sequenceDiagram
+    title Sequence Diagram: Proses Matching Engine (Calculate & Recommendation)
+    autonumber
+
+    actor P as Petugas / Administrator
+    participant FE as Frontend (React)
+    participant RT as Router
+    participant MC as MatchingController
+    participant DB as Database
+
+    rect rgb(240, 249, 255)
+    Note over P,DB: FASE 1 - Hitung Match Score (POST /api/matching/calculate)
+    P->>FE: Pilih siswa, klik "Hitung Matching"
+    FE->>RT: POST /api/matching/calculate { student_id }
+    RT->>MC: dispatch ke MatchingController::calculate()
+    MC->>MC: Auth::requireLogin() + resolveStudentId()
+
+    MC->>DB: SELECT * FROM students WHERE id = :id
+    DB-->>MC: data profil siswa
+    MC->>DB: SELECT minat FROM student_interests WHERE student_id = :id
+    DB-->>MC: daftar minat siswa
+    MC->>DB: SELECT COUNT(*) FROM student_experiences WHERE student_id = :id
+    DB-->>MC: jumlah pengalaman
+    MC->>DB: SELECT kompetensi (JOIN student_competencies + competencies)
+    DB-->>MC: daftar kompetensi siswa
+    MC->>DB: SELECT keyword FROM keywords WHERE jurusan = :jurusan
+    DB-->>MC: kamus kata kunci jurusan
+    MC->>DB: SELECT lowongan aktif<br/>(JOIN company_requirements + companies WHERE status='Aktif')
+    DB-->>MC: daftar lowongan aktif
+
+    loop Untuk setiap lowongan aktif
+        MC->>DB: SELECT jurusan_relevan & kompetensi_dibutuhkan<br/>(requirement_majors, requirement_competencies)
+        DB-->>MC: kriteria lowongan
+        MC->>MC: hitung skorKompetensi() -&gt; bobot 40%
+        MC->>MC: hitung skorPengalaman() -&gt; bobot 20%
+        MC->>DB: (jika perlu) SELECT bidang_jurusan_map
+        DB-->>MC: mapping bidang-jurusan
+        MC->>MC: hitung skorPendidikan() -&gt; bobot 15%
+        MC->>MC: hitung skorBidangMinat() -&gt; bobot 15%
+        MC->>MC: hitung skorPreferensi() -&gt; bobot 10%
+        MC->>MC: Total = round(SUM(skor_i x bobot_i))<br/>Kategori = kategoriFromScore(Total)
+        MC->>DB: INSERT INTO matching_results (5 skor komponen, total, category)
+        DB-->>MC: matching_id
+    end
+
+    MC-->>RT: array hasil matching + breakdown per komponen
+    RT-->>FE: 200 OK { results }
+    FE-->>P: Tampilkan tabel Match Score per lowongan
+    end
+
+    rect rgb(252, 231, 243)
+    Note over P,DB: FASE 2 - Rekomendasi Terurut (GET /api/recommendation/{studentId})
+    P->>FE: Klik "Lihat Rekomendasi"
+    FE->>RT: GET /api/recommendation/{studentId}
+    RT->>MC: dispatch ke MatchingController::recommendation()
+    MC->>MC: Ulangi seluruh proses hitung (FASE 1)<br/>via runForStudent()
+    MC->>MC: usort(results) urutkan total_score DESC
+
+    loop Untuk setiap hasil terurut
+        MC->>DB: INSERT INTO recommendations (matching_id, rank, recommendation_date)
+        DB-->>MC: OK
+    end
+
+    MC-->>RT: hasil terurut + nomor rank
+    RT-->>FE: 200 OK { results (sorted) }
+    FE-->>P: Tampilkan daftar rekomendasi rank #1, #2, #3, ...
+    end
+
+    Note over MC,DB: Catatan: hasil Match Score & rekomendasi bersifat DECISION SUPPORT (BR-10) -<br/>keputusan akhir penerimaan tetap di tangan Petugas & Perusahaan, bukan otomatis oleh sistem.
