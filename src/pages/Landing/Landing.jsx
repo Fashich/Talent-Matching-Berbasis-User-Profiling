@@ -399,17 +399,33 @@ const Landing = () => {
           className="rounded-2xl border p-9 flex flex-col min-[720px]:flex-row items-center gap-8 text-center min-[720px]:text-left"
           style={{ background: 'var(--lp-surface-bg)', borderColor: 'var(--lp-surface-border)' }}
         >
-          <img
-            src="/logo-rajasa-192.png"
-            alt="Logo SMKS Rajasa Surabaya"
-            className="w-[84px] h-[84px] shrink-0"
-          />
+          <a
+            href="https://smkrajasa.sch.id/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0"
+            aria-label="Kunjungi website resmi SMKS Rajasa Surabaya"
+          >
+            <img
+              src="/logo-rajasa-192.png"
+              alt="Logo SMKS Rajasa Surabaya"
+              className="w-[84px] h-[84px]"
+            />
+          </a>
           <div>
             <div className="text-[0.76rem] font-bold tracking-[0.08em] mb-2.5" style={{ color: '#35C4C9' }}>
               STUDI KASUS
             </div>
             <h2 className="font-[Sora,sans-serif] font-extrabold tracking-[-0.01em] text-[clamp(1.4rem,2.6vw,1.9rem)] mb-3">
-              Dikembangkan sebagai Studi Kasus untuk SMKS Rajasa Surabaya
+              Dikembangkan sebagai Studi Kasus untuk{' '}
+              <a
+                href="https://smkrajasa.sch.id/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline-offset-4 hover:underline"
+              >
+                SMKS Rajasa Surabaya
+              </a>
             </h2>
             <p className="text-[0.9rem] leading-[1.7] max-w-[680px]" style={{ color: 'var(--lp-text-muted)' }}>
               EduPKL dirancang dan dikembangkan oleh Kelompok 1 Capstone Program Studi S1 Sistem Informasi
@@ -417,6 +433,16 @@ const Landing = () => {
               Sistem dikembangkan secara independen melalui observasi dan wawancara langsung dengan pihak
               sekolah, atas izin SMKS Rajasa Surabaya.
             </p>
+            <a
+              href="https://smkrajasa.sch.id/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 mt-4 text-[0.85rem] font-bold underline-offset-2 hover:underline"
+              style={{ color: '#35C4C9' }}
+            >
+              Kunjungi Website Resmi SMKS Rajasa Surabaya
+              <ArrowRight size={14} strokeWidth={2.4} />
+            </a>
           </div>
         </div>
       </section>
