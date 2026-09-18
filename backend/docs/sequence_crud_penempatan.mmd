@@ -1,0 +1,97 @@
+sequenceDiagram
+    title Sequence Diagram: CRUD Data Penempatan (Pola Umum Semua Modul)
+    autonumber
+
+    actor Usr as Pengguna (role bervariasi)
+    participant FE as Frontend (React)
+    participant RT as Router
+    participant PC as PlacementController
+    participant DB as Database
+
+    rect rgb(220, 252, 231)
+    Note over Usr,DB: CREATE - Petugas/Administrator menambah penempatan baru
+    Usr->>FE: Isi form penempatan, klik "Simpan"
+    FE->>RT: POST /api/penempatan { student_id, company_id, ... }
+    RT->>PC: dispatch ke store()
+    PC->>PC: Auth::requireLogin()<br/>Auth::requireRole(['Administrator','Petugas'])
+    PC->>PC: validate(data, isCreate=true)
+    alt data tidak valid
+        PC-->>RT: 422 Unprocessable Entity + detail error per-field
+        RT-->>FE: 422 { errors }
+        FE-->>Usr: Tampilkan pesan validasi
+    else data valid
+        PC->>DB: INSERT INTO placements (student_id, company_id, group_id,<br/>guru_pembimbing_id, tanggal_mulai, tanggal_selesai, status)
+        DB-->>PC: lastInsertId
+        PC->>DB: SELECT placement LEFT JOIN users (findOrFail)
+        DB-->>PC: data penempatan lengkap
+        PC-->>RT: 201 Created { placement }
+        RT-->>FE: 201 { placement }
+        FE-->>Usr: Tampilkan penempatan baru di daftar
+    end
+    end
+
+    rect rgb(224, 242, 254)
+    Note over Usr,DB: READ - Daftar penempatan (di-scope otomatis sesuai role)
+    Usr->>FE: Buka halaman "Penempatan & Penerimaan"
+    FE->>RT: GET /api/penempatan?status=...&company_id=...
+    RT->>PC: dispatch ke index()
+    PC->>PC: Auth::requireLogin()
+    alt role == Siswa
+        PC->>PC: filter WHERE student_id = milik sendiri
+    else role == Guru
+        PC->>PC: filter WHERE guru_pembimbing_id = dirinya
+    else role == Administrator / Petugas
+        PC->>PC: tanpa filter tambahan (lihat semua data)
+    end
+    PC->>DB: SELECT placements LEFT JOIN users WHERE ... ORDER BY tanggal_mulai DESC
+    DB-->>PC: daftar penempatan (sesuai scope)
+    PC-->>RT: 200 OK { data }
+    RT-->>FE: 200 { data }
+    FE-->>Usr: Tampilkan tabel penempatan
+    end
+
+    rect rgb(254, 249, 195)
+    Note over Usr,DB: UPDATE - Ubah status penempatan (mis. Diajukan -&gt; Diterima)
+    Usr->>FE: Ubah status, klik "Simpan Perubahan"
+    FE->>RT: PUT /api/penempatan/{id} { status: "Diterima" }
+    RT->>PC: dispatch ke update(id)
+    PC->>PC: Auth::requireLogin()<br/>Auth::requireRole(['Administrator','Petugas'])
+    PC->>DB: findOrFail(id) - SELECT placement
+    DB-->>PC: data existing (atau kosong)
+    alt penempatan tidak ditemukan
+        PC-->>RT: 404 Not Found
+        RT-->>FE: 404 "Penempatan tidak ditemukan"
+        FE-->>Usr: Tampilkan pesan error
+    else ditemukan
+        PC->>PC: validate(data, isCreate=false)
+        PC->>DB: UPDATE placements SET status = ... WHERE id = :id
+        DB-->>PC: OK
+        PC->>DB: findOrFail(id) - ambil data terbaru
+        DB-->>PC: data terbaru
+        PC-->>RT: 200 OK { placement terbaru }
+        RT-->>FE: 200 { placement }
+        FE-->>Usr: Update tampilan status di UI
+    end
+    end
+
+    rect rgb(254, 226, 226)
+    Note over Usr,DB: DELETE - Hapus penempatan (Administrator-only)
+    Usr->>FE: Klik "Hapus" pada penempatan
+    FE->>RT: DELETE /api/penempatan/{id}
+    RT->>PC: dispatch ke destroy(id)
+    PC->>PC: Auth::requireLogin()<br/>Auth::requireRole(['Administrator'])
+    PC->>DB: findOrFail(id) - SELECT placement
+    DB-->>PC: data existing
+    PC->>DB: DELETE FROM placements WHERE id = :id
+    alt gagal (FK constraint - masih ada jurnal terkait)
+        DB-->>PC: PDOException
+        PC-->>RT: 409 Conflict
+        RT-->>FE: "Tidak bisa dihapus, masih ada jurnal terkait"
+        FE-->>Usr: Tampilkan pesan error
+    else berhasil dihapus
+        DB-->>PC: OK
+        PC-->>RT: 200 OK "Penempatan berhasil dihapus"
+        RT-->>FE: 200 OK
+        FE-->>Usr: Hapus baris dari tampilan tabel
+    end
+    end

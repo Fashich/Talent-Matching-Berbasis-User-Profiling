@@ -1,0 +1,69 @@
+sequenceDiagram
+    title Sequence Diagram: Login & Autentikasi (Bearer Token)
+    autonumber
+
+    actor U as Pengguna
+    participant FE as Frontend (React - Vercel)
+    participant RT as Router (index.php)
+    participant AC as AuthController
+    participant AU as Auth (Middleware)
+    participant DB as Database (MySQL - TiDB Cloud)
+
+    rect rgb(240, 249, 255)
+    Note over U,DB: FASE 1 - Login (POST /api/auth/login)
+    U->>FE: Isi username & password, klik "Login"
+    FE->>RT: POST /api/auth/login { username, password }
+    RT->>AC: dispatch ke AuthController::login()
+    AC->>DB: SELECT * FROM users WHERE username = :username
+    DB-->>AC: baris user (atau kosong)
+
+    alt user tidak ditemukan / password salah
+        AC->>AC: password_verify(password, user.password) == false
+        AC-->>RT: 401 Unauthorized
+        RT-->>FE: "Username atau password salah"
+        FE-->>U: Tampilkan pesan error
+    else akun tidak aktif
+        AC->>AC: cek user.status != 'Aktif'
+        AC-->>RT: 403 Forbidden
+        RT-->>FE: "Akun kamu nonaktif"
+        FE-->>U: Tampilkan pesan error
+    else login berhasil
+        AC->>AU: Auth::generateToken(user.id)
+        AU->>AU: token = bin2hex(random_bytes(32))<br/>expires_at = now() + 24 jam
+        AU->>DB: INSERT INTO auth_tokens (user_id, token, expires_at)
+        DB-->>AU: OK
+        AU-->>AC: { token, expires_at }
+        AC-->>RT: Response::success({ token, expires_at, user })
+        RT-->>FE: 200 OK { token, expires_at, user }
+        FE->>FE: Simpan token ke AuthContext / localStorage
+        FE-->>U: Redirect ke Dashboard (sesuai role)
+    end
+    end
+
+    rect rgb(254, 249, 195)
+    Note over U,DB: FASE 2 - Request Terautentikasi Berikutnya (contoh: GET /api/siswa)
+    U->>FE: Buka halaman modul (misal "Siswa")
+    FE->>RT: GET /api/siswa<br/>Header: Authorization: Bearer &lt;token&gt;
+    RT->>AU: Auth::requireLogin()
+    AU->>DB: SELECT u.*, at.expires_at FROM auth_tokens at<br/>JOIN users u WHERE at.token = :token
+    DB-->>AU: baris user + expires_at (atau kosong)
+
+    alt token tidak ditemukan
+        AU-->>RT: 401 Unauthorized
+        RT-->>FE: "Token tidak valid"
+        FE-->>U: Redirect ke halaman Login
+    else token kedaluwarsa
+        AU->>AU: strtotime(expires_at) < time()
+        AU-->>RT: 401 Unauthorized
+        RT-->>FE: "Token sudah kedaluwarsa"
+        FE-->>U: Redirect ke halaman Login
+    else akun nonaktif
+        AU-->>RT: 403 Forbidden
+        RT-->>FE: "Akun tidak aktif"
+    else token valid
+        AU-->>RT: data user (id, role, status, dst.)
+        RT->>RT: Lanjut ke Controller modul terkait
+        RT-->>FE: 200 OK { data }
+        FE-->>U: Tampilkan data modul
+    end
+    end
