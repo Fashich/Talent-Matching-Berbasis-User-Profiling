@@ -38,6 +38,11 @@ const User = () => {
   };
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  // Fix bug 20 Sept 2026 (laporan Rizky via WA, ditemukan di form Perusahaan
+  // tapi pola inputnya identik di sini): email instansi (@go.id, @sch.id)
+  // sempat gagal krn keyboard mobile nyisipin spasi tak sengaja setelah
+  // titik domain (mis. "go. id"). Strip whitespace dari input email.
+  const setEmail = (e) => setForm((f) => ({ ...f, email: e.target.value.replace(/\s+/g, '') }));
 
   const linkedLabel = (u) => {
     if (u.role === 'Siswa' && u.linkedId) return siswa.find((s) => s.id === u.linkedId)?.nama;
@@ -129,7 +134,7 @@ const User = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Email</label>
-              <input type="email" value={form.email} onChange={set('email')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="email" value={form.email} onChange={setEmail} autoCapitalize="none" autoCorrect="off" spellCheck="false" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           {!editingId && (

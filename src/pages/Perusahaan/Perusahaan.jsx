@@ -69,6 +69,12 @@ const Perusahaan = () => {
   };
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  // Fix bug 20 Sept 2026 (laporan Rizky via WA): email instansi pemerintah/
+  // sekolah (@go.id, @sch.id) sempat gagal masuk krn keyboard mobile
+  // (autocorrect/auto-space) suka nyisipin spasi tak sengaja setelah titik
+  // domain (mis. "go. id"), bikin format email jadi invalid. Strip semua
+  // whitespace dari input email biar tahan terhadap gangguan itu.
+  const setEmail = (e) => setForm((f) => ({ ...f, email: e.target.value.replace(/\s+/g, '') }));
 
   const toggleJurusan = (j) => {
     setForm((f) => ({
@@ -206,7 +212,7 @@ const Perusahaan = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Email</label>
-              <input type="email" value={form.email} onChange={set('email')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="email" value={form.email} onChange={setEmail} autoCapitalize="none" autoCorrect="off" spellCheck="false" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
