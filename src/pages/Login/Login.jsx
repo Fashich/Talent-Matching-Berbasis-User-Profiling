@@ -75,14 +75,13 @@ const Login = () => {
         className="w-full max-w-[920px] rounded-[22px] overflow-hidden grid grid-cols-1 min-[760px]:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] border"
         style={{ boxShadow: '0 40px 90px -30px rgba(0,0,0,0.45)', borderColor: 'var(--lp-card-border)' }}
       >
-        {/* Panel brand — selalu gelap di kedua tema (keputusan desain). */}
+        {/* Panel brand — ikut tema light/dark (direvisi 21 Sept 2026, sebelumnya selalu gelap). */}
         <div
-          className="hidden min-[760px]:flex lp-grid-drift flex-col justify-between p-11 relative overflow-hidden"
+          className="hidden min-[760px]:flex lp-grid-drift flex-col justify-between p-11 relative overflow-hidden transition-[background,color] duration-[0.4s]"
           style={{
-            backgroundColor: '#0a0e1c',
-            color: '#f1f3f9',
+            color: 'var(--lp-text-primary)',
             backgroundImage:
-              'radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px), linear-gradient(155deg,#0a0e1c,#0d1326 55%,#0a0e1c)',
+              'radial-gradient(var(--lp-hero-grid-dot) 1px, transparent 1px), var(--lp-hero-gradient)',
             backgroundSize: '26px 26px, auto',
             animation: 'lp-grid-drift 14s linear infinite',
           }}
@@ -107,11 +106,11 @@ const Login = () => {
           <div className="relative z-[1]">
             <div className="flex items-center gap-2.5 mb-[34px]">
               <img src="/logo-rajasa-192.png" alt="Logo SMKS Rajasa Surabaya" className="w-[38px] h-[38px]" />
-              <span className="font-[Sora,sans-serif] font-bold text-[1.15rem]" style={{ color: '#f1f3f9' }}>
+              <span className="font-[Sora,sans-serif] font-bold text-[1.15rem]" style={{ color: 'var(--lp-text-primary)' }}>
                 EduPKL
               </span>
             </div>
-            <h1 className="font-[Sora,sans-serif] text-[1.65rem] font-bold leading-[1.28] tracking-[-0.01em] mb-3.5" style={{ color: '#f1f3f9' }}>
+            <h1 className="font-[Sora,sans-serif] text-[1.65rem] font-bold leading-[1.28] tracking-[-0.01em] mb-3.5" style={{ color: 'var(--lp-text-primary)' }}>
               Talent Matching berbasis{' '}
               <span
                 className="bg-clip-text text-transparent"
@@ -121,7 +120,7 @@ const Login = () => {
               </span>{' '}
               untuk PKL siswa SMK.
             </h1>
-            <p className="text-[0.9rem] leading-[1.7] mb-[30px]" style={{ color: '#aeb7cf' }}>
+            <p className="text-[0.9rem] leading-[1.7] mb-[30px]" style={{ color: 'var(--lp-text-muted)' }}>
               Profil &amp; kompetensi siswa dicocokkan otomatis dengan kebutuhan perusahaan —
               menghasilkan Match Score dan rekomendasi penempatan PKL yang paling sesuai.
             </p>
@@ -133,9 +132,9 @@ const Login = () => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-3.5 rounded-2xl p-4 no-underline group"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: '#f1f3f9',
+                  background: 'var(--lp-surface-bg)',
+                  border: '1px solid var(--lp-surface-border)',
+                  color: 'var(--lp-text-primary)',
                   backdropFilter: 'blur(6px)',
                   transform: `perspective(1200px) rotateX(${cardTilt.x}deg) rotateY(${cardTilt.y}deg)`,
                   transition: 'transform 0.15s ease-out, border-color 0.2s ease, background 0.2s ease',
@@ -145,8 +144,8 @@ const Login = () => {
                   e.currentTarget.style.background = 'rgba(37,211,102,0.08)';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  e.currentTarget.style.borderColor = 'var(--lp-surface-border)';
+                  e.currentTarget.style.background = 'var(--lp-surface-bg)';
                 }}
               >
                 <span
@@ -161,18 +160,18 @@ const Login = () => {
                   </svg>
                 </span>
                 <span className="block">
-                  <span className="flex items-center gap-1.5 font-bold text-[0.85rem] mb-0.5" style={{ color: '#f1f3f9' }}>
+                  <span className="flex items-center gap-1.5 font-bold text-[0.85rem] mb-0.5" style={{ color: 'var(--lp-text-primary)' }}>
                     Hubungi Admin
                     <ArrowRight size={13} strokeWidth={2.6} color="#25D366" />
                   </span>
-                  <span className="block text-[0.72rem] leading-[1.5]" style={{ color: '#a2acc4' }}>
+                  <span className="block text-[0.72rem] leading-[1.5]" style={{ color: 'var(--lp-text-muted)' }}>
                     Tidak bisa Login? Silakan hubungi Admin sekarang
                   </span>
                 </span>
               </a>
             </div>
           </div>
-          <p className="text-[0.75rem] relative z-[1] mt-6" style={{ color: '#7c87a6' }}>
+          <p className="text-[0.75rem] relative z-[1] mt-6" style={{ color: 'var(--lp-text-faint)' }}>
             © {new Date().getFullYear()} EduPKL — Capstone Project
           </p>
         </div>
