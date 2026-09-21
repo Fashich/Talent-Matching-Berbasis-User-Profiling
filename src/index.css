@@ -52,6 +52,9 @@ body {
   --lp-input-border: #e2e8f0;
   --lp-chip-bg: #f1f5f9;
   --lp-chip-border: #e2e8f0;
+  --lp-text-faint: #94a3b8;
+  --lp-hero-gradient: linear-gradient(155deg, #eef3fe, #dde7fa 55%, #eef3fe);
+  --lp-hero-grid-dot: rgba(15, 23, 42, 0.05);
 }
 
 :root.dark {
@@ -79,6 +82,9 @@ body {
   --lp-input-border: rgba(255, 255, 255, 0.12);
   --lp-chip-bg: rgba(255, 255, 255, 0.05);
   --lp-chip-border: rgba(255, 255, 255, 0.1);
+  --lp-text-faint: #7c87a6;
+  --lp-hero-gradient: linear-gradient(155deg, #0a0e1c, #0d1326 55%, #0a0e1c);
+  --lp-hero-grid-dot: rgba(255, 255, 255, 0.055);
 }
 
 @keyframes lp-float-orb {
