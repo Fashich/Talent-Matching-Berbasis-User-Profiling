@@ -326,9 +326,6 @@ const Landing = () => {
                 </div>
               ))}
             </div>
-            <p className="text-center text-[0.74rem] mt-3.5 opacity-80" style={{ color: 'var(--lp-text-muted)' }}>
-              Angka dari dokumen resmi capstone (CD-2/CD-3) — tersambung otomatis ke data live setelah backend API aktif.
-            </p>
           </>
         )}
       </section>
