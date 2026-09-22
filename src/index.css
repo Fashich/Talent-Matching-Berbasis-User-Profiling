@@ -55,6 +55,11 @@ body {
   --lp-text-faint: #94a3b8;
   --lp-hero-gradient: linear-gradient(155deg, #eef3fe, #dde7fa 55%, #eef3fe);
   --lp-hero-grid-dot: rgba(15, 23, 42, 0.05);
+
+  /* Sidebar & navbar app shell — gradient lembut senada tema terang Login,
+     dipertahankan solid di dark mode biar konsisten dgn panel dashboard lain
+     (slate-900/950). */
+  --app-shell-bg: linear-gradient(165deg, #eef3fe 0%, #f7fafd 55%, #eef2f9 100%);
 }
 
 :root.dark {
@@ -85,6 +90,8 @@ body {
   --lp-text-faint: #7c87a6;
   --lp-hero-gradient: linear-gradient(155deg, #0a0e1c, #0d1326 55%, #0a0e1c);
   --lp-hero-grid-dot: rgba(255, 255, 255, 0.055);
+
+  --app-shell-bg: #0f172a; /* slate-900, sama seperti sebelumnya di dark mode */
 }
 
 @keyframes lp-float-orb {

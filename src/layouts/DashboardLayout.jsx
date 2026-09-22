@@ -70,7 +70,10 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-slate-950 font-sans">
       {/* Sidebar desktop */}
-      <aside className="hidden md:flex w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 flex-col transition-all duration-300">
+      <aside
+        className="hidden md:flex w-64 border-r border-gray-200 dark:border-slate-800 flex-col transition-all duration-300"
+        style={{ background: 'var(--app-shell-bg)' }}
+      >
         {SidebarContent}
       </aside>
 
@@ -78,7 +81,10 @@ const DashboardLayout = () => {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-slate-900/50" onClick={() => setMobileOpen(false)} />
-          <aside className="relative w-64 h-full bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 flex flex-col">
+          <aside
+            className="relative w-64 h-full border-r border-gray-200 dark:border-slate-800 flex flex-col"
+            style={{ background: 'var(--app-shell-bg)' }}
+          >
             {SidebarContent}
           </aside>
         </div>
