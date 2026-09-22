@@ -2,6 +2,15 @@
 // index.php — Front controller / entry point backend EduPKL.
 declare(strict_types=1);
 
+// ---- Config lokal server (TIDAK pernah di-commit isinya — lihat .gitignore) ----
+// Kalau file ini ada (dibuat manual di server produksi via cPanel File Manager,
+// isinya kredensial DB TiDB Cloud + FRONTEND_URL lewat putenv()), otomatis dimuat.
+// Aman di-commit karena cuma cek file_exists() — di lokal/XAMPP file ini nggak ada,
+// jadi behavior lokal TIDAK berubah sama sekali (tetap pakai .env/fallback biasa).
+if (file_exists(__DIR__ . '/config/env-local.php')) {
+    require_once __DIR__ . '/config/env-local.php';
+}
+
 // ---- CORS: frontend (Vite, port 5173) beda origin dari backend (XAMPP) ----
 // SAAT HOSTING: set environment variable FRONTEND_URL ke domain frontend
 // produksi (lewat panel hosting / .htaccess `SetEnv FRONTEND_URL ...`),

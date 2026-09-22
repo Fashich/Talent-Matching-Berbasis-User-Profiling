@@ -36,3 +36,9 @@ CATATAN_PENGINGAT_CAPSTONE.txt
 # src/components/SchoolScene. Lihat design_handoff_landing_login/README.md.
 design_handoff_landing_login/
 Edupkl Capstone Web Redesign.zip
+
+# Kredensial server produksi — HANYA pernah ada fisik di server hosting
+# (dibuat manual via cPanel File Manager), TIDAK PERNAH dibuat/di-commit
+# dari repo ini. Baris ini jaga-jaga (defense in depth) kalau suatu saat
+# ada yang bikin file ini juga di checkout lokal buat testing.
+backend/config/env-local.php
