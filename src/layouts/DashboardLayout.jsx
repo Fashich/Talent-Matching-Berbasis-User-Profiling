@@ -26,10 +26,10 @@ const DashboardLayout = () => {
 
   const SidebarContent = (
     <>
-      <div className="h-16 flex items-center px-6 border-b border-slate-800">
+      <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <img src="/logo-rajasa-192.png" alt="Logo SMKS Rajasa Surabaya" className="w-8 h-8 rounded" />
-          <span className="text-white font-semibold text-lg tracking-wide">EduPKL</span>
+          <span className="text-gray-900 dark:text-white font-semibold text-lg tracking-wide">EduPKL</span>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ const DashboardLayout = () => {
                 `flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? 'bg-blue-600 text-white'
-                    : 'hover:bg-slate-800 hover:text-white'
+                    : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
                 }`
               }
             >
@@ -55,10 +55,10 @@ const DashboardLayout = () => {
         </nav>
       </div>
 
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-gray-200 dark:border-slate-800">
         <button
           onClick={handleLogout}
-          className="flex items-center w-full px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors"
+          className="flex items-center w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
           <LogOut size={20} />
           <span className="ml-3">Logout</span>
@@ -70,7 +70,7 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-slate-950 font-sans">
       {/* Sidebar desktop */}
-      <aside className="hidden md:flex w-64 bg-slate-900 text-slate-300 flex-col transition-all duration-300">
+      <aside className="hidden md:flex w-64 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 flex-col transition-all duration-300">
         {SidebarContent}
       </aside>
 
@@ -78,7 +78,7 @@ const DashboardLayout = () => {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-slate-900/50" onClick={() => setMobileOpen(false)} />
-          <aside className="relative w-64 h-full bg-slate-900 text-slate-300 flex flex-col">
+          <aside className="relative w-64 h-full bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 flex flex-col">
             {SidebarContent}
           </aside>
         </div>
