@@ -99,15 +99,15 @@ const User = () => {
                     <td className="py-3 px-6"><Badge status={u.status} /></td>
                     <td className="py-3 px-6">
                       <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => openEdit(u)} className="flex items-center gap-1.5 bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 transition">
+                        <button onClick={() => openEdit(u)} className="flex items-center gap-1.5 whitespace-nowrap bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 transition">
                           <Edit size={14} />
                           Edit
                         </button>
-                        <button onClick={() => openReset(u)} className="flex items-center gap-1.5 bg-amber-500 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-amber-600 transition">
+                        <button onClick={() => openReset(u)} title="Reset Password" className="flex items-center gap-1.5 whitespace-nowrap bg-amber-500 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-amber-600 transition">
                           <KeyRound size={14} />
-                          Reset Password
+                          Reset
                         </button>
-                        <button onClick={() => setDeleteTarget(u)} className="flex items-center gap-1.5 bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-red-700 transition">
+                        <button onClick={() => setDeleteTarget(u)} className="flex items-center gap-1.5 whitespace-nowrap bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-red-700 transition">
                           <Trash2 size={14} />
                           Hapus
                         </button>
