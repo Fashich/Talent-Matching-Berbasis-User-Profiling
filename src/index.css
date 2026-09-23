@@ -59,7 +59,7 @@ body {
   /* Sidebar & navbar app shell — gradient lembut senada tema terang Login,
      dipertahankan solid di dark mode biar konsisten dgn panel dashboard lain
      (slate-900/950). */
-  --app-shell-bg: linear-gradient(165deg, #dbe6fb 0%, #eef3fe 45%, #f8fafc 100%);
+  --app-shell-bg: linear-gradient(180deg, #c9dbf9 0%, #eaf1fd 45%, #ffffff 100%);
 }
 
 :root.dark {
