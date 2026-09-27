@@ -197,7 +197,37 @@ class MatchingController
         return 'Kurang Sesuai';
     }
 
-    /** Skor Kompetensi (40%): overlap keyword kompetensi siswa vs kebutuhan perusahaan. */
+    /**
+     * Kata sambung/umum Bahasa Indonesia yang diabaikan saat fallback overlap kata
+     * (lihat skorKompetensi) — supaya kecocokan hanya dihitung dari kata bermakna
+     * (mis. "database", "xampp"), bukan kata pengisi kalimat seperti "dengan"/"untuk".
+     */
+    private const STOPWORDS = [
+        'dan', 'atau', 'yang', 'dengan', 'untuk', 'dari', 'pada', 'akan', 'juga',
+        'agar', 'serta', 'seperti', 'dalam', 'itu', 'ini', 'saat', 'bisa', 'dapat',
+        'mampu', 'minimal', 'terutama', 'disesuaikan', 'memahami', 'pemahaman',
+        'menggunakan', 'penggunaan', 'kemampuan', 'penguasaan', 'menguasai',
+        'mengelola', 'mengolah', 'pengoperasian', 'mengoperasikan', 'secara',
+        'terkait', 'lainnya', 'selain', 'adalah', 'jurusan', 'siswa', 'mahasiswa',
+    ];
+
+    /**
+     * Skor Kompetensi (40%): overlap keyword kompetensi siswa vs kebutuhan perusahaan.
+     *
+     * Jalur utama: cocok kalau seluruh frasa kebutuhan (mis. "Database Management")
+     * muncul persis sebagai substring di pool kompetensi siswa — ini presisi tinggi
+     * kalau data "Kompetensi Dibutuhkan" diisi sebagai keyword singkat sesuai desain
+     * form (lihat Perusahaan.jsx: "pisahkan dengan koma").
+     *
+     * Jalur fallback: kalau satu entri "kompetensi dibutuhkan" ternyata berupa frasa/
+     * kalimat panjang (data lama yang keliru diisi kalimat penuh lalu ke-split koma,
+     * mis. "dan menggunakan tools untuk mengolah database seperti XAMPP"), overlap
+     * whole-phrase di atas nyaris pasti gagal walau siswa punya kompetensi yang
+     * relevan. Supaya Match Score tidak diam-diam selalu 0 untuk kasus begini,
+     * fallback ini memecah frasa jadi kata-kata bermakna (>3 huruf, bukan stopword)
+     * dan tetap menghitung cocok kalau SALAH SATU kata itu match ke pool siswa —
+     * konsisten dengan pendekatan overlap-per-kata yang sudah dipakai skorBidangMinat.
+     */
     private static function skorKompetensi(string $poolKompetensiSiswa, array $dibutuhkan): array
     {
         if (count($dibutuhkan) === 0) {
@@ -205,8 +235,23 @@ class MatchingController
         }
         $cocok = 0;
         foreach ($dibutuhkan as $req) {
-            if (str_contains($poolKompetensiSiswa, self::normalize($req))) {
+            $reqNormal = self::normalize($req);
+            if ($reqNormal === '') {
+                continue;
+            }
+            if (str_contains($poolKompetensiSiswa, $reqNormal)) {
                 $cocok++;
+                continue;
+            }
+            $kata = array_filter(
+                preg_split('/\s+/', $reqNormal),
+                fn ($w) => mb_strlen($w) > 3 && !in_array($w, self::STOPWORDS, true)
+            );
+            foreach ($kata as $w) {
+                if (str_contains($poolKompetensiSiswa, $w)) {
+                    $cocok++;
+                    break;
+                }
             }
         }
         return ['skor' => (int) round(($cocok / count($dibutuhkan)) * 100), 'cocok' => $cocok, 'total' => count($dibutuhkan)];
