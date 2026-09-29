@@ -40,53 +40,102 @@ function texWall(base, line) {
     x.fillStyle = 'rgba(255,255,255,0.05)';
     x.fillRect(Math.random() * 256, Math.random() * 256, 2, 2);
   }
-  x.globalAlpha = 0.22;
-  x.strokeStyle = line;
+  // noda pelapukan vertikal tipis — biar dinding kelihatan "dipakai"
+  // bertahun-tahun, bukan tembok baru dicat rata/polos.
+  for (let i = 0; i < 9; i++) {
+    const sx = Math.random() * 256;
+    const w = 6 + Math.random() * 16;
+    const grad = x.createLinearGradient(sx, 0, sx, 256);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(0.65, 'rgba(0,0,0,0.05)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.11)');
+    x.fillStyle = grad;
+    x.fillRect(sx, 0, w, 256);
+  }
+  // garis panel dibikin BERCEKUNG (bevel: shadow di bawah + highlight tipis
+  // di atas), bukan cuma satu garis datar — ini yang bikin bumpMap di
+  // material bisa "baca" reliefnya jadi dinding kelihatan ada ketebalan.
   x.lineWidth = 2;
   for (let y = 32; y < 256; y += 64) {
+    x.globalAlpha = 0.28;
+    x.strokeStyle = line;
     x.beginPath();
-    x.moveTo(0, y);
-    x.lineTo(256, y);
+    x.moveTo(0, y + 1);
+    x.lineTo(256, y + 1);
+    x.stroke();
+    x.globalAlpha = 0.2;
+    x.strokeStyle = '#ffffff';
+    x.beginPath();
+    x.moveTo(0, y - 1);
+    x.lineTo(256, y - 1);
     x.stroke();
   }
   x.globalAlpha = 0.16;
   x.fillStyle = '#000';
   x.fillRect(0, 236, 256, 20);
-  return new THREE.CanvasTexture(c);
-}
-
-function texBrick() {
-  const c = cv(256, 256);
-  const x = c.getContext('2d');
-  x.fillStyle = '#8e5a4c';
-  x.fillRect(0, 0, 256, 256);
-  for (let row = 0; row < 16; row++) {
-    for (let col = 0; col < 9; col++) {
-      const off = row % 2 ? 14 : 0;
-      x.fillStyle = row % 3 === 0 ? '#a6604d' : col % 2 ? '#95513f' : '#9e5a47';
-      x.fillRect(col * 29 + off, row * 16 + 2, 26, 12);
-    }
-  }
+  x.globalAlpha = 1;
   return new THREE.CanvasTexture(c);
 }
 
 function texRoof() {
   const c = cv(256, 256);
   const x = c.getContext('2d');
-  x.fillStyle = '#8e3520';
+  x.fillStyle = '#6e2a18'; // celah antar genteng digelapin, sama alasannya spt texBrick
   x.fillRect(0, 0, 256, 256);
   for (let row = 0; row < 15; row++) {
     for (let col = 0; col < 12; col++) {
       const off = row % 2 ? 11 : 0;
+      const bx = col * 22 + off;
+      const by = row * 17;
       x.fillStyle = row % 2 ? '#c0532f' : '#b0482a';
       x.beginPath();
-      x.roundRect(col * 22 + off, row * 17, 20, 15, 4);
+      x.roundRect(bx, by, 20, 15, 4);
       x.fill();
-      x.strokeStyle = 'rgba(0,0,0,0.22)';
+      // shading atas-terang -> bawah-gelap per genteng, biar tiap keping
+      // kelihatan melengkung/menonjol (genteng beneran nggak datar)
+      const g = x.createLinearGradient(bx, by, bx, by + 15);
+      g.addColorStop(0, 'rgba(255,255,255,0.24)');
+      g.addColorStop(0.4, 'rgba(255,255,255,0)');
+      g.addColorStop(1, 'rgba(0,0,0,0.3)');
+      x.fillStyle = g;
+      x.beginPath();
+      x.roundRect(bx, by, 20, 15, 4);
+      x.fill();
+      x.strokeStyle = 'rgba(0,0,0,0.3)';
       x.lineWidth = 1.5;
       x.stroke();
     }
   }
+  return new THREE.CanvasTexture(c);
+}
+
+function texDoor() {
+  // Pintu kaca-alumunium 2 daun (lobi sekolah) — sebelumnya cuma kotak flat
+  // warna solid tanpa detail sama sekali, jadi kelihatan bukan pintu.
+  const c = cv(256, 256);
+  const x = c.getContext('2d');
+  const bgGrad = x.createLinearGradient(0, 0, 256, 0);
+  bgGrad.addColorStop(0, '#233a52');
+  bgGrad.addColorStop(0.5, '#33526f');
+  bgGrad.addColorStop(1, '#1e3247');
+  x.fillStyle = bgGrad;
+  x.fillRect(0, 0, 256, 256);
+  [0, 128].forEach((ox) => {
+    x.strokeStyle = 'rgba(255,255,255,0.4)';
+    x.lineWidth = 6;
+    x.strokeRect(ox + 10, 8, 108, 240);
+    // kickplate alumunium di bagian bawah daun pintu
+    x.fillStyle = 'rgba(8,14,22,0.55)';
+    x.fillRect(ox + 16, 160, 96, 82);
+    x.fillStyle = 'rgba(255,255,255,0.14)';
+    x.fillRect(ox + 16, 160, 96, 5);
+    // palang pegangan vertikal (push bar)
+    const handleX = ox + (ox ? 22 : 100);
+    x.fillStyle = 'rgba(18,24,32,0.92)';
+    x.fillRect(handleX, 55, 9, 75);
+    x.fillStyle = 'rgba(255,255,255,0.3)';
+    x.fillRect(handleX, 55, 2.5, 75);
+  });
   return new THREE.CanvasTexture(c);
 }
 
@@ -228,17 +277,6 @@ function texWood() {
     x.stroke();
   }
   return new THREE.CanvasTexture(c);
-}
-
-function texRail() {
-  const c = cv(128, 64);
-  const x = c.getContext('2d');
-  x.clearRect(0, 0, 128, 64);
-  x.fillStyle = '#ffffff';
-  x.fillRect(0, 0, 128, 9);
-  x.fillRect(0, 55, 128, 9);
-  for (let i = 5; i < 128; i += 14) x.fillRect(i, 0, 5, 64);
-  return wrapt(new THREE.CanvasTexture(c), 1, 1);
 }
 
 function texGable() {
@@ -388,32 +426,43 @@ function initScene(canvas) {
     }
     const ground = new THREE.Mesh(
       new THREE.CircleGeometry(26, 64),
-      new THREE.MeshStandardMaterial({ map: pave, alphaMap: new THREE.CanvasTexture(fadeCanvas), transparent: true, roughness: 0.95 })
+      new THREE.MeshStandardMaterial({ map: pave, bumpMap: pave, bumpScale: 0.015, alphaMap: new THREE.CanvasTexture(fadeCanvas), transparent: true, roughness: 0.95 })
     );
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
 
-    const wallCream = texWall('#efe7d4', '#cfc3a8');
-    const wallGreen = texWall('#a9cf5f', '#7fa63f');
-    const brick = texBrick();
+    // Warna gedung nyata SMKS Rajasa (dicek dari foto referensi Fashich):
+    // dominan BIRU di semua lantai + pilar MAROON polos — BUKAN bata ekspos
+    // di lantai dasar + selang-seling krem/hijau di lantai atas kayak versi
+    // sebelumnya, itu sebabnya "gedung tengah di miniatur beda jauh sama
+    // aslinya".
+    const wallBlueBase = texWall('#2f6a95', '#1f4d70');
+    const wallBlueLight = texWall('#4a93c9', '#2f6a95');
     const roofT = texRoof();
     const gableT = texGable();
+    const doorT = texDoor();
     const panesDay = texPanes(6, 2, '#e8edf3', false);
     const panesLit = texPanes(6, 2, '#e8edf3', true);
-    const railT = texRail();
     const signT = texSign('SMKS RAJASA SURABAYA');
 
     const litMats = [];
     const fh = 3.3;
 
-    function box(w, h, d, x, y, z, tex, rx, ry, color) {
+    // Semua tekstur prosedural di atas (bata, dinding, genteng, pintu) dibikin
+    // punya bevel/shading sendiri di canvas-nya — dipakai lagi sebagai
+    // bumpMap (bukan cuma map warna) biar lightingnya benar-benar
+    // "membaca" relief itu [cekungan nat, tonjolan tiap bata/genteng],
+    // bukan cuma pattern warna di permukaan yang datar sempurna.
+    function box(w, h, d, x, y, z, tex, rx, ry, color, bumpScale) {
       const mat = new THREE.MeshStandardMaterial({ roughness: 0.9 });
       if (tex) {
         const t = tex.clone();
         t.needsUpdate = true;
         wrapt(t, rx || 1, ry || 1);
         mat.map = t;
+        mat.bumpMap = t;
+        mat.bumpScale = bumpScale === undefined ? 0.03 : bumpScale;
       }
       if (color !== undefined) mat.color = new THREE.Color(color);
       const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
@@ -421,6 +470,25 @@ function initScene(canvas) {
       m.castShadow = true;
       m.receiveShadow = true;
       scene.add(m);
+      return m;
+    }
+
+    // Bingkai/ceruk gelap di belakang tiap kaca jendela [28 Sept 2026,
+    // keluhan user: "itu kaya ada ruang gitu bukan full jendela... jangan
+    // cuma 3d object yang asal buat"] — sebelumnya kaca ditempel LANGSUNG
+    // di tembok datar tanpa bingkai apapun, jadi kaca+tembok kelihatan
+    // rata/menyatu [kesan "kaca nempel stiker"]. Sekarang tiap jendela
+    // dikasih panel gelap SEDIKIT LEBIH BESAR dari kacanya, diposisikan
+    // SEDIKIT LEBIH MEPET ke tembok drpd kacanya [kaca tetap paling
+    // menjorok keluar] — dari luar kelihatan sbg garis bingkai gelap
+    // mengelilingi kaca, memberi kesan jendela "masuk ke dalam tembok"
+    // [ada kedalaman/ruang], bukan cuma gambar datar. `box()` sendiri
+    // nggak bisa dirotasi [rx/ry di box() itu parameter texture repeat,
+    // bukan rotasi] — makanya rotasi Y diterapkan manual ke mesh hasil
+    // box() di sini, persis pola yang sudah dipakai railing()/stairs().
+    function windowFrame(w, h, x, y, z, ry) {
+      const m = box(w + 0.3, h + 0.34, 0.06, x, y, z, null, 1, 1, 0x1b2530, 0);
+      if (ry) m.rotation.y = ry;
       return m;
     }
 
@@ -441,18 +509,64 @@ function initScene(canvas) {
     }
 
     function railing(w, x, y, z, ry) {
-      const t = railT.clone();
-      t.needsUpdate = true;
-      wrapt(t, Math.round(w / 1.1), 1);
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, 1.05), new THREE.MeshStandardMaterial({ color: 0x2f86c8, alphaMap: t, transparent: true, roughness: 0.5, side: THREE.DoubleSide }));
-      m.position.set(x, y, z);
-      if (ry) m.rotation.y = ry;
-      m.castShadow = true;
-      scene.add(m);
-      return m;
+      // SEBELUMNYA: satu PlaneGeometry datar pakai alphaMap tekstur pager —
+      // dari sudut manapun kelihatan kayak "stiker" nempel di udara depan
+      // tembok (nggak ada ketebalan/bayangan nyata sama sekali). Sekarang
+      // diganti geometri 3D asli: railing atas (pipa biru) + railing bawah
+      // + baluster vertikal berjarak, persis pager balkon beneran di foto
+      // referensi (pipa besi gelap + list biru di bagian atas).
+      const g = new THREE.Group();
+      const barMat = new THREE.MeshStandardMaterial({ color: 0x21262e, roughness: 0.55, metalness: 0.35 });
+      const railMat = new THREE.MeshStandardMaterial({ color: 0x2f86c8, roughness: 0.45, metalness: 0.2 });
+      const H = 1.0;
+      const topRail = new THREE.Mesh(new THREE.BoxGeometry(w, 0.08, 0.08), railMat);
+      topRail.position.y = H / 2;
+      g.add(topRail);
+      const midRail = new THREE.Mesh(new THREE.BoxGeometry(w, 0.05, 0.05), barMat);
+      midRail.position.y = 0.05;
+      g.add(midRail);
+      const botRail = new THREE.Mesh(new THREE.BoxGeometry(w, 0.06, 0.06), barMat);
+      botRail.position.y = -H / 2;
+      g.add(botRail);
+      const n = Math.max(4, Math.round(w / 0.34));
+      for (let i = 0; i <= n; i++) {
+        const bx = -w / 2 + (w / n) * i;
+        const baluster = new THREE.Mesh(new THREE.BoxGeometry(0.045, H, 0.045), barMat);
+        baluster.position.set(bx, 0, 0);
+        g.add(baluster);
+      }
+      g.traverse((o) => {
+        o.castShadow = true;
+        o.receiveShadow = true;
+      });
+      g.position.set(x, y, z);
+      if (ry) g.rotation.y = ry;
+      scene.add(g);
+      return g;
     }
 
-    function tiledRoof(w, d, x, y, z, ry) {
+    function tiledRoof(w, d, x, y, z) {
+      // BUG LAMA [ditemukan 28 Sept 2026, diverifikasi numerik pakai THREE
+      // langsung via Node]: mesh atap dulu di-rotasi `rotation.x = -90°`
+      // [+ `rotation.z = ry` khusus sayap] — ini malah MENUKAR sumbu tinggi
+      // puncak atap [harusnya kecil, ~w*0.17] dengan sumbu punggung atap
+      // [memanjang searah kedalaman gedung, d — bisa 9.6/15.6 unit]. Akibat
+      // nyata [dicek pakai geo.computeBoundingBox() manual]: atap gedung
+      // tengah jadi SETINGGI 9.6 satuan [harusnya 3.3] dan atap sayap jadi
+      // SETINGGI 15.6 satuan [harusnya 1.6] — persis "tiang segitiga
+      // raksasa" yang dikeluhkan user. Shape triangle ini SUDAH didefinisikan
+      // benar di bidang lokal XY [alas selebar w di X, puncak di Y] lalu
+      // di-extrude sepanjang Z sejauh d — kalau TIDAK diputar sama sekali,
+      // X→X [lebar, cocok w gedung], Y→Y [tinggi puncak, kecil, vertikal —
+      // BENAR], Z→Z [punggung atap, cocok d gedung]. Diverifikasi: utk
+      // kedua panggilan [gedung tengah w=19.6/d=9.6 & sayap w=9.6/d=15.6],
+      // w & d SUDAH match persis dgn denah fisik gedungnya [lihat block()]
+      // di SUMBU YANG SAMA [X↔X, Z↔Z] — jadi TIDAK PERNAH butuh rotasi
+      // apapun, utk gedung tengah MAUPUN sayap. Parameter `ry` [dulu dikira
+      // perlu utk "menyesuaikan" sayap yg "diputar"] dihapus total dari
+      // sini & dari eave() di bawah — sayap sebenarnya TIDAK PERNAH
+      // benar2 dirotasi di ruang 3D [block() cuma pakai `ry` sbg flag
+      // penentu sisi pintu/jendela, bukan rotasi mesh].
       const shape = new THREE.Shape();
       shape.moveTo(-w / 2, 0);
       shape.lineTo(w / 2, 0);
@@ -463,47 +577,152 @@ function initScene(canvas) {
       const t = roofT.clone();
       t.needsUpdate = true;
       wrapt(t, Math.round(w / 2), Math.round(d / 2));
-      const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: t, roughness: 0.85 }));
-      m.rotation.x = -Math.PI / 2;
-      m.rotation.z = ry || 0;
+      const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: t, bumpMap: t, bumpScale: 0.03, roughness: 0.85 }));
       m.position.set(x, y, z);
       m.castShadow = true;
       m.receiveShadow = true;
       scene.add(m);
-      const eave = box(w + 0.7, 0.22, d + 0.7, x, y - 0.06, z, null, 1, 1, 0xe9e2d2);
-      if (ry) eave.rotation.y = ry;
+      box(w + 0.7, 0.22, d + 0.7, x, y - 0.06, z, null, 1, 1, 0xe9e2d2);
       return m;
     }
 
     function block(w, d, x, z, ry, floors) {
-      const front = d / 2 + 0.02;
+      // BUG LAMA: dulu cuma ada 1 variabel `front` = d/2 (setengah kedalaman
+      // arah-z), dipakai jugauntuk offset arah-x di gedung sayap kiri/kanan
+      // yang di-rotasi (ry truthy). Utk sayap, dindingnya menghadap arah-x
+      // (bukan z) jadi jaraknya harus dari SETENGAH LEBAR (w/2), bukan
+      // setengah kedalaman (d/2) — d sayap = 15 vs w sayap = 9, jadi selisih
+      // ~3 unit itu yang bikin railing/pilar keliatan "melayang" jauh dari
+      // tembok aslinya. Sekarang dipisah: frontZ utk gedung tak-dirotasi
+      // (hadap +z), frontX utk sayap yg dirotasi (hadap +/-x).
+      const frontZ = d / 2 + 0.02;
+      const frontX = w / 2 + 0.02;
       const n = floors || 3;
-      box(w, fh, d, x, fh / 2, z, brick, Math.round(w / 3), 1);
-      for (let i = 0; i < Math.round(w / 3.4); i++) {
-        const px = x - w / 2 + 1.7 + i * 3.4;
-        box(0.85, fh - 0.3, 0.62, ry ? x + front : px, (fh - 0.3) / 2, ry ? z - w / 2 + 1.7 + i * 3.4 : z + front, brick, 1, 1);
+      box(w, fh, d, x, fh / 2, z, wallBlueBase, Math.round(w / 3), 1);
+      // BUG TAMBAHAN yg baru ketemu: loop pilar di bawah ini dulu SELALU
+      // pakai `w` (lebar) buat hitung jumlah+jarak pilar, padahal di gedung
+      // SAYAP yg dirotasi, muka depannya justru membentang sepanjang `d`
+      // (kedalaman, 15 unit) bukan `w` (9 unit) — sama persis kelas bug
+      // frontZ/frontX yg udah dibenerin di atas. Akibatnya pilar sayap dulu
+      // numpuk di 1/3 awal tembok doang, sisanya polos tanpa pilar. Sekarang
+      // dipisah pakai `pilasterSpan` sesuai orientasi.
+      const pilasterSpan = ry ? d : w;
+      // Spasi pilar diperlebar dari 3.4 -> 3.8 [28 Sept 2026, keluhan
+      // "full jendela ga kaya versi aslinya, itu kaya ada ruang gitu"] —
+      // foto referensi GOR SMK Rajasa nunjukin cuma ~4 jendela per lantai
+      // dgn tembok solid lebar di kanan-kiri tiap jendela, bukan 5-6
+      // jendela berjejer rapat. Spasi lebih lebar -> pilar lebih jarang ->
+      // bay lebih lebar -> lebih banyak ruang buat tembok solid di kiri-
+      // kanan tiap jendela [lihat windowW di bawah, jendelanya sendiri jg
+      // dipersempit].
+      const baySpacing = 3.8;
+      const halfBay = baySpacing / 2;
+      const pilasterCount = Math.max(2, Math.round(pilasterSpan / baySpacing));
+      for (let i = 0; i < pilasterCount; i++) {
+        const along = -pilasterSpan / 2 + halfBay + i * baySpacing;
+        // Pilar dicat MAROON polos (bukan bata ekspos) — sesuai foto
+        // referensi, kolom depan gedung SMKS Rajasa dicat rata warna merah
+        // marun, bukan bata terbuka.
+        box(0.85, fh - 0.3, 0.62, ry ? x + frontX : x + along, (fh - 0.3) / 2, ry ? z + along : z + frontZ, null, 1, 1, 0xa8402f);
+      }
+      // Lebar kaca jendela dipersempit dari 1.9 -> 1.3 [keluhan sama spt di
+      // atas] — sekarang tembok solid di kiri-kanan tiap jendela [dalam
+      // 1 bay selebar baySpacing-0.85 pilar] jauh lebih lebar drpd kacanya
+      // sendiri, bukan kaca yg nyaris nutupin seluruh celah antar pilar.
+      const windowW = 1.3;
+      // Lantai dasar SEBELUMNYA kosong total [cuma tembok+pilar polos, tanpa
+      // satu pun bukaan] — ini penyebab utama keluhan "gedungnya kaya gaada
+      // pintu, jendela kelas". Sekarang ditambah baris pintu kelas [pakai
+      // texDoor, diselang-seling jendela [paneStrip]] persis di lantai
+      // dasar, sepanjang muka gedung — berlaku utk gedung tengah MAUPUN
+      // sayap [dulu sayap ["gedung gor"] sama sekali nggak ada bukaan/
+      // dekorasi apapun, makanya kelihatan "polos gepeng gaada apa-apa"].
+      // BUG: loop ini dulu jalan `pilasterCount` kali [sama kayak jumlah
+      // pilar], padahal cuma ada `pilasterCount - 1` CELAH di antara pilar
+      // yg valid buat diisi pintu/jendela — bay terakhir jatuh di LUAR
+      // tembok [numpuk lewat ujung, nggak kelihatan]. Dipangkas jadi
+      // `bayCount = pilasterCount - 1`.
+      const bayCount = Math.max(1, pilasterCount - 1);
+      if (!ry) {
+        for (let i = 0; i < bayCount; i++) {
+          const bx = x - pilasterSpan / 2 + halfBay + i * baySpacing + halfBay;
+          if (i % 2 === 0) {
+            box(1.3, 2.35, 0.16, bx, 1.2, z + frontZ + 0.04, doorT, 1, 1, undefined, 0.015);
+          } else {
+            // BUG [ditemukan 29 Sept 2026, keluhan user: jendela kelihatan
+            // kotak hitam polos]: windowFrame() itu box() [punya ketebalan
+            // 0.06], BUKAN bidang datar — titik pusatnya dulu ditaruh di
+            // frontZ+0.045, jadi permukaan DEPANnya [pusat + separuh
+            // ketebalan 0.03] ada di frontZ+0.075 — itu LEBIH MAJU drpd kaca
+            // di frontZ+0.06! Akibatnya bingkai gelap [warna 0x1b2530, nyaris
+            // hitam] nutupin kaca di belakangnya total, jendela jd keliatan
+            // kotak hitam tanpa tekstur kaca sama sekali. Digeser ke
+            // frontZ+0.01 -> permukaan depan bingkai jd frontZ+0.04, di
+            // BELAKANG kaca [frontZ+0.06] dgn jarak aman 0.02.
+            windowFrame(windowW, 1.5, bx, 1.5, z + frontZ + 0.01);
+            paneStrip(windowW, 1.5, bx, 1.5, z + frontZ + 0.06);
+          }
+        }
+      } else {
+        const sd = ry < 0 ? -1 : 1;
+        for (let i = 0; i < bayCount; i++) {
+          const bz = z - pilasterSpan / 2 + halfBay + i * baySpacing + halfBay;
+          if (i % 2 === 0) {
+            box(0.16, 2.35, 1.3, x + sd * (frontX + 0.04), 1.2, bz, doorT, 1, 1, undefined, 0.015);
+          } else {
+            windowFrame(windowW, 1.5, x + sd * (frontX + 0.01), 1.5, bz, (sd * -Math.PI) / 2);
+            paneStrip(windowW, 1.5, x + sd * (frontX + 0.06), 1.5, bz, (sd * -Math.PI) / 2);
+          }
+        }
       }
       for (let f = 1; f < n; f++) {
-        box(w, fh, d, x, fh * f + fh / 2, z, f % 2 ? wallGreen : wallCream, Math.round(w / 3), 1);
+        box(w, fh, d, x, fh * f + fh / 2, z, wallBlueLight, Math.round(w / 3), 1);
         box(w + 0.55, 0.32, d + 1.5, x, fh * f + 0.1, z, null, 1, 1, 0xdad4c4);
         box(w + 0.2, 0.16, d + 1.2, x, fh * f + 0.34, z, null, 1, 1, 0x2f86c8);
+        // BUG LAMA [keluhan user 28 Sept 2026: "full jendela ga kaya versi
+        // aslinya"]: lantai atas dulu pasang SATU paneStrip() lebar hampir
+        // sepanjang seluruh muka tembok [w-1.4] sbg SATU kaca menerus —
+        // hasilnya jadi "curtain wall" tanpa sekat tembok sama sekali,
+        // padahal foto referensi GOR SMK Rajasa jelas menunjukkan tiap
+        // lantai [termasuk lantai 2 & 3] punya jendela TERPISAH per bay,
+        // dipisah tembok solid persis sejajar pilar — sama persis pola yg
+        // sudah benar dipakai lantai dasar [loop bayCount di atas]. Sekarang
+        // lantai atas pakai loop bay yg SAMA [pilasterSpan/bayCount/spasi
+        // baySpacing identik dgn lantai dasar], satu jendela sempit
+        // [windowW lebar] + bingkai gelap per bay, biar tembok di antara
+        // jendela kelihatan solid — bukan kaca menerus.
+        // Jendela sisi BELAKANG [muka -z / -x, arah nggak pernah kelihatan
+        // dari courtyard/kamera default] DIHAPUS TOTAL atas permintaan
+        // eksplisit Fashich 28 Sept 2026 ["hapus jendela di belakang
+        // gedung"] — sisi belakang sekarang tembok polos aja [wall+trim
+        // band di atas tetap ada, cuma tanpa insert jendela individual].
         if (!ry) {
-          paneStrip(w - 1.4, 1.75, x, fh * f + 1.95, z + front + 0.72);
-          railing(w + 0.45, x, fh * f + 0.78, z + front + 0.74);
-          paneStrip(w - 1.8, 1.5, x, fh * f + 1.95, z - front - 0.06, Math.PI);
+          for (let i = 0; i < bayCount; i++) {
+            const bx = x - pilasterSpan / 2 + halfBay + i * baySpacing + halfBay;
+            // Fix z-depth bingkai sama spt lantai dasar di atas — lihat
+            // komentar di loop bayCount pertama utk detail bug-nya.
+            windowFrame(windowW, 1.6, bx, fh * f + 1.95, z + frontZ + 0.01);
+            paneStrip(windowW, 1.6, bx, fh * f + 1.95, z + frontZ + 0.06);
+          }
+          railing(w + 0.45, x, fh * f + 0.78, z + frontZ + 0.09);
         } else {
           const sd = ry < 0 ? -1 : 1;
-          paneStrip(d - 1.4, 1.75, x + sd * (front + 0.72), fh * f + 1.95, z, (sd * -Math.PI) / 2);
-          railing(d + 0.45, x + sd * (front + 0.74), fh * f + 0.78, z, (sd * -Math.PI) / 2);
-          paneStrip(d - 1.8, 1.5, x - sd * (front + 0.06), fh * f + 1.95, z, (sd * Math.PI) / 2);
+          for (let i = 0; i < bayCount; i++) {
+            const bz = z - pilasterSpan / 2 + halfBay + i * baySpacing + halfBay;
+            windowFrame(windowW, 1.6, x + sd * (frontX + 0.01), fh * f + 1.95, bz, (sd * -Math.PI) / 2);
+            paneStrip(windowW, 1.6, x + sd * (frontX + 0.06), fh * f + 1.95, bz, (sd * -Math.PI) / 2);
+          }
+          railing(d + 0.45, x + sd * (frontX + 0.09), fh * f + 0.78, z, (sd * -Math.PI) / 2);
         }
       }
       return fh * n;
     }
 
     function gazebo(gx, gz) {
-      const woodA = new THREE.MeshStandardMaterial({ map: wrapt(texWood(), 1, 3), roughness: 0.6 });
-      const woodB = new THREE.MeshStandardMaterial({ map: wrapt(texWood(), 3, 1), roughness: 0.6 });
+      const woodTexA = wrapt(texWood(), 1, 3);
+      const woodTexB = wrapt(texWood(), 3, 1);
+      const woodA = new THREE.MeshStandardMaterial({ map: woodTexA, bumpMap: woodTexA, bumpScale: 0.025, roughness: 0.6 });
+      const woodB = new THREE.MeshStandardMaterial({ map: woodTexB, bumpMap: woodTexB, bumpScale: 0.025, roughness: 0.6 });
       const g = new THREE.Group();
       const deck = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.3, 3.6), woodB);
       deck.position.y = 0.66;
@@ -539,7 +758,8 @@ function initScene(canvas) {
       const beam = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.2, 3.5), woodA);
       beam.position.y = 3.3;
       g.add(beam);
-      const roofMat = new THREE.MeshStandardMaterial({ map: wrapt(texRoof(), 3, 2), roughness: 0.8 });
+      const gazeboRoofTex = wrapt(texRoof(), 3, 2);
+      const roofMat = new THREE.MeshStandardMaterial({ map: gazeboRoofTex, bumpMap: gazeboRoofTex, bumpScale: 0.03, roughness: 0.8 });
       const r1 = new THREE.Mesh(new THREE.ConeGeometry(3.0, 0.85, 4, 1), roofMat);
       r1.rotation.y = Math.PI / 4;
       r1.position.y = 3.72;
@@ -566,11 +786,13 @@ function initScene(canvas) {
     const centerH = block(19, 9, 0, -11, 0, 4);
     tiledRoof(19.6, 9.6, 0, centerH + 0.1, -11);
     block(9, 15, -14, -1, 1, 3);
-    tiledRoof(9.6, 15.6, -14, fh * 3 + 0.1, -1, Math.PI / 2);
+    tiledRoof(9.6, 15.6, -14, fh * 3 + 0.1, -1);
     block(9, 15, 14, -1, -1, 3);
-    tiledRoof(9.6, 15.6, 14, fh * 3 + 0.1, -1, Math.PI / 2);
+    tiledRoof(9.6, 15.6, 14, fh * 3 + 0.1, -1);
+    // Tangga luar [stairs()] diminta dihapus lagi oleh Fashich [28 Sept
+    // 2026] — dikembalikan spt semula, tanpa tangga.
 
-    box(5.2, 3.05, 0.34, 0, 1.52, -6.42, null, 1, 1, 0x1f2f42);
+    box(5.2, 3.05, 0.34, 0, 1.52, -6.42, doorT, 1, 1, undefined, 0.02);
     paneStrip(4.6, 2.5, 0, 1.62, -6.2);
     box(6.2, 0.26, 1.9, 0, 3.2, -5.6, null, 1, 1, 0x2f86c8);
     [
@@ -641,8 +863,14 @@ function initScene(canvas) {
     flag.castShadow = true;
     scene.add(flag);
 
-    gazebo(-7.8, 3.6);
-    gazebo(7.8, 3.6);
+    // Posisi lama (-7.8/7.8, z=3.6) numpuk sejajar sisi sayap gedung [wing
+    // sayap kiri x:[-18.5,-9.5], kanan x:[9.5,18.5], keduanya z:[-8.5,6.5]]
+    // — jarak ke tembok sayap cuma ~1.7 unit padahal atap gazebo radiusnya
+    // ~3 unit, jadi atapnya nembus dinding. Digeser ke z=10 (di depan garis
+    // depan sayap z=6.5 + margin), jadi gazebo beneran berdiri lepas di
+    // halaman depan, bukan nempel/tembus badan gedung.
+    gazebo(-7.5, 10);
+    gazebo(7.5, 10);
 
     const lamps = [];
     [
@@ -675,23 +903,6 @@ function initScene(canvas) {
         leaf.position.set(p[0] + f[0], f[1], p[1]);
         leaf.castShadow = true;
         scene.add(leaf);
-      });
-    });
-
-    [
-      [-8, 5.5, 0.4],
-      [-6.6, 5.5, 0.4],
-      [7.2, 5.2, -0.3],
-      [8.6, 5.2, -0.3],
-    ].forEach((p) => {
-      box(1.5, 0.5, 0.55, p[0], 0.8, p[1], null, 1, 1, 0x2c3138);
-      box(0.55, 0.5, 0.5, p[0] - 0.5, 1.15, p[1], null, 1, 1, 0x9aa4b2);
-      [-0.55, 0.6].forEach((o) => {
-        const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.11, 8, 16), new THREE.MeshStandardMaterial({ color: 0x1a1d22, roughness: 0.8 }));
-        wheel.position.set(p[0] + o, 0.36, p[1]);
-        wheel.rotation.y = Math.PI / 2;
-        wheel.castShadow = true;
-        scene.add(wheel);
       });
     });
 
