@@ -7,7 +7,7 @@ import Badge from '../../components/ui/Badge';
 import EmptyState from '../../components/ui/EmptyState';
 
 const ROLES = ['Administrator', 'Petugas', 'Guru', 'Siswa'];
-const emptyForm = { nama: '', username: '', email: '', role: 'Siswa', status: 'Aktif', password: '' };
+const emptyForm = { nama: '', username: '', email: '', role: 'Siswa', status: 'Aktif', password: '', studentId: '' };
 
 const User = () => {
   const { users, siswa, addItem, updateItem, removeItem, resetUserPassword } = useData();
@@ -26,9 +26,17 @@ const User = () => {
 
   const openEdit = (u) => {
     setEditingId(u.id);
-    setForm({ nama: u.nama, username: u.username, email: u.email, role: u.role, status: u.status, password: '' });
+    setForm({ nama: u.nama, username: u.username, email: u.email, role: u.role, status: u.status, password: '', studentId: u.linkedId || '' });
     setModalOpen(true);
   };
+
+  // Bug 23 Sept 2026 (laporan Hadiid): akun Siswa yang dibuat lewat form ini
+  // sebelumnya TIDAK PERNAH tertaut ke profil siswa manapun (field ini belum
+  // ada) -> linked_id selalu null -> Profil/Kompetensi/Jurnal/Recommendation
+  // kosong utk role Siswa manapun, walau data perusahaan/siswa lain sudah
+  // ada. Opsi dropdown: siswa yang belum tertaut, DITAMBAH siswa yang saat
+  // ini tertaut ke akun yang sedang diedit (biar tetap kepilih di form).
+  const availableSiswaForLink = siswa.filter((s) => !s.userId || (editingId && s.userId === editingId));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -158,6 +166,18 @@ const User = () => {
               </select>
             </div>
           </div>
+          {form.role === 'Siswa' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Siswa Terkait</label>
+              <select value={form.studentId} onChange={set('studentId')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">— Belum ditautkan —</option>
+                {availableSiswaForLink.map((s) => <option key={s.id} value={s.id}>{s.nama} ({s.nisn})</option>)}
+              </select>
+              <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
+                Tanpa ditautkan ke profil siswa, akun ini tidak akan bisa melihat Profil, Kompetensi, Jurnal, maupun Rekomendasi miliknya sendiri.
+              </p>
+            </div>
+          )}
           {editingId && <p className="text-xs text-gray-400 dark:text-slate-500">Ganti password lewat tombol "Reset Password" di tabel, bukan form ini.</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">

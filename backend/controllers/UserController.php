@@ -110,15 +110,43 @@ class UserController
             }
         }
 
-        if ($fields) {
-            $db = Database::getConnection();
-            try {
+        $db = Database::getConnection();
+        try {
+            $db->beginTransaction();
+
+            if ($fields) {
                 $sql = 'UPDATE users SET ' . implode(', ', $fields) . ' WHERE id = :id';
                 $db->prepare($sql)->execute($params);
-            } catch (PDOException $e) {
-                $message = (int) $e->getCode() === 23000 ? 'Username atau email sudah dipakai.' : $e->getMessage();
-                Response::error('Gagal memperbarui user: ' . $message, 422);
             }
+
+            // Tautkan/lepas-tautkan akun ke profil siswa — kontrak sama seperti
+            // store(), tapi juga bisa dipakai buat akun Siswa yang dibuat
+            // SEBELUM field penautan ini ada di form (mis. akun demo siswa1),
+            // atau utk mengganti tautan ke siswa lain. Bug 23 Sept 2026
+            // (laporan Hadiid): akun Siswa yang dibuat via form User TIDAK
+            // PERNAH tertaut ke profil siswa manapun karena store() cuma
+            // menautkan kalau student_id dikirim, dan form lama tidak pernah
+            // mengirimnya sama sekali -> linked_id selalu null -> Profil,
+            // Kompetensi, Jurnal, dan Recommendation semua kosong utk role
+            // Siswa manapun. student_id null/kosong = lepas tautan.
+            if (array_key_exists('student_id', $data)) {
+                $db->prepare('UPDATE students SET user_id = NULL WHERE user_id = :user_id')
+                    ->execute(['user_id' => $target['id']]);
+
+                if (!empty($data['student_id'])) {
+                    $link = $db->prepare('UPDATE students SET user_id = :user_id WHERE id = :student_id AND user_id IS NULL');
+                    $link->execute(['user_id' => $target['id'], 'student_id' => $data['student_id']]);
+                    if ($link->rowCount() === 0) {
+                        throw new PDOException('Profil siswa tidak ditemukan atau sudah ditautkan ke akun lain.');
+                    }
+                }
+            }
+
+            $db->commit();
+        } catch (PDOException $e) {
+            $db->rollBack();
+            $message = (int) $e->getCode() === 23000 ? 'Username atau email sudah dipakai.' : $e->getMessage();
+            Response::error('Gagal memperbarui user: ' . $message, 422);
         }
 
         Response::success(self::findOrFail((int) $target['id']), 'User berhasil diperbarui.');

@@ -417,10 +417,18 @@ export function DataProvider({ children }) {
       case 'users': {
         const created = await apiFetch('/api/users', {
           method: 'POST',
-          body: { username: item.username, password: item.password, nama: item.nama, email: item.email, role: item.role, status: item.status || 'Aktif' },
+          body: {
+            username: item.username, password: item.password, nama: item.nama, email: item.email,
+            role: item.role, status: item.status || 'Aktif',
+            student_id: item.studentId ? Number(item.studentId) : null,
+          },
         });
-        const mapped = userFromApi(created, null);
+        const mapped = userFromApi(created, item.studentId ? Number(item.studentId) : null);
         setUsers((prev) => [...prev, mapped]);
+        // Penautan akun<->siswa mengubah field userId di koleksi siswa juga
+        // (dipakai buat memfilter opsi "Siswa Terkait" di form ini) — refresh
+        // penuh biar dua-duanya konsisten, bukan cuma optimistic update lokal.
+        if (item.studentId) await refreshAll();
         return mapped;
       }
       default:
@@ -483,11 +491,14 @@ export function DataProvider({ children }) {
         return patch;
       }
       case 'users': {
-        const updated = await apiFetch(`/api/users/${id}`, {
-          method: 'PUT',
-          body: { username: patch.username, nama: patch.nama, email: patch.email, role: patch.role, status: patch.status },
-        });
-        setUsers((prev) => prev.map((u) => (u.id === id ? userFromApi(updated, u.linkedId) : u)));
+        const body = { username: patch.username, nama: patch.nama, email: patch.email, role: patch.role, status: patch.status };
+        if (patch.studentId !== undefined) body.student_id = patch.studentId ? Number(patch.studentId) : null;
+        const updated = await apiFetch(`/api/users/${id}`, { method: 'PUT', body });
+        const linkedId = patch.studentId !== undefined ? (patch.studentId ? Number(patch.studentId) : null) : undefined;
+        setUsers((prev) => prev.map((u) => (u.id === id ? userFromApi(updated, linkedId !== undefined ? linkedId : u.linkedId) : u)));
+        // Sama seperti addItem: penautan/pelepasan siswa<->akun mengubah
+        // userId di koleksi siswa juga, refresh penuh biar konsisten.
+        if (patch.studentId !== undefined) await refreshAll();
         return updated;
       }
       default:
