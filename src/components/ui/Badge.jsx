@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Peta warna untuk status-status yang umum dipakai di seluruh EduPKL.
 const STATUS_STYLES = {
@@ -27,10 +28,13 @@ const STATUS_STYLES = {
 };
 
 const Badge = ({ status, children }) => {
+  const { t } = useLanguage();
   const cls = STATUS_STYLES[status] || 'bg-gray-100 text-gray-600 border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700';
+  const statusLabels = t('common', 'statusLabels');
+  const label = children || statusLabels[status] || status;
   return (
     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${cls}`}>
-      {children || status}
+      {label}
     </span>
   );
 };

@@ -2,8 +2,25 @@ import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { LogOut, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { menuForRole } from '../config/menu';
 import ThemeToggle from '../components/ThemeToggle';
+import LanguageToggle from '../components/LanguageToggle';
+
+const MENU_LABEL_KEY = {
+  dashboard: 'menuDashboard',
+  siswa: 'menuSiswa',
+  perusahaan: 'menuPerusahaan',
+  kelompokMagang: 'menuKelompokMagang',
+  penempatan: 'menuPenempatan',
+  profil: 'menuProfil',
+  kompetensi: 'menuKompetensi',
+  jurnal: 'menuJurnal',
+  recommendation: 'menuRecommendation',
+  laporan: 'menuLaporan',
+  user: 'menuUser',
+  pengaturan: 'menuPengaturan',
+};
 
 const ROLE_BADGE_CLASS = {
   Administrator: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300',
@@ -14,6 +31,7 @@ const ROLE_BADGE_CLASS = {
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -37,7 +55,7 @@ const DashboardLayout = () => {
         <nav className="space-y-1 px-3">
           {menus.map((menu) => (
             <NavLink
-              key={menu.name}
+              key={menu.key}
               to={menu.path}
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
@@ -49,7 +67,7 @@ const DashboardLayout = () => {
               }
             >
               <menu.icon size={20} />
-              <span className="ml-3">{menu.name}</span>
+              <span className="ml-3">{t('dashboardLayout', MENU_LABEL_KEY[menu.key] || menu.name)}</span>
             </NavLink>
           ))}
         </nav>
@@ -61,7 +79,7 @@ const DashboardLayout = () => {
           className="flex items-center w-full px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
           <LogOut size={20} />
-          <span className="ml-3">Logout</span>
+          <span className="ml-3">{t('dashboardLayout', 'logout')}</span>
         </button>
       </div>
     </>
@@ -98,14 +116,15 @@ const DashboardLayout = () => {
             <button
               className="md:hidden text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200"
               onClick={() => setMobileOpen(true)}
-              aria-label="Buka menu"
+              aria-label={t('dashboardLayout', 'openMenuAriaLabel')}
             >
               <Menu size={22} />
             </button>
-            <span className="text-gray-500 dark:text-slate-400 font-medium hidden sm:block">Talent Matching Berbasis User Profiling</span>
+            <span className="text-gray-500 dark:text-slate-400 font-medium hidden sm:block">{t('dashboardLayout', 'appSubtitle')}</span>
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4">
+            <LanguageToggle />
             <ThemeToggle />
             <div className="flex items-center gap-3 bg-gray-50 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-gray-100 dark:border-slate-700">
               <span className="text-sm font-medium text-gray-700 dark:text-slate-200">{user?.nama}</span>

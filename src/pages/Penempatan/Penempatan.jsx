@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Plus, Edit, Trash2, Briefcase } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { scopedPenempatan, findById } from '../../utils/scope';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -14,6 +15,8 @@ const STATUS_OPTIONS = ['Diajukan', 'Diterima', 'Berlangsung', 'Selesai', 'Ditol
 const Penempatan = () => {
   const { siswa, perusahaan, kelompokMagang, penempatan, users, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
+  const { t } = useLanguage();
+  const statusLabels = t('common', 'statusLabels');
   const canManage = user?.role === 'Administrator' || user?.role === 'Petugas';
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -85,37 +88,37 @@ const Penempatan = () => {
     <div className="max-w-7xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Penempatan & Penerimaan</h1>
-          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Pencocokan siswa dengan perusahaan beserta status penempatan dan penerimaannya.</p>
+          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('penempatan', 'pageTitle')}</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">{t('penempatan', 'pageDesc')}</p>
         </div>
         <div className="flex items-center gap-3">
           {canManage && (
             <button onClick={openAdd} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
               <Plus size={16} />
-              Tambah Penempatan
+              {t('penempatan', 'btnTambah')}
             </button>
           )}
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900">
-            <option value="Semua">Semua Status</option>
-            {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+            <option value="Semua">{t('penempatan', 'filterSemua')}</option>
+            {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{statusLabels[s] || s}</option>)}
           </select>
         </div>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
         {list.length === 0 ? (
-          <EmptyState icon={<Briefcase size={28} />} title="Belum ada penempatan" description="Tambahkan penempatan untuk mencocokkan siswa dengan perusahaan." />
+          <EmptyState icon={<Briefcase size={28} />} title={t('penempatan', 'emptyTitle')} description={t('penempatan', 'emptyDesc')} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50 dark:bg-slate-800 text-gray-600 dark:text-slate-400 font-medium border-b border-gray-100 dark:border-slate-800">
                 <tr>
-                  <th className="py-3 px-6">SISWA</th>
-                  <th className="py-3 px-6">PERUSAHAAN</th>
-                  <th className="py-3 px-6">GURU PEMBIMBING</th>
-                  <th className="py-3 px-6">PERIODE</th>
-                  <th className="py-3 px-6">STATUS</th>
-                  {canManage && <th className="py-3 px-6 text-center">AKSI</th>}
+                  <th className="py-3 px-6">{t('penempatan', 'colSiswa')}</th>
+                  <th className="py-3 px-6">{t('penempatan', 'colPerusahaan')}</th>
+                  <th className="py-3 px-6">{t('penempatan', 'colGuruPembimbing')}</th>
+                  <th className="py-3 px-6">{t('penempatan', 'colPeriode')}</th>
+                  <th className="py-3 px-6">{t('common', 'colStatus')}</th>
+                  {canManage && <th className="py-3 px-6 text-center">{t('common', 'colActions')}</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
@@ -130,18 +133,18 @@ const Penempatan = () => {
                       </td>
                       <td className="py-3 px-6 text-gray-600 dark:text-slate-400">{c?.nama || '—'}</td>
                       <td className="py-3 px-6 text-gray-600 dark:text-slate-400">{p.guruPembimbing}</td>
-                      <td className="py-3 px-6 text-gray-500 dark:text-slate-400 whitespace-nowrap">{p.tanggalMulai} s/d {p.tanggalSelesai}</td>
+                      <td className="py-3 px-6 text-gray-500 dark:text-slate-400 whitespace-nowrap">{p.tanggalMulai} {t('common', 'sd')} {p.tanggalSelesai}</td>
                       <td className="py-3 px-6"><Badge status={p.status} /></td>
                       {canManage && (
                         <td className="py-3 px-6">
                           <div className="flex items-center justify-center gap-2">
                             <button onClick={() => openEdit(p)} className="flex items-center gap-1.5 bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 transition">
                               <Edit size={14} />
-                              Edit
+                              {t('common', 'edit')}
                             </button>
                             <button onClick={() => setDeleteTarget(p)} className="flex items-center gap-1.5 bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-red-700 transition">
                               <Trash2 size={14} />
-                              Hapus
+                              {t('common', 'delete')}
                             </button>
                           </div>
                         </td>
@@ -155,62 +158,62 @@ const Penempatan = () => {
         )}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? 'Edit Penempatan' : 'Tambah Penempatan'}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? t('penempatan', 'modalTitleEdit') : t('penempatan', 'modalTitleAdd')}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Siswa</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('penempatan', 'labelSiswa')}</label>
             <select required value={form.siswaId} onChange={set('siswaId')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Pilih siswa</option>
+              <option value="">{t('penempatan', 'optionPilihSiswa')}</option>
               {availableSiswa.map((s) => <option key={s.id} value={s.id}>{s.nama} — {s.kelas}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Perusahaan</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('penempatan', 'labelPerusahaan')}</label>
             <select required value={form.perusahaanId} onChange={set('perusahaanId')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Pilih perusahaan</option>
+              <option value="">{t('penempatan', 'optionPilihPerusahaan')}</option>
               {perusahaan.map((c) => <option key={c.id} value={c.id}>{c.nama}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kelompok Magang (opsional)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('penempatan', 'labelKelompokOpsional')}</label>
             <select value={form.kelompokMagangId} onChange={handleKelompokChange} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Tidak terkait kelompok</option>
+              <option value="">{t('penempatan', 'optionTidakTerkaitKelompok')}</option>
               {kelompokMagang.map((k) => <option key={k.id} value={k.id}>{k.nama}</option>)}
             </select>
-            <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Pilih kelompok untuk otomatis mempersempit daftar siswa & mengisi perusahaan/guru pembimbing.</p>
+            <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{t('penempatan', 'kelompokHint')}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Guru Pembimbing</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('penempatan', 'labelGuruPembimbing')}</label>
             <select required value={form.guruPembimbing} onChange={set('guruPembimbing')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="">Pilih guru pembimbing</option>
+              <option value="">{t('penempatan', 'optionPilihGuru')}</option>
               {guruList.map((g) => <option key={g.id} value={g.nama}>{g.nama}</option>)}
             </select>
             {guruList.length === 0 && (
-              <p className="text-xs text-red-500 mt-1">Belum ada akun Guru terdaftar. Tambahkan dulu di menu User (peran Guru).</p>
+              <p className="text-xs text-red-500 mt-1">{t('penempatan', 'warningNoGuru')}</p>
             )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tanggal Mulai</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('penempatan', 'labelTanggalMulai')}</label>
               <input required type="date" value={form.tanggalMulai} onChange={set('tanggalMulai')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tanggal Selesai</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('penempatan', 'labelTanggalSelesai')}</label>
               <input required type="date" value={form.tanggalSelesai} onChange={set('tanggalSelesai')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('penempatan', 'labelStatus')}</label>
             <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+              {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{statusLabels[s] || s}</option>)}
             </select>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-              Batal
+              {t('common', 'cancel')}
             </button>
             <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
-              {editingId ? 'Simpan Perubahan' : 'Tambah Penempatan'}
+              {editingId ? t('common', 'saveChanges') : t('penempatan', 'btnTambah')}
             </button>
           </div>
         </form>
@@ -220,8 +223,8 @@ const Penempatan = () => {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteTarget && removeItem('penempatan', deleteTarget.id)}
-        title="Hapus Penempatan"
-        message="Yakin ingin menghapus data penempatan ini?"
+        title={t('penempatan', 'deleteTitle')}
+        message={t('penempatan', 'deleteMessage')}
       />
     </div>
   );

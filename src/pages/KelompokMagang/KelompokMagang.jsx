@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Plus, Edit, Trash2, UsersRound, Building2 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { scopedKelompokMagang, findById } from '../../utils/scope';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -16,6 +17,7 @@ const emptyForm = { nama: '', perusahaanId: '', pembimbingGuru: '', anggotaSiswa
 const KelompokMagang = () => {
   const { siswa, perusahaan, kelompokMagang, users, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const canManage = user.role === 'Administrator' || user.role === 'Petugas';
 
   const list = useMemo(() => scopedKelompokMagang(user, kelompokMagang), [user, kelompokMagang]);
@@ -67,20 +69,20 @@ const KelompokMagang = () => {
     <div className="max-w-6xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Kelompok Magang</h1>
-          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Pengelompokan siswa yang PKL bersama di satu perusahaan, di bawah satu guru pembimbing.</p>
+          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('kelompokMagang', 'pageTitle')}</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">{t('kelompokMagang', 'pageDesc')}</p>
         </div>
         {canManage && (
           <button onClick={openAdd} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition w-fit">
             <Plus size={16} />
-            Tambah Kelompok
+            {t('kelompokMagang', 'btnTambah')}
           </button>
         )}
       </div>
 
       {list.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
-          <EmptyState icon={<UsersRound size={28} />} title="Belum ada kelompok magang" />
+          <EmptyState icon={<UsersRound size={28} />} title={t('kelompokMagang', 'emptyTitle')} />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -99,18 +101,18 @@ const KelompokMagang = () => {
                   </div>
                   <Badge status={k.status} />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-slate-400 mt-3">Pembimbing: <span className="text-gray-700 dark:text-slate-300 font-medium">{k.pembimbingGuru}</span></p>
-                <p className="text-xs text-gray-500 dark:text-slate-400">Periode: {k.periodeMulai} s/d {k.periodeSelesai}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-3">{t('kelompokMagang', 'pembimbingLabel')} <span className="text-gray-700 dark:text-slate-300 font-medium">{k.pembimbingGuru}</span></p>
+                <p className="text-xs text-gray-500 dark:text-slate-400">{t('kelompokMagang', 'periodeLabel')} {k.periodeMulai} {t('common', 'sd')} {k.periodeSelesai}</p>
 
                 <div className="mt-3">
-                  <p className="text-xs font-medium text-gray-500 dark:text-slate-400 mb-1.5">Anggota ({anggota.length})</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-slate-400 mb-1.5">{t('kelompokMagang', 'anggotaLabelPrefix')} ({anggota.length})</p>
                   <div className="flex flex-wrap gap-1.5">
                     {anggota.map((s) => (
                       <span key={s.id} className="px-2.5 py-1 rounded-full bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-800 text-xs text-gray-600 dark:text-slate-400">
                         {s.nama}
                       </span>
                     ))}
-                    {anggota.length === 0 && <span className="text-xs text-gray-400 dark:text-slate-500">Belum ada anggota.</span>}
+                    {anggota.length === 0 && <span className="text-xs text-gray-400 dark:text-slate-500">{t('kelompokMagang', 'belumAdaAnggota')}</span>}
                   </div>
                 </div>
 
@@ -118,11 +120,11 @@ const KelompokMagang = () => {
                   <div className="mt-4 flex items-center gap-2">
                     <button onClick={() => openEdit(k)} className="flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-500/20 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition">
                       <Edit size={12} />
-                      Edit
+                      {t('common', 'edit')}
                     </button>
                     <button onClick={() => setDeleteTarget(k)} className="flex items-center gap-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-500/20 hover:bg-red-50 dark:hover:bg-red-500/10 transition">
                       <Trash2 size={12} />
-                      Hapus
+                      {t('common', 'delete')}
                     </button>
                   </div>
                 )}
@@ -132,50 +134,50 @@ const KelompokMagang = () => {
         </div>
       )}
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? 'Edit Kelompok Magang' : 'Tambah Kelompok Magang'} size="lg">
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? t('kelompokMagang', 'modalTitleEdit') : t('kelompokMagang', 'modalTitleAdd')} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nama Kelompok</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kelompokMagang', 'labelNamaKelompok')}</label>
             <input required value={form.nama} onChange={set('nama')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Perusahaan</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kelompokMagang', 'labelPerusahaan')}</label>
               <select required value={form.perusahaanId} onChange={set('perusahaanId')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Pilih perusahaan</option>
+                <option value="">{t('kelompokMagang', 'optionPilihPerusahaan')}</option>
                 {perusahaan.map((c) => <option key={c.id} value={c.id}>{c.nama}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Pembimbing Guru</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kelompokMagang', 'labelPembimbingGuru')}</label>
               <select required value={form.pembimbingGuru} onChange={set('pembimbingGuru')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">Pilih guru pembimbing</option>
+                <option value="">{t('kelompokMagang', 'optionPilihGuru')}</option>
                 {guruList.map((g) => <option key={g.id} value={g.nama}>{g.nama}</option>)}
               </select>
               {guruList.length === 0 && (
-                <p className="text-xs text-red-500 mt-1">Belum ada akun Guru terdaftar. Tambahkan dulu di menu User (peran Guru).</p>
+                <p className="text-xs text-red-500 mt-1">{t('kelompokMagang', 'warningNoGuru')}</p>
               )}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Periode Mulai</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kelompokMagang', 'labelPeriodeMulai')}</label>
               <input required type="date" value={form.periodeMulai} onChange={set('periodeMulai')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Periode Selesai</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kelompokMagang', 'labelPeriodeSelesai')}</label>
               <input required type="date" value={form.periodeSelesai} onChange={set('periodeSelesai')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kelompokMagang', 'labelStatus')}</label>
             <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="Aktif">Aktif</option>
-              <option value="Selesai">Selesai</option>
+              <option value="Aktif">{t('kelompokMagang', 'optionAktif')}</option>
+              <option value="Selesai">{t('kelompokMagang', 'optionSelesai')}</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Anggota Siswa</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">{t('kelompokMagang', 'labelAnggotaSiswa')}</label>
             <div className="max-h-48 overflow-y-auto border border-gray-200 dark:border-slate-700 rounded-lg divide-y divide-gray-100 dark:divide-slate-800">
               {siswa.map((s) => (
                 <label key={s.id} className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer">
@@ -188,10 +190,10 @@ const KelompokMagang = () => {
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-              Batal
+              {t('common', 'cancel')}
             </button>
             <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
-              {editingId ? 'Simpan Perubahan' : 'Tambah Kelompok'}
+              {editingId ? t('common', 'saveChanges') : t('kelompokMagang', 'btnTambah')}
             </button>
           </div>
         </form>
@@ -201,8 +203,8 @@ const KelompokMagang = () => {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteTarget && removeItem('kelompokMagang', deleteTarget.id)}
-        title="Hapus Kelompok Magang"
-        message={`Yakin ingin menghapus "${deleteTarget?.nama}"?`}
+        title={t('kelompokMagang', 'deleteTitle')}
+        message={t('kelompokMagang', 'deleteMessage')(deleteTarget?.nama)}
       />
     </div>
   );

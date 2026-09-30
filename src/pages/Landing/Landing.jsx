@@ -382,7 +382,7 @@ const Landing = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0"
-            aria-label="Kunjungi website resmi SMKS Rajasa Surabaya"
+            aria-label={t('landing', 'studiKasusLink')}
           >
             <img
               src="/logo-rajasa-192.png"

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Save, UserRound } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { findById } from '../../utils/scope';
 
 // User Profiling — siswa melengkapi profil terstruktur (pendidikan, pengalaman,
@@ -11,6 +12,7 @@ import { findById } from '../../utils/scope';
 const Profil = () => {
   const { siswa, updateItem } = useData();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const data = findById(siswa, user.linkedId);
 
   const [form, setForm] = useState({
@@ -24,7 +26,7 @@ const Profil = () => {
   const [saved, setSaved] = useState(false);
 
   if (!data) {
-    return <div className="max-w-3xl mx-auto text-sm text-gray-500 dark:text-slate-400">Data siswa tidak ditemukan.</div>;
+    return <div className="max-w-3xl mx-auto text-sm text-gray-500 dark:text-slate-400">{t('profil', 'dataTidakDitemukan')}</div>;
   }
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -52,8 +54,8 @@ const Profil = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div>
-        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Profil Saya</h1>
-        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Lengkapi profil ini supaya rekomendasi perusahaan lebih akurat.</p>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('profil', 'pageTitle')}</h1>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">{t('profil', 'pageDesc')}</p>
       </div>
 
       {/* Data dasar — dikelola Administrator/Petugas, ditampilkan read-only */}
@@ -64,35 +66,35 @@ const Profil = () => {
           </div>
           <div>
             <h3 className="font-semibold text-gray-800 dark:text-slate-100">{data.nama}</h3>
-            <p className="text-xs text-gray-400 dark:text-slate-500">NISN {data.nisn} · {data.kelas} · Jurusan {data.jurusan}</p>
+            <p className="text-xs text-gray-400 dark:text-slate-500">{t('profil', 'dataDasarInfo')(data.nisn, data.kelas, data.jurusan)}</p>
           </div>
         </div>
         <p className="text-xs text-gray-400 dark:text-slate-500">
-          Data dasar (nama, kelas, jurusan, kontak) dikelola oleh Administrator/Petugas. Hubungi mereka bila ada perubahan.
+          {t('profil', 'dataDasarNote')}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Pendidikan</label>
-            <input value={form.pendidikan} onChange={set('pendidikan')} placeholder="mis. SMK Kelas XI — Rekayasa Perangkat Lunak" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('profil', 'labelPendidikan')}</label>
+            <input value={form.pendidikan} onChange={set('pendidikan')} placeholder={t('profil', 'placeholderPendidikan')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Preferensi (lokasi, jenis pekerjaan, dsb.)</label>
-            <input value={form.preferensi} onChange={set('preferensi')} placeholder="mis. Lokasi Surabaya, jenis pekerjaan Web Developer" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('profil', 'labelPreferensi')}</label>
+            <input value={form.preferensi} onChange={set('preferensi')} placeholder={t('profil', 'placeholderPreferensi')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Portofolio (opsional, tautan)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('profil', 'labelPortofolio')}</label>
             <input value={form.portofolio} onChange={set('portofolio')} placeholder="https://..." className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6">
           <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">Minat</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">{t('profil', 'labelMinat')}</label>
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
             {form.minat.map((m, i) => (
@@ -103,31 +105,31 @@ const Profil = () => {
                 </button>
               </span>
             ))}
-            {form.minat.length === 0 && <p className="text-xs text-gray-400 dark:text-slate-500">Belum ada minat ditambahkan.</p>}
+            {form.minat.length === 0 && <p className="text-xs text-gray-400 dark:text-slate-500">{t('profil', 'belumAdaMinat')}</p>}
           </div>
           <div className="flex gap-2">
             <input
               value={minatBaru}
               onChange={(e) => setMinatBaru(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addMinat(); } }}
-              placeholder="mis. Pemrograman Web"
+              placeholder={t('profil', 'placeholderMinatBaru')}
               className="flex-1 px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button type="button" onClick={addMinat} className="px-3 py-2 rounded-lg text-sm font-medium text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition">
-              Tambah
+              {t('profil', 'btnTambah')}
             </button>
           </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6">
           <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">Pengalaman</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">{t('profil', 'labelPengalaman')}</label>
             <button type="button" onClick={addPengalaman} className="flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-500/20 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition">
               <Plus size={12} />
-              Tambah Pengalaman
+              {t('profil', 'btnTambahPengalaman')}
             </button>
           </div>
-          {form.pengalaman.length === 0 && <p className="text-xs text-gray-400 dark:text-slate-500">Belum ada pengalaman ditambahkan.</p>}
+          {form.pengalaman.length === 0 && <p className="text-xs text-gray-400 dark:text-slate-500">{t('profil', 'belumAdaPengalaman')}</p>}
           <div className="space-y-3">
             {form.pengalaman.map((p, i) => (
               <div key={i} className="border border-gray-100 dark:border-slate-800 rounded-lg p-3 relative">
@@ -137,13 +139,13 @@ const Profil = () => {
                 <input
                   value={p.judul}
                   onChange={(e) => updatePengalaman(i, 'judul', e.target.value)}
-                  placeholder="Judul pengalaman"
+                  placeholder={t('profil', 'placeholderJudulPengalaman')}
                   className="w-full px-3 py-1.5 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm font-medium mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <textarea
                   value={p.deskripsi}
                   onChange={(e) => updatePengalaman(i, 'deskripsi', e.target.value)}
-                  placeholder="Deskripsi singkat"
+                  placeholder={t('profil', 'placeholderDeskripsiPengalaman')}
                   rows={2}
                   className="w-full px-3 py-1.5 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -155,9 +157,9 @@ const Profil = () => {
         <div className="flex items-center gap-3">
           <button type="submit" className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
             <Save size={16} />
-            Simpan Profil
+            {t('profil', 'btnSimpanProfil')}
           </button>
-          {saved && <span className="text-sm text-green-600 dark:text-green-400 font-medium">Tersimpan.</span>}
+          {saved && <span className="text-sm text-green-600 dark:text-green-400 font-medium">{t('profil', 'tersimpan')}</span>}
         </div>
       </form>
     </div>

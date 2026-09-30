@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Sparkles, ChevronDown, Building2, MapPin } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { findById } from '../../utils/scope';
 import { apiFetch, ApiError } from '../../config/api';
 import Badge from '../../components/ui/Badge';
@@ -16,6 +17,7 @@ import EmptyState from '../../components/ui/EmptyState';
 const Recommendation = () => {
   const { siswa, kompetensi } = useData();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const data = findById(siswa, user.linkedId);
   const [expanded, setExpanded] = useState(null);
   const [hasil, setHasil] = useState([]);
@@ -30,14 +32,14 @@ const Recommendation = () => {
     setLoadingHasil(true);
     apiFetch(`/api/recommendation/${user.linkedId}`)
       .then((data2) => setHasil(data2))
-      .catch((err) => setError(err instanceof ApiError ? err.message : 'Gagal memuat rekomendasi.'))
+      .catch((err) => setError(err instanceof ApiError ? err.message : t('recommendation', 'errorFallback')))
       .finally(() => setLoadingHasil(false));
-  }, [user.linkedId]);
+  }, [user.linkedId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const profilKurangLengkap = data && (!data.jurusan || (data.minat || []).length === 0 || kompetensi.filter((k) => k.siswaId === data.id).length === 0);
 
   if (!data) {
-    return <div className="max-w-4xl mx-auto text-sm text-gray-500 dark:text-slate-400">Data siswa tidak ditemukan.</div>;
+    return <div className="max-w-4xl mx-auto text-sm text-gray-500 dark:text-slate-400">{t('recommendation', 'dataTidakDitemukan')}</div>;
   }
 
   return (
@@ -45,27 +47,27 @@ const Recommendation = () => {
       <div>
         <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
           <Sparkles size={20} className="text-blue-600" />
-          Rekomendasi Perusahaan
+          {t('recommendation', 'pageTitle')}
         </h1>
         <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
-          Diurutkan berdasarkan Match Score — hasil pencocokan profil, kompetensi, jurusan, minat, dan preferensimu dengan kebutuhan tiap perusahaan.
+          {t('recommendation', 'pageDesc')}
         </p>
       </div>
 
       {profilKurangLengkap && (
         <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 text-amber-700 dark:text-amber-300 text-sm rounded-lg px-4 py-3">
-          Profil & kompetensimu belum lengkap sepenuhnya — lengkapi di halaman <span className="font-semibold">Profil</span> dan{' '}
-          <span className="font-semibold">Kompetensi</span> supaya Match Score lebih akurat.
+          {t('recommendation', 'warningProfilPrefix')} <span className="font-semibold">{t('recommendation', 'profilLinkLabel')}</span> {t('recommendation', 'warningProfilAnd')}{' '}
+          <span className="font-semibold">{t('recommendation', 'kompetensiLinkLabel')}</span> {t('recommendation', 'warningProfilSuffix')}
         </div>
       )}
 
       {loadingHasil ? (
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-8 text-center text-sm text-gray-400 dark:text-slate-500">Menghitung rekomendasi...</div>
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-8 text-center text-sm text-gray-400 dark:text-slate-500">{t('recommendation', 'loadingText')}</div>
       ) : error ? (
         <div className="bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm rounded-lg px-4 py-3">{error}</div>
       ) : hasil.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
-          <EmptyState icon={<Building2 size={28} />} title="Belum ada perusahaan aktif untuk dicocokkan" />
+          <EmptyState icon={<Building2 size={28} />} title={t('recommendation', 'emptyTitle')} />
         </div>
       ) : (
         <div className="space-y-3">

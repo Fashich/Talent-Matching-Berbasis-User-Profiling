@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Plus, NotebookPen, MessageSquareText, Trash2 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { scopedPenempatan, findById } from '../../utils/scope';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -13,6 +14,7 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 const Jurnal = () => {
   const { siswa, jurnal, penempatan, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const isSiswa = user?.role === 'Siswa';
   const isAdmin = user?.role === 'Administrator';
 
@@ -66,15 +68,15 @@ const Jurnal = () => {
     <div className="max-w-5xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Jurnal Harian PKL</h1>
+          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('jurnal', 'pageTitle')}</h1>
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
-            {isSiswa ? 'Catat kegiatan harian selama PKL berlangsung.' : 'Pantau & tinjau jurnal kegiatan harian seluruh siswa.'}
+            {isSiswa ? t('jurnal', 'descSiswa') : t('jurnal', 'descLainnya')}
           </p>
         </div>
         <div className="flex items-center gap-3">
           {!isSiswa && siswaOptions.length > 0 && (
             <select value={siswaFilter} onChange={(e) => setSiswaFilter(e.target.value)} className="px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900">
-              <option value="Semua">Semua Siswa</option>
+              <option value="Semua">{t('jurnal', 'filterSemuaSiswa')}</option>
               {siswaOptions.map((s) => <option key={s.id} value={s.id}>{s.nama}</option>)}
             </select>
           )}
@@ -83,10 +85,10 @@ const Jurnal = () => {
               onClick={() => setAddOpen(true)}
               disabled={!myActivePenempatan}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
-              title={!myActivePenempatan ? 'Kamu belum memiliki penempatan PKL' : undefined}
+              title={!myActivePenempatan ? t('jurnal', 'tooltipBelumPenempatan') : undefined}
             >
               <Plus size={16} />
-              Tulis Jurnal Hari Ini
+              {t('jurnal', 'btnTulisJurnal')}
             </button>
           )}
         </div>
@@ -94,14 +96,14 @@ const Jurnal = () => {
 
       {isSiswa && !myActivePenempatan && (
         <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 text-amber-700 dark:text-amber-300 text-sm rounded-lg px-4 py-3">
-          Kamu belum memiliki data penempatan PKL, sehingga belum bisa mengisi jurnal harian.
+          {t('jurnal', 'warningBelumPenempatan')}
         </div>
       )}
 
       <div className="space-y-3">
         {list.length === 0 ? (
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
-            <EmptyState icon={<NotebookPen size={28} />} title="Belum ada jurnal" description="Jurnal kegiatan harian akan muncul di sini." />
+            <EmptyState icon={<NotebookPen size={28} />} title={t('jurnal', 'emptyTitle')} description={t('jurnal', 'emptyDesc')} />
           </div>
         ) : (
           list.map((j) => {
@@ -118,25 +120,25 @@ const Jurnal = () => {
                 <p className="text-sm text-gray-700 dark:text-slate-300 mt-3 whitespace-pre-line">{j.kegiatan}</p>
                 {j.kendala && (
                   <p className="text-xs text-gray-500 dark:text-slate-400 mt-2">
-                    <span className="font-medium text-gray-600 dark:text-slate-400">Kendala: </span>{j.kendala}
+                    <span className="font-medium text-gray-600 dark:text-slate-400">{t('jurnal', 'kendalaLabel')} </span>{j.kendala}
                   </p>
                 )}
                 {j.catatanPembimbing && (
                   <div className="mt-3 bg-gray-50 dark:bg-slate-800 rounded-lg px-3 py-2 text-xs text-gray-600 dark:text-slate-400 flex gap-2">
                     <MessageSquareText size={14} className="shrink-0 mt-0.5 text-gray-400 dark:text-slate-500" />
-                    <span><span className="font-medium">Catatan pembimbing: </span>{j.catatanPembimbing}</span>
+                    <span><span className="font-medium">{t('jurnal', 'catatanPembimbingLabel')} </span>{j.catatanPembimbing}</span>
                   </div>
                 )}
                 <div className="mt-4 flex items-center gap-2">
                   {isAdmin && (
                     <button onClick={() => openReview(j)} className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-500/20 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition">
-                      Tinjau Jurnal
+                      {t('jurnal', 'btnTinjau')}
                     </button>
                   )}
                   {isAdmin && (
                     <button onClick={() => setDeleteTarget(j)} className="text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-500/20 hover:bg-red-50 dark:hover:bg-red-500/10 transition flex items-center gap-1">
                       <Trash2 size={12} />
-                      Hapus
+                      {t('common', 'delete')}
                     </button>
                   )}
                 </div>
@@ -146,45 +148,45 @@ const Jurnal = () => {
         )}
       </div>
 
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Tulis Jurnal Harian">
+      <Modal open={addOpen} onClose={() => setAddOpen(false)} title={t('jurnal', 'modalTulisTitle')}>
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tanggal</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('jurnal', 'labelTanggal')}</label>
             <input required type="date" value={form.tanggal} onChange={(e) => setForm((f) => ({ ...f, tanggal: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kegiatan yang Dilakukan</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('jurnal', 'labelKegiatan')}</label>
             <textarea required rows={4} value={form.kegiatan} onChange={(e) => setForm((f) => ({ ...f, kegiatan: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kendala (opsional)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('jurnal', 'labelKendalaOpsional')}</label>
             <textarea rows={2} value={form.kendala} onChange={(e) => setForm((f) => ({ ...f, kendala: e.target.value }))} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setAddOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-              Batal
+              {t('common', 'cancel')}
             </button>
             <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
-              Simpan Jurnal
+              {t('jurnal', 'btnSimpanJurnal')}
             </button>
           </div>
         </form>
       </Modal>
 
-      <Modal open={!!reviewTarget} onClose={() => setReviewTarget(null)} title="Tinjau Jurnal Harian">
+      <Modal open={!!reviewTarget} onClose={() => setReviewTarget(null)} title={t('jurnal', 'modalTinjauTitle')}>
         {reviewTarget && (
           <div className="space-y-4">
             <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-3 text-sm text-gray-700 dark:text-slate-300">{reviewTarget.kegiatan}</div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Catatan Pembimbing</label>
-              <textarea rows={3} value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Tulis masukan untuk siswa..." />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('jurnal', 'labelCatatanPembimbing')}</label>
+              <textarea rows={3} value={reviewNote} onChange={(e) => setReviewNote(e.target.value)} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder={t('jurnal', 'placeholderCatatanPembimbing')} />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <button onClick={() => submitReview('Revisi')} className="px-4 py-2 rounded-lg text-sm font-medium text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 transition">
-                Minta Revisi
+                {t('jurnal', 'btnMintaRevisi')}
               </button>
               <button onClick={() => submitReview('Disetujui')} className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition">
-                Setujui
+                {t('jurnal', 'btnSetujui')}
               </button>
             </div>
           </div>
@@ -195,8 +197,8 @@ const Jurnal = () => {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteTarget && removeItem('jurnal', deleteTarget.id)}
-        title="Hapus Jurnal"
-        message="Yakin ingin menghapus entri jurnal ini?"
+        title={t('jurnal', 'deleteTitle')}
+        message={t('jurnal', 'deleteMessage')}
       />
     </div>
   );

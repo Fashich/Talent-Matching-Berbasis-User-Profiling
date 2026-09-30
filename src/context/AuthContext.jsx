@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { apiFetch, ApiError, getToken, setToken } from '../config/api';
 import { useConnection } from './ConnectionContext';
+import { useLanguage } from './LanguageContext';
 
 // v3: login sungguhan ke backend PHP (username + password), bukan lagi mock
 // username-only. Token disimpan di localStorage (lihat src/config/api.js),
@@ -26,6 +27,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const { online } = useConnection();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!getToken()) {
@@ -72,7 +74,7 @@ export function AuthProvider({ children }) {
       setUser(toFrontendUser(data.user));
       return { ok: true };
     } catch (err) {
-      return { ok: false, message: err instanceof ApiError ? err.message : 'Login gagal, coba lagi.' };
+      return { ok: false, message: err instanceof ApiError ? err.message : t('errors', 'loginFailed') };
     }
   };
 
