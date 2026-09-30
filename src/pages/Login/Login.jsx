@@ -3,6 +3,8 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff, AlertCircle, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../../components/ThemeToggle';
+import LanguageToggle from '../../components/LanguageToggle';
+import { useLanguage } from '../../context/LanguageContext';
 import { buildWhatsAppLink } from '../../config/contact';
 
 // Login — redesign hifi (design_handoff_landing_login/README.md §Screen 2).
@@ -16,6 +18,7 @@ const DEMO_ACCOUNTS = [
 ];
 
 const Login = () => {
+  const { t } = useLanguage();
   const { user, loading, login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +39,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username.trim() || !password) {
-      setError('Username dan password wajib diisi.');
+      setError(t('login', 'errorRequired'));
       return;
     }
     setSubmitting(true);
@@ -69,7 +72,10 @@ const Login = () => {
       className="min-h-screen flex items-center justify-center p-5 relative transition-[background] duration-[0.4s]"
       style={{ background: 'var(--lp-page-bg)' }}
     >
-      <ThemeToggle size={46} className="fixed top-[18px] right-[18px] z-40" />
+      <div className="fixed top-[18px] right-[18px] z-40 flex items-center gap-2">
+        <LanguageToggle size={46} />
+        <ThemeToggle size={46} />
+      </div>
 
       <div
         className="w-full max-w-[920px] rounded-[22px] overflow-hidden grid grid-cols-1 min-[760px]:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] border"
@@ -111,18 +117,17 @@ const Login = () => {
               </span>
             </div>
             <h1 className="font-[Sora,sans-serif] text-[1.65rem] font-bold leading-[1.28] tracking-[-0.01em] mb-3.5" style={{ color: 'var(--lp-text-primary)' }}>
-              Talent Matching berbasis{' '}
+              {t('login', 'brandTitlePrefix')}{' '}
               <span
                 className="bg-clip-text text-transparent"
                 style={{ backgroundImage: 'var(--lp-accent-gradient)' }}
               >
-                User Profiling
+                {t('login', 'brandTitleHighlight')}
               </span>{' '}
-              untuk PKL siswa SMK.
+              {t('login', 'brandTitleSuffix')}
             </h1>
             <p className="text-[0.9rem] leading-[1.7] mb-[30px]" style={{ color: 'var(--lp-text-muted)' }}>
-              Profil &amp; kompetensi siswa dicocokkan otomatis dengan kebutuhan perusahaan —
-              menghasilkan Match Score dan rekomendasi penempatan PKL yang paling sesuai.
+              {t('login', 'brandDesc')}
             </p>
 
             <div style={{ perspective: '1200px' }} onMouseMove={handleCardMove} onMouseLeave={handleCardLeave}>
@@ -161,18 +166,18 @@ const Login = () => {
                 </span>
                 <span className="block">
                   <span className="flex items-center gap-1.5 font-bold text-[0.85rem] mb-0.5" style={{ color: 'var(--lp-text-primary)' }}>
-                    Hubungi Admin
+                    {t('login', 'whatsappTitle')}
                     <ArrowRight size={13} strokeWidth={2.6} color="#25D366" />
                   </span>
                   <span className="block text-[0.72rem] leading-[1.5]" style={{ color: 'var(--lp-text-muted)' }}>
-                    Tidak bisa Login? Silakan hubungi Admin sekarang
+                    {t('login', 'whatsappDesc')}
                   </span>
                 </span>
               </a>
             </div>
           </div>
           <p className="text-[0.75rem] relative z-[1] mt-6" style={{ color: 'var(--lp-text-faint)' }}>
-            © {new Date().getFullYear()} EduPKL — Capstone Project
+            {t('login', 'brandCopyright')(new Date().getFullYear())}
           </p>
         </div>
 
@@ -186,16 +191,16 @@ const Login = () => {
           </div>
 
           <h2 className="font-[Sora,sans-serif] text-[1.3rem] font-bold mb-1" style={{ color: 'var(--lp-text-primary)' }}>
-            Masuk ke akun kamu
+            {t('login', 'formTitle')}
           </h2>
           <p className="text-[0.85rem] mb-[26px]" style={{ color: 'var(--lp-text-muted)' }}>
-            Masukkan username dan password akunmu.
+            {t('login', 'formDesc')}
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="block text-[0.82rem] font-semibold mb-[7px]" style={{ color: 'var(--lp-text-secondary)' }}>
-                Username
+                {t('login', 'labelUsername')}
               </label>
               <div className="relative flex items-center">
                 <User size={16} className="absolute left-[13px] pointer-events-none" style={{ color: 'var(--lp-text-muted)' }} />
@@ -206,7 +211,7 @@ const Login = () => {
                     setUsername(e.target.value);
                     setError('');
                   }}
-                  placeholder="contoh: admin"
+                  placeholder={t('login', 'placeholderUsername')}
                   autoComplete="username"
                   className="w-full box-border rounded-[11px] text-[0.9rem] outline-none focus:border-[#5B8DEF]"
                   style={{
@@ -220,7 +225,7 @@ const Login = () => {
             </div>
             <div>
               <label className="block text-[0.82rem] font-semibold mb-[7px]" style={{ color: 'var(--lp-text-secondary)' }}>
-                Password
+                {t('login', 'labelPassword')}
               </label>
               <div className="relative flex items-center">
                 <Lock size={16} className="absolute left-[13px] pointer-events-none" style={{ color: 'var(--lp-text-muted)' }} />
@@ -244,7 +249,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => setPasswordVisible((v) => !v)}
-                  aria-label="Lihat password"
+                  aria-label={t('login', 'showPasswordAriaLabel')}
                   className="absolute right-[11px] bg-transparent border-0 p-0.5 cursor-pointer flex"
                   style={{ color: 'var(--lp-text-muted)' }}
                 >
@@ -270,13 +275,13 @@ const Login = () => {
                 boxShadow: '0 12px 26px -8px rgba(91,141,239,0.5)',
               }}
             >
-              {submitting ? 'Memproses...' : 'Masuk'}
+              {submitting ? t('login', 'submitProcessing') : t('login', 'submitMasuk')}
             </button>
           </form>
 
           <div className="mt-[26px] pt-5 border-t" style={{ borderColor: 'var(--lp-card-border)' }}>
             <p className="text-[0.72rem] font-bold tracking-[0.05em] mb-2.5" style={{ color: 'var(--lp-text-muted)' }}>
-              DEMO AKUN — KHUSUS REVIEW
+              {t('login', 'demoLabel')}
             </p>
             <div className="flex gap-2 flex-wrap">
               {DEMO_ACCOUNTS.map((account) => (

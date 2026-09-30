@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import { ConnectionProvider } from './context/ConnectionContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import RootGate from './components/RootGate';
 import LostSignal from './components/LostSignal';
@@ -26,6 +27,7 @@ import Pengaturan from './pages/Pengaturan/Pengaturan';
 function App() {
   return (
     <ThemeProvider>
+    <LanguageProvider>
     <ConnectionProvider>
       <AuthProvider>
         <DataProvider>
@@ -128,6 +130,7 @@ function App() {
         </DataProvider>
       </AuthProvider>
     </ConnectionProvider>
+    </LanguageProvider>
     </ThemeProvider>
   );
 }

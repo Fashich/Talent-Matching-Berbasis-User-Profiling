@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Users, Building2, Sparkles, FileText, ArrowRight, Menu } from 'lucide-react';
 import SchoolScene from '../../components/SchoolScene/SchoolScene';
 import ThemeToggle from '../../components/ThemeToggle';
+import LanguageToggle from '../../components/LanguageToggle';
+import { useLanguage } from '../../context/LanguageContext';
 import { API_BASE_URL } from '../../config/api';
 
 // Landing Page — redesign hifi (lihat design_handoff_landing_login/README.md).
@@ -11,39 +13,16 @@ import { API_BASE_URL } from '../../config/api';
 // pengunjung publik yang belum login, halaman ini harus tetap bisa dilihat
 // walau backend sedang mati; kalau fetch gagal, section angka disembunyikan
 // saja, TIDAK fallback ke angka fabrikasi).
+//
+// Teks (judul/deskripsi) diambil dari src/i18n/translations.js via t() —
+// hanya ikon & warna box yang tetap konstan di sini, supaya translations.js
+// jadi satu-satunya sumber kebenaran untuk copy ID/EN.
 
-const FEATURES = [
-  {
-    icon: Users,
-    iconBox: 'blue',
-    title: 'User & Competency Profiling',
-    desc: 'Siswa melengkapi profil, pengalaman, minat, dan kompetensi sebagai dasar pencocokan.',
-  },
-  {
-    icon: Building2,
-    iconBox: 'cyan',
-    title: 'Company Requirement',
-    desc: 'Perusahaan mitra mendaftarkan lowongan beserta kompetensi & jurusan yang dibutuhkan.',
-  },
-  {
-    icon: Sparkles,
-    iconBox: 'blue',
-    title: 'Talent Matching & Rekomendasi',
-    desc: 'Match Score dihitung otomatis dari profil siswa vs kebutuhan perusahaan — rekomendasi terurut secara real-time.',
-  },
-  {
-    icon: FileText,
-    iconBox: 'cyan',
-    title: 'Jurnal & Pemantauan PKL',
-    desc: 'Jurnal harian, kelompok magang, dan status penempatan terpantau dalam satu sistem.',
-  },
-];
-
-const STEPS = [
-  { title: 'Lengkapi Profil', desc: 'Siswa mengisi data kompetensi, minat, dan pengalaman.' },
-  { title: 'Perusahaan Daftar Kebutuhan', desc: 'Mitra mengajukan kebutuhan kompetensi & jurusan.' },
-  { title: 'Sistem Menghitung Match Score', desc: 'Rekomendasi terurut otomatis dari skor tertinggi.' },
-  { title: 'Penempatan & Pemantauan', desc: 'Jurnal harian & status PKL terpantau sampai selesai.' },
+const FEATURE_ICONS = [
+  { icon: Users, iconBox: 'blue' },
+  { icon: Building2, iconBox: 'cyan' },
+  { icon: Sparkles, iconBox: 'blue' },
+  { icon: FileText, iconBox: 'cyan' },
 ];
 
 function scrollToId(id) {
@@ -58,6 +37,9 @@ function scrollToId(id) {
 const MOBILE_QUERY = '(max-width: 859px)';
 
 const Landing = () => {
+  const { t } = useLanguage();
+  const FEATURES = t('landing', 'features').map((f, i) => ({ ...f, ...FEATURE_ICONS[i] }));
+  const STEPS = t('landing', 'steps');
   const [navOpen, setNavOpen] = useState(false);
   const [stats, setStats] = useState(null);
   const [counts, setCounts] = useState([0, 0, 0, 0]);
@@ -153,7 +135,7 @@ const Landing = () => {
                 className="text-[0.9rem] font-medium whitespace-nowrap"
                 style={{ color: 'var(--lp-text-secondary)' }}
               >
-                Fitur
+                {t('landing', 'navFitur')}
               </a>
               <a
                 href="#cara-kerja"
@@ -161,24 +143,25 @@ const Landing = () => {
                 className="text-[0.9rem] font-medium whitespace-nowrap"
                 style={{ color: 'var(--lp-text-secondary)' }}
               >
-                Cara Kerja
+                {t('landing', 'navCaraKerja')}
               </a>
               <Link
                 to="/login"
                 className="inline-flex items-center gap-1.5 px-[18px] py-[9px] rounded-[10px] text-[0.88rem] font-bold whitespace-nowrap text-[#04060c]"
                 style={{ backgroundImage: 'var(--lp-accent-gradient)' }}
               >
-                Masuk
+                {t('landing', 'navMasuk')}
                 <ArrowRight size={15} strokeWidth={2.4} />
               </Link>
             </div>
 
+            <LanguageToggle size={38} />
             <ThemeToggle size={38} />
 
             <button
               type="button"
               onClick={() => setNavOpen((v) => !v)}
-              aria-label="Menu"
+              aria-label={t('landing', 'menuAriaLabel')}
               className="min-[860px]:hidden inline-flex items-center justify-center w-[38px] h-[38px] rounded-[9px] border shrink-0"
               style={{ background: 'var(--lp-ghost-btn-bg)', borderColor: 'var(--lp-ghost-btn-border)', color: 'var(--lp-text-primary)' }}
             >
@@ -201,7 +184,7 @@ const Landing = () => {
               className="text-[0.95rem] font-medium"
               style={{ color: 'var(--lp-text-secondary)' }}
             >
-              Fitur
+              {t('landing', 'navFitur')}
             </a>
             <a
               href="#cara-kerja"
@@ -212,14 +195,14 @@ const Landing = () => {
               className="text-[0.95rem] font-medium"
               style={{ color: 'var(--lp-text-secondary)' }}
             >
-              Cara Kerja
+              {t('landing', 'navCaraKerja')}
             </a>
             <Link
               to="/login"
               className="text-center px-[18px] py-2.5 rounded-[10px] text-[0.9rem] font-bold text-[#04060c]"
               style={{ backgroundImage: 'var(--lp-accent-gradient)' }}
             >
-              Masuk ke Sistem
+              {t('landing', 'navMasukKeSistem')}
             </Link>
           </div>
         )}
@@ -256,21 +239,19 @@ const Landing = () => {
               className="lp-pulse-dot w-1.5 h-1.5 rounded-full"
               style={{ background: '#35C4C9', animation: 'lp-pulse-dot 1.8s ease-in-out infinite' }}
             />
-            SMKS RAJASA SURABAYA &middot; CAPSTONE PROJECT
+            {t('landing', 'heroPill')}
           </div>
           <h1 className="font-[Sora,sans-serif] font-extrabold leading-[1.08] tracking-[-0.02em] mb-[22px] text-[clamp(2.2rem,5vw,3.6rem)]">
-            Talent Matching berbasis{' '}
+            {t('landing', 'heroTitlePrefix')}{' '}
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: 'var(--lp-accent-gradient)' }}
             >
-              User Profiling
+              {t('landing', 'heroTitleHighlight')}
             </span>
           </h1>
           <p className="text-[1.05rem] leading-[1.7] mb-[34px] max-w-[520px]" style={{ color: 'var(--lp-text-muted)' }}>
-            Mencocokkan profil &amp; kompetensi siswa PKL dengan kebutuhan perusahaan mitra secara
-            otomatis — Match Score real-time, jurnal harian, dan rekomendasi penempatan dalam satu
-            sistem terpadu.
+            {t('landing', 'heroDesc')}
           </p>
           <div className="flex gap-3.5 flex-wrap">
             <Link
@@ -278,7 +259,7 @@ const Landing = () => {
               className="inline-flex items-center gap-2 px-[26px] py-3.5 rounded-xl text-[0.95rem] font-bold text-[#04060c]"
               style={{ backgroundImage: 'var(--lp-accent-gradient)', boxShadow: '0 12px 30px -8px rgba(91,141,239,0.55)' }}
             >
-              Masuk ke Sistem
+              {t('landing', 'ctaMasukKeSistem')}
               <ArrowRight size={17} strokeWidth={2.4} />
             </Link>
             <a
@@ -287,7 +268,7 @@ const Landing = () => {
               className="inline-flex items-center gap-2 px-[26px] py-3.5 rounded-xl text-[0.95rem] font-semibold border"
               style={{ background: 'var(--lp-ghost-btn-bg)', borderColor: 'var(--lp-ghost-btn-border)', color: 'var(--lp-text-primary)' }}
             >
-              Cara Kerja
+              {t('landing', 'ctaCaraKerja')}
             </a>
           </div>
         </div>
@@ -307,10 +288,10 @@ const Landing = () => {
               style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', borderColor: 'var(--lp-stats-divider)' }}
             >
               {[
-                [counts[0], 'Siswa Terdaftar', '+'],
-                [counts[1], 'Perusahaan Mitra', '+'],
-                [counts[2], 'Program Keahlian', ''],
-                [counts[3], 'Sistem Terpadu', ''],
+                [counts[0], t('landing', 'statSiswa'), '+'],
+                [counts[1], t('landing', 'statPerusahaan'), '+'],
+                [counts[2], t('landing', 'statProgram'), ''],
+                [counts[3], t('landing', 'statSistem'), ''],
               ].map(([value, label, suffix]) => (
                 <div key={label} className="text-center">
                   <div
@@ -333,10 +314,10 @@ const Landing = () => {
       <section id="fitur" className="max-w-[1180px] mx-auto px-6 pt-5 pb-[76px] relative z-[1]">
         <div className="text-center max-w-[560px] mx-auto mb-11">
           <div className="text-[0.76rem] font-bold tracking-[0.08em] mb-2.5" style={{ color: '#35C4C9' }}>
-            FITUR UTAMA
+            {t('landing', 'fiturEyebrow')}
           </div>
           <h2 className="font-[Sora,sans-serif] font-extrabold tracking-[-0.01em] text-[clamp(1.6rem,3vw,2.2rem)]">
-            Satu sistem, seluruh siklus PKL
+            {t('landing', 'fiturTitle')}
           </h2>
         </div>
         <div className="grid gap-[18px]" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
@@ -367,10 +348,10 @@ const Landing = () => {
       <section id="cara-kerja" className="max-w-[1180px] mx-auto px-6 pt-5 pb-[90px] relative z-[1]">
         <div className="text-center max-w-[560px] mx-auto mb-12">
           <div className="text-[0.76rem] font-bold tracking-[0.08em] mb-2.5" style={{ color: '#35C4C9' }}>
-            CARA KERJA
+            {t('landing', 'caraKerjaEyebrow')}
           </div>
           <h2 className="font-[Sora,sans-serif] font-extrabold tracking-[-0.01em] text-[clamp(1.6rem,3vw,2.2rem)]">
-            Dari profil siswa ke penempatan, dalam 4 langkah
+            {t('landing', 'caraKerjaTitle')}
           </h2>
         </div>
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
@@ -411,10 +392,10 @@ const Landing = () => {
           </a>
           <div>
             <div className="text-[0.76rem] font-bold tracking-[0.08em] mb-2.5" style={{ color: '#35C4C9' }}>
-              STUDI KASUS
+              {t('landing', 'studiKasusEyebrow')}
             </div>
             <h2 className="font-[Sora,sans-serif] font-extrabold tracking-[-0.01em] text-[clamp(1.4rem,2.6vw,1.9rem)] mb-3">
-              Dikembangkan sebagai Studi Kasus untuk{' '}
+              {t('landing', 'studiKasusTitlePrefix')}{' '}
               <a
                 href="https://smkrajasa.sch.id/"
                 target="_blank"
@@ -425,10 +406,7 @@ const Landing = () => {
               </a>
             </h2>
             <p className="text-[0.9rem] leading-[1.7] max-w-[680px]" style={{ color: 'var(--lp-text-muted)' }}>
-              EduPKL dirancang dan dikembangkan oleh Kelompok 1 Capstone Program Studi S1 Sistem Informasi
-              Unesa, menjadikan alur penempatan PKL di SMKS Rajasa Surabaya sebagai studi kasus penelitian.
-              Sistem dikembangkan secara independen melalui observasi dan wawancara langsung dengan pihak
-              sekolah, atas izin SMKS Rajasa Surabaya.
+              {t('landing', 'studiKasusDesc')}
             </p>
             <a
               href="https://smkrajasa.sch.id/"
@@ -437,7 +415,7 @@ const Landing = () => {
               className="inline-flex items-center gap-1.5 mt-4 text-[0.85rem] font-bold underline-offset-2 hover:underline"
               style={{ color: '#35C4C9' }}
             >
-              Kunjungi Website Resmi SMKS Rajasa Surabaya
+              {t('landing', 'studiKasusLink')}
               <ArrowRight size={14} strokeWidth={2.4} />
             </a>
           </div>
@@ -456,17 +434,17 @@ const Landing = () => {
               className="text-[0.78rem] font-medium underline-offset-2 hover:underline"
               style={{ color: 'var(--lp-text-muted)' }}
             >
-              Syarat & Ketentuan
+              {t('landing', 'footerTerms')}
             </Link>
             <Link
               to="/privacy"
               className="text-[0.78rem] font-medium underline-offset-2 hover:underline"
               style={{ color: 'var(--lp-text-muted)' }}
             >
-              Kebijakan Privasi
+              {t('landing', 'footerPrivacy')}
             </Link>
             <p className="text-[0.78rem]" style={{ color: 'var(--lp-text-muted)' }}>
-              © {new Date().getFullYear()} EduPKL — Capstone Project, Prodi Sistem Informasi, Unesa.
+              {t('landing', 'footerCopyright')(new Date().getFullYear())}
             </p>
           </div>
         </div>
