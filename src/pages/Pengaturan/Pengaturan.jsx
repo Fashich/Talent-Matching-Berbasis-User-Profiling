@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Save, RotateCcw } from 'lucide-react';
 import { useData } from '../../context/DataContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Pengaturan = () => {
   const { settings, updateSettings, resetToSeed } = useData();
+  const { t } = useLanguage();
   const [form, setForm] = useState(settings);
   const [saved, setSaved] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
@@ -25,40 +27,40 @@ const Pengaturan = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div>
-        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Pengaturan</h1>
-        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Informasi sekolah & periode PKL yang dipakai di seluruh sistem (termasuk sertifikat).</p>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('pengaturan', 'pageTitle')}</h1>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">{t('pengaturan', 'pageDesc')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nama Sekolah</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('pengaturan', 'labelNamaSekolah')}</label>
           <input value={form.namaSekolah} onChange={set('namaSekolah')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">NPSN</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('pengaturan', 'labelNpsn')}</label>
             <input value={form.npsn} onChange={set('npsn')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tahun Ajaran</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('pengaturan', 'labelTahunAjaran')}</label>
             <input value={form.tahunAjaran} onChange={set('tahunAjaran')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Alamat Sekolah</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('pengaturan', 'labelAlamatSekolah')}</label>
           <input value={form.alamatSekolah} onChange={set('alamatSekolah')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kepala Sekolah</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('pengaturan', 'labelKepalaSekolah')}</label>
           <input value={form.kepalaSekolah} onChange={set('kepalaSekolah')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Periode PKL Mulai</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('pengaturan', 'labelPeriodeMulai')}</label>
             <input type="date" value={form.periodePklMulai} onChange={set('periodePklMulai')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Periode PKL Selesai</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('pengaturan', 'labelPeriodeSelesai')}</label>
             <input type="date" value={form.periodePklSelesai} onChange={set('periodePklSelesai')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
@@ -66,27 +68,27 @@ const Pengaturan = () => {
         <div className="flex items-center gap-3 pt-2">
           <button type="submit" className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition">
             <Save size={16} />
-            Simpan Pengaturan
+            {t('pengaturan', 'btnSimpanPengaturan')}
           </button>
-          {saved && <span className="text-sm text-green-600 dark:text-green-400 font-medium">Tersimpan.</span>}
+          {saved && <span className="text-sm text-green-600 dark:text-green-400 font-medium">{t('pengaturan', 'tersimpan')}</span>}
         </div>
       </form>
 
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 p-6">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-slate-100">Reset Pengaturan</h3>
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-slate-100">{t('pengaturan', 'resetTitle')}</h3>
         <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 mb-3">
-          Mengembalikan info sekolah & periode PKL di atas ke nilai default. Ini TIDAK menghapus data siswa/perusahaan/penempatan/dst. — data operasional itu sekarang tersimpan di database (bukan lagi contoh/demo), jadi tidak ikut ter-reset.
+          {t('pengaturan', 'resetDesc')}
         </p>
         {!confirmReset ? (
           <button onClick={() => setConfirmReset(true)} className="flex items-center gap-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 px-4 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition">
             <RotateCcw size={16} />
-            Reset ke Data Awal
+            {t('pengaturan', 'btnResetKeDataAwal')}
           </button>
         ) : (
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 dark:text-slate-400">Yakin? Data yang sudah diubah akan hilang.</span>
-            <button onClick={handleReset} className="text-sm font-medium text-white bg-red-600 px-3 py-1.5 rounded-lg hover:bg-red-700 transition">Ya, Reset</button>
-            <button onClick={() => setConfirmReset(false)} className="text-sm font-medium text-gray-600 dark:text-slate-400 px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition">Batal</button>
+            <span className="text-sm text-gray-600 dark:text-slate-400">{t('pengaturan', 'confirmResetText')}</span>
+            <button onClick={handleReset} className="text-sm font-medium text-white bg-red-600 px-3 py-1.5 rounded-lg hover:bg-red-700 transition">{t('pengaturan', 'btnYaReset')}</button>
+            <button onClick={() => setConfirmReset(false)} className="text-sm font-medium text-gray-600 dark:text-slate-400 px-3 py-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition">{t('common', 'cancel')}</button>
           </div>
         )}
       </div>

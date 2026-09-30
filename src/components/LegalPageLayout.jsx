@@ -2,12 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import LanguageToggle from './LanguageToggle';
+import { useLanguage } from '../context/LanguageContext';
 
 // Layout bersama untuk halaman legal (Syarat & Ketentuan, Kebijakan Privasi).
 // Sengaja dipisah dari Landing/Login supaya kontennya bisa panjang & di-scroll
 // natural, tapi tetap konsisten visual (pakai token CSS --lp-* yang sama,
 // lihat src/index.css) dan tetap punya ThemeToggle + jalan balik ke Beranda.
 const LegalPageLayout = ({ title, updatedLabel, children }) => {
+  const { t } = useLanguage();
   return (
     <div
       className="min-h-screen font-[Plus_Jakarta_Sans,system-ui,sans-serif] transition-[background,color] duration-[0.4s]"
@@ -29,8 +32,9 @@ const LegalPageLayout = ({ title, updatedLabel, children }) => {
               style={{ color: 'var(--lp-text-secondary)' }}
             >
               <ArrowLeft size={15} strokeWidth={2.4} />
-              Kembali ke Beranda
+              {t('common', 'backToHome')}
             </Link>
+            <LanguageToggle size={38} />
             <ThemeToggle size={38} />
           </div>
         </div>
@@ -43,7 +47,7 @@ const LegalPageLayout = ({ title, updatedLabel, children }) => {
           style={{ color: 'var(--lp-text-secondary)' }}
         >
           <ArrowLeft size={15} strokeWidth={2.4} />
-          Kembali ke Beranda
+          {t('common', 'backToHome')}
         </Link>
 
         <h1 className="font-[Sora,sans-serif] font-extrabold tracking-[-0.01em] text-[clamp(1.7rem,4vw,2.4rem)] mb-2">
@@ -63,7 +67,7 @@ const LegalPageLayout = ({ title, updatedLabel, children }) => {
             <span className="font-[Sora,sans-serif] font-bold text-[0.9rem]">EduPKL</span>
           </div>
           <p className="text-[0.78rem]" style={{ color: 'var(--lp-text-muted)' }}>
-            © {new Date().getFullYear()} EduPKL — Capstone Project, Prodi Sistem Informasi, Unesa.
+            {t('landing', 'footerCopyright')(new Date().getFullYear())}
           </p>
         </div>
       </footer>
@@ -86,5 +90,22 @@ export const LegalSection = ({ heading, children }) => (
     </div>
   </section>
 );
+
+// Merender array "parts" (dipakai oleh dictionary terms/privacy di
+// translations.js) menjadi elemen React — { t }: teks polos,
+// { b }: bold, { i }: italic, { a, href }: link bergaris bawah.
+export const renderParts = (parts) =>
+  parts.map((part, idx) => {
+    if (part.b !== undefined) return <strong key={idx}>{part.b}</strong>;
+    if (part.i !== undefined) return <em key={idx}>{part.i}</em>;
+    if (part.a !== undefined) {
+      return (
+        <a key={idx} href={part.href} className="underline font-semibold">
+          {part.a}
+        </a>
+      );
+    }
+    return <React.Fragment key={idx}>{part.t}</React.Fragment>;
+  });
 
 export default LegalPageLayout;

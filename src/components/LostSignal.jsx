@@ -1,6 +1,7 @@
 import React from 'react';
 import { WifiOff, RotateCw } from 'lucide-react';
 import { useConnection } from '../context/ConnectionContext';
+import { useLanguage } from '../context/LanguageContext';
 
 // Overlay full-screen "No Connection / Lost Signal" (task #18) — muncul di
 // ATAS seluruh aplikasi (di luar <Routes>, lihat App.jsx) begitu apiFetch()
@@ -8,6 +9,7 @@ import { useConnection } from '../context/ConnectionContext';
 
 const LostSignal = () => {
   const { online, checking, retry } = useConnection();
+  const { t } = useLanguage();
 
   if (online) return null;
 
@@ -17,10 +19,9 @@ const LostSignal = () => {
         <div className="w-16 h-16 rounded-2xl bg-red-500/10 text-red-400 flex items-center justify-center mx-auto mb-6">
           <WifiOff size={30} />
         </div>
-        <h1 className="text-xl font-bold mb-2">Koneksi ke Server Terputus</h1>
+        <h1 className="text-xl font-bold mb-2">{t('lostSignal', 'title')}</h1>
         <p className="text-slate-400 text-sm leading-relaxed mb-8">
-          Sepertinya backend EduPKL tidak bisa dijangkau — periksa koneksi internetmu, atau
-          pastikan server backend sedang menyala, lalu coba lagi.
+          {t('lostSignal', 'desc')}
         </p>
         <button
           onClick={retry}
@@ -28,7 +29,7 @@ const LostSignal = () => {
           className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition disabled:opacity-60"
         >
           <RotateCw size={16} className={checking ? 'animate-spin' : ''} />
-          {checking ? 'Menghubungkan...' : 'Coba Lagi'}
+          {checking ? t('lostSignal', 'btnConnecting') : t('lostSignal', 'btnRetry')}
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Award, Printer, FileBarChart } from 'lucide-react';
 import { useData } from '../../context/DataContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { findById } from '../../utils/scope';
 import { apiFetch } from '../../config/api';
 import Modal from '../../components/ui/Modal';
@@ -17,6 +18,7 @@ import EmptyState from '../../components/ui/EmptyState';
 
 const Laporan = () => {
   const { siswa, perusahaan, penempatan, settings } = useData();
+  const { t } = useLanguage();
   const [certTarget, setCertTarget] = useState(null);
   const [matchByStudent, setMatchByStudent] = useState({}); // { [studentId]: [{company_id, total_score, category}] }
 
@@ -43,24 +45,24 @@ const Laporan = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div>
-        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Laporan & Sertifikat PKL</h1>
-        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Rekap seluruh penempatan siswa, Match Score, dan cetak sertifikat bagi yang telah menyelesaikan program.</p>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('laporan', 'pageTitle')}</h1>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">{t('laporan', 'pageDesc')}</p>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
         {penempatan.length === 0 ? (
-          <EmptyState icon={<FileBarChart size={28} />} title="Belum ada data untuk direkap" />
+          <EmptyState icon={<FileBarChart size={28} />} title={t('laporan', 'emptyTitle')} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50 dark:bg-slate-800 text-gray-600 dark:text-slate-400 font-medium border-b border-gray-100 dark:border-slate-800">
                 <tr>
-                  <th className="py-3 px-6">SISWA</th>
-                  <th className="py-3 px-6">PERUSAHAAN</th>
-                  <th className="py-3 px-6">PERIODE</th>
-                  <th className="py-3 px-6">STATUS</th>
-                  <th className="py-3 px-6">MATCH SCORE</th>
-                  <th className="py-3 px-6 text-center">SERTIFIKAT</th>
+                  <th className="py-3 px-6">{t('laporan', 'colSiswa')}</th>
+                  <th className="py-3 px-6">{t('laporan', 'colPerusahaan')}</th>
+                  <th className="py-3 px-6">{t('laporan', 'colPeriode')}</th>
+                  <th className="py-3 px-6">{t('common', 'colStatus')}</th>
+                  <th className="py-3 px-6">{t('laporan', 'colMatchScore')}</th>
+                  <th className="py-3 px-6 text-center">{t('laporan', 'colSertifikat')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
@@ -75,7 +77,7 @@ const Laporan = () => {
                         <p className="text-xs text-gray-400 dark:text-slate-500">{s?.kelas}</p>
                       </td>
                       <td className="py-3 px-6 text-gray-600 dark:text-slate-400">{c?.nama}</td>
-                      <td className="py-3 px-6 text-gray-500 dark:text-slate-400 whitespace-nowrap">{p.tanggalMulai} s/d {p.tanggalSelesai}</td>
+                      <td className="py-3 px-6 text-gray-500 dark:text-slate-400 whitespace-nowrap">{p.tanggalMulai} {t('common', 'sd')} {p.tanggalSelesai}</td>
                       <td className="py-3 px-6"><Badge status={p.status} /></td>
                       <td className="py-3 px-6">
                         {match ? (
@@ -87,10 +89,10 @@ const Laporan = () => {
                           onClick={() => setCertTarget({ p, s, c, match })}
                           disabled={p.status !== 'Selesai'}
                           className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-500/20 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                          title={p.status !== 'Selesai' ? 'Sertifikat tersedia setelah PKL berstatus Selesai' : undefined}
+                          title={p.status !== 'Selesai' ? t('laporan', 'tooltipSertifikat') : undefined}
                         >
                           <Award size={14} />
-                          Lihat Sertifikat
+                          {t('laporan', 'btnLihatSertifikat')}
                         </button>
                       </td>
                     </tr>
@@ -102,19 +104,19 @@ const Laporan = () => {
         )}
       </div>
 
-      <Modal open={!!certTarget} onClose={() => setCertTarget(null)} title="Sertifikat PKL" size="lg">
+      <Modal open={!!certTarget} onClose={() => setCertTarget(null)} title={t('laporan', 'modalSertifikatTitle')} size="lg">
         {certTarget && (
           <div>
             <div id="certificate-print" className="border-4 border-double border-blue-200 rounded-xl p-10 text-center bg-gradient-to-b from-blue-50/40 to-white">
               <Award size={40} className="mx-auto text-blue-500" />
-              <p className="text-xs tracking-[0.3em] text-gray-400 dark:text-slate-500 mt-4 uppercase">Sertifikat Praktik Kerja Lapangan</p>
+              <p className="text-xs tracking-[0.3em] text-gray-400 dark:text-slate-500 mt-4 uppercase">{t('laporan', 'certLabel')}</p>
               <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mt-3">{certTarget.s?.nama}</h2>
               <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">NISN {certTarget.s?.nisn} · {certTarget.s?.kelas}</p>
               <p className="text-sm text-gray-600 dark:text-slate-400 mt-6 leading-relaxed max-w-md mx-auto">
-                Telah menyelesaikan Praktik Kerja Lapangan di{' '}
-                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.c?.nama}</span> pada periode{' '}
-                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalMulai}</span> s/d{' '}
-                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalSelesai}</span> dengan tingkat kesesuaian{' '}
+                {t('laporan', 'certCompletedPrefix')}{' '}
+                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.c?.nama}</span> {t('laporan', 'certPeriodLabel')}{' '}
+                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalMulai}</span> {t('common', 'sd')}{' '}
+                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalSelesai}</span> {t('laporan', 'certSuitabilityLabel')}{' '}
                 <span className="font-semibold text-gray-800 dark:text-slate-100">
                   {certTarget.match ? `${certTarget.match.kategori} (${certTarget.match.total}%)` : '—'}
                 </span>.
@@ -123,17 +125,17 @@ const Laporan = () => {
                 <div>
                   <p>{settings.alamatSekolah?.split(',').slice(-1)[0]?.trim()}, {certTarget.p.tanggalSelesai}</p>
                   <p className="mt-8 font-semibold text-gray-800 dark:text-slate-100">{settings.kepalaSekolah}</p>
-                  <p className="text-xs text-gray-400 dark:text-slate-500">Kepala {settings.namaSekolah}</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500">{t('laporan', 'kepalaPrefix')} {settings.namaSekolah}</p>
                 </div>
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button onClick={() => setCertTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-                Tutup
+                {t('laporan', 'btnTutup')}
               </button>
               <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
                 <Printer size={16} />
-                Cetak
+                {t('laporan', 'btnCetak')}
               </button>
             </div>
           </div>

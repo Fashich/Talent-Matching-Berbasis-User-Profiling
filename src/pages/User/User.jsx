@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, UserCog, KeyRound } from 'lucide-react';
 import { useData } from '../../context/DataContext';
+import { useLanguage } from '../../context/LanguageContext';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import Badge from '../../components/ui/Badge';
@@ -11,6 +12,7 @@ const emptyForm = { nama: '', username: '', email: '', role: 'Siswa', status: 'A
 
 const User = () => {
   const { users, siswa, addItem, updateItem, removeItem, resetUserPassword } = useData();
+  const { t } = useLanguage();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -72,29 +74,29 @@ const User = () => {
     <div className="max-w-6xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">User</h1>
-          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">Kelola akun Administrator, Petugas, Guru, dan Siswa.</p>
+          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('user', 'pageTitle')}</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">{t('user', 'pageDesc')}</p>
         </div>
         <button onClick={openAdd} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition w-fit">
           <Plus size={16} />
-          Tambah User
+          {t('user', 'btnTambah')}
         </button>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
         {users.length === 0 ? (
-          <EmptyState icon={<UserCog size={28} />} title="Belum ada pengguna" />
+          <EmptyState icon={<UserCog size={28} />} title={t('user', 'emptyTitle')} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50 dark:bg-slate-800 text-gray-600 dark:text-slate-400 font-medium border-b border-gray-100 dark:border-slate-800">
                 <tr>
-                  <th className="py-3 px-6">NAMA</th>
-                  <th className="py-3 px-6">USERNAME</th>
-                  <th className="py-3 px-6">PERAN</th>
-                  <th className="py-3 px-6">TERKAIT</th>
-                  <th className="py-3 px-6">STATUS</th>
-                  <th className="py-3 px-6 text-center">AKSI</th>
+                  <th className="py-3 px-6">{t('user', 'colNama')}</th>
+                  <th className="py-3 px-6">{t('user', 'colUsername')}</th>
+                  <th className="py-3 px-6">{t('user', 'colPeran')}</th>
+                  <th className="py-3 px-6">{t('user', 'colTerkait')}</th>
+                  <th className="py-3 px-6">{t('common', 'colStatus')}</th>
+                  <th className="py-3 px-6 text-center">{t('common', 'colActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
@@ -109,15 +111,15 @@ const User = () => {
                       <div className="flex items-center justify-center gap-2">
                         <button onClick={() => openEdit(u)} className="flex items-center gap-1.5 whitespace-nowrap bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-blue-700 transition">
                           <Edit size={14} />
-                          Edit
+                          {t('common', 'edit')}
                         </button>
-                        <button onClick={() => openReset(u)} title="Reset Password" className="flex items-center gap-1.5 whitespace-nowrap bg-amber-500 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-amber-600 transition">
+                        <button onClick={() => openReset(u)} title={t('user', 'tooltipReset')} className="flex items-center gap-1.5 whitespace-nowrap bg-amber-500 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-amber-600 transition">
                           <KeyRound size={14} />
-                          Reset
+                          {t('user', 'btnReset')}
                         </button>
                         <button onClick={() => setDeleteTarget(u)} className="flex items-center gap-1.5 whitespace-nowrap bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-red-700 transition">
                           <Trash2 size={14} />
-                          Hapus
+                          {t('common', 'delete')}
                         </button>
                       </div>
                     </td>
@@ -129,84 +131,84 @@ const User = () => {
         )}
       </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? 'Edit User' : 'Tambah User'}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? t('user', 'modalTitleEdit') : t('user', 'modalTitleAdd')}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelNamaLengkap')}</label>
             <input required value={form.nama} onChange={set('nama')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Username</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelUsername')}</label>
               <input required value={form.username} onChange={set('username')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelEmail')}</label>
               <input type="email" value={form.email} onChange={setEmail} autoCapitalize="none" autoCorrect="off" spellCheck="false" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           {!editingId && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Password Awal</label>
-              <input required type="password" minLength={6} value={form.password} onChange={set('password')} placeholder="Minimal 6 karakter" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelPasswordAwal')}</label>
+              <input required type="password" minLength={6} value={form.password} onChange={set('password')} placeholder={t('user', 'placeholderPassword')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           )}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Peran</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelPeran')}</label>
               <select value={form.role} onChange={set('role')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Status</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelStatus')}</label>
               <select value={form.status} onChange={set('status')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Aktif">Aktif</option>
-                <option value="Nonaktif">Nonaktif</option>
+                <option value="Aktif">{t('user', 'optionAktif')}</option>
+                <option value="Nonaktif">{t('user', 'optionNonaktif')}</option>
               </select>
             </div>
           </div>
           {form.role === 'Siswa' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Siswa Terkait</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelSiswaTerkait')}</label>
               <select value={form.studentId} onChange={set('studentId')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">— Belum ditautkan —</option>
+                <option value="">{t('user', 'optionBelumDitautkan')}</option>
                 {availableSiswaForLink.map((s) => <option key={s.id} value={s.id}>{s.nama} ({s.nisn})</option>)}
               </select>
               <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
-                Tanpa ditautkan ke profil siswa, akun ini tidak akan bisa melihat Profil, Kompetensi, Jurnal, maupun Rekomendasi miliknya sendiri.
+                {t('user', 'hintSiswaTerkait')}
               </p>
             </div>
           )}
-          {editingId && <p className="text-xs text-gray-400 dark:text-slate-500">Ganti password lewat tombol "Reset Password" di tabel, bukan form ini.</p>}
+          {editingId && <p className="text-xs text-gray-400 dark:text-slate-500">{t('user', 'hintGantiPassword')}</p>}
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-              Batal
+              {t('common', 'cancel')}
             </button>
             <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
-              {editingId ? 'Simpan Perubahan' : 'Tambah User'}
+              {editingId ? t('common', 'saveChanges') : t('user', 'btnTambah')}
             </button>
           </div>
         </form>
       </Modal>
 
-      <Modal open={!!resetTarget} onClose={() => setResetTarget(null)} title="Reset Password">
+      <Modal open={!!resetTarget} onClose={() => setResetTarget(null)} title={t('user', 'modalResetTitle')}>
         {resetTarget && (
           <form onSubmit={submitReset} className="space-y-4">
             <p className="text-sm text-gray-600 dark:text-slate-400">
-              Setel password baru untuk akun <span className="font-semibold text-gray-800 dark:text-slate-100">{resetTarget.nama}</span> ({resetTarget.username}).
-              Semua sesi login akun ini akan otomatis logout.
+              {t('user', 'resetInfoPrefix')} <span className="font-semibold text-gray-800 dark:text-slate-100">{resetTarget.nama}</span> ({resetTarget.username}).
+              {' '}{t('user', 'resetInfoSuffix')}
             </p>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Password Baru</label>
-              <input required type="password" minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Minimal 6 karakter" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('user', 'labelPasswordBaru')}</label>
+              <input required type="password" minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder={t('user', 'placeholderPassword')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <button type="button" onClick={() => setResetTarget(null)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-                Batal
+                {t('common', 'cancel')}
               </button>
               <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 transition">
-                Reset Password
+                {t('user', 'btnResetPassword')}
               </button>
             </div>
           </form>
@@ -217,8 +219,8 @@ const User = () => {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteTarget && removeItem('users', deleteTarget.id)}
-        title="Hapus User"
-        message={`Yakin ingin menghapus akun "${deleteTarget?.nama}"?`}
+        title={t('user', 'deleteTitle')}
+        message={t('user', 'deleteMessage')(deleteTarget?.nama)}
       />
     </div>
   );

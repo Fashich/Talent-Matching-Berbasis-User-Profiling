@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Scene 3D gedung sekolah untuk hero Landing — siklus 24 jam (=120 detik
 // nyata), orang-orangan berjalan sesuai jam sekolah, tanpa auto-rotate
@@ -1159,6 +1160,7 @@ function initScene(canvas) {
 
 const SchoolScene = ({ className = '' }) => {
   const canvasRef = useRef(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!canvasRef.current) return undefined;
@@ -1171,7 +1173,7 @@ const SchoolScene = ({ className = '' }) => {
       ref={canvasRef}
       className={`absolute block touch-none cursor-grab ${className}`}
       style={{ top: '-150px', left: '-30px' }}
-      aria-label="Ilustrasi 3D gedung SMKS Rajasa Surabaya, siklus siang-malam"
+      aria-label={t('landing', 'schoolSceneAriaLabel')}
       role="img"
     />
   );

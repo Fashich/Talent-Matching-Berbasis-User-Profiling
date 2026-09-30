@@ -1,5 +1,6 @@
 import React, { useId } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 // Tombol toggle light/dark — ikon SVG kustom dibelah diagonal (malam kiri-atas,
 // siang kanan-bawah), lihat design_handoff_landing_login/README.md bagian
@@ -16,6 +17,7 @@ const STARS = [
 
 const ThemeToggle = ({ className = '', size = 38 }) => {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   const isDark = theme === 'dark';
   const uid = useId();
   const clipId = `tt-clip-${uid}`;
@@ -35,8 +37,8 @@ const ThemeToggle = ({ className = '', size = 38 }) => {
     <button
       type="button"
       onClick={toggleTheme}
-      aria-label="Ganti tema"
-      title={isDark ? 'Mode Terang' : 'Mode Gelap'}
+      aria-label={t('common', 'toggleThemeAriaLabel')}
+      title={isDark ? t('common', 'lightMode') : t('common', 'darkMode')}
       className={`inline-flex shrink-0 border-0 bg-transparent p-0 cursor-pointer transition-transform duration-150 hover:scale-[1.08] active:scale-[0.94] ${className}`}
       style={{ width: size, height: size, borderRadius: radius }}
     >

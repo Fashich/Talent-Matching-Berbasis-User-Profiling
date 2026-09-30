@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Modal = ({ open, onClose, title, children, size = 'md' }) => {
+  const { t } = useLanguage();
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => {
@@ -33,7 +35,7 @@ const Modal = ({ open, onClose, title, children, size = 'md' }) => {
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-slate-800 rounded-lg p-1.5 transition"
-            aria-label="Tutup"
+            aria-label={t('common', 'close')}
           >
             <X size={18} />
           </button>

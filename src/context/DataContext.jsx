@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { apiFetch, ApiError } from '../config/api';
 import { useAuth } from './AuthContext';
+import { useLanguage } from './LanguageContext';
 
 // v3: data sungguhan dari backend PHP (bukan lagi localStorage). Context ini
 // tetap mengekspos bentuk data & fungsi (addItem/updateItem/removeItem) yang
@@ -131,15 +132,12 @@ function perusahaanToApi(form) {
 // dari backend (sudah di-JOIN), tapi untuk MENULIS nama perlu dicocokkan ke
 // akun Guru yang benar-benar terdaftar — lihat resolveGuruId().
 
-function resolveGuruId(namaGuru, guruList) {
+function resolveGuruId(namaGuru, guruList, t) {
   const nama = (namaGuru || '').trim();
   if (!nama) return null;
   const match = guruList.find((g) => g.nama.trim().toLowerCase() === nama.toLowerCase());
   if (!match) {
-    throw new ApiError(
-      `Guru pembimbing "${nama}" belum terdaftar sebagai akun Guru. Tambahkan dulu akunnya di halaman User (Administrator), baru pilih lagi di sini.`,
-      422
-    );
+    throw new ApiError(t('errors', 'guruNotRegistered')(nama), 422);
   }
   return match.id;
 }
@@ -162,12 +160,12 @@ function kelompokMagangFromApi(k) {
   };
 }
 
-async function kelompokMagangToApi(form) {
+async function kelompokMagangToApi(form, t) {
   const guruList = await fetchGuruList();
   return {
     nama: form.nama,
     company_id: Number(form.perusahaanId),
-    guru_pembimbing_id: resolveGuruId(form.pembimbingGuru, guruList),
+    guru_pembimbing_id: resolveGuruId(form.pembimbingGuru, guruList, t),
     periode_mulai: form.periodeMulai,
     periode_selesai: form.periodeSelesai,
     status: form.status,
@@ -188,13 +186,13 @@ function penempatanFromApi(p) {
   };
 }
 
-async function penempatanToApi(form) {
+async function penempatanToApi(form, t) {
   const guruList = await fetchGuruList();
   return {
     student_id: Number(form.siswaId),
     company_id: Number(form.perusahaanId),
     group_id: form.kelompokMagangId ? Number(form.kelompokMagangId) : null,
-    guru_pembimbing_id: resolveGuruId(form.guruPembimbing, guruList),
+    guru_pembimbing_id: resolveGuruId(form.guruPembimbing, guruList, t),
     tanggal_mulai: form.tanggalMulai,
     tanggal_selesai: form.tanggalSelesai,
     status: form.status,
@@ -234,6 +232,7 @@ const DataContext = createContext(null);
 
 export function DataProvider({ children }) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [siswa, setSiswa] = useState([]);
   const [perusahaan, setPerusahaan] = useState([]);
   const [kelompokMagang, setKelompokMagang] = useState([]);
@@ -282,7 +281,7 @@ export function DataProvider({ children }) {
       setSiswa(siswaMapped);
       setUsers(usersData.map((u) => userFromApi(u, linkedIdByUserId[u.id])));
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Gagal memuat data dari server.');
+      setError(err instanceof ApiError ? err.message : t('errors', 'genericLoadFailed'));
     } finally {
       setLoading(false);
     }
@@ -322,11 +321,11 @@ export function DataProvider({ children }) {
     try {
       return await fn(...args);
     } catch (err) {
-      const message = err instanceof ApiError ? err.message : 'Terjadi kesalahan tak terduga.';
+      const message = err instanceof ApiError ? err.message : t('errors', 'genericUnexpected');
       window.alert(message);
       throw err;
     }
-  }, []);
+  }, [t]);
 
   // ---- Kompetensi siswa: koleksi ini flat dengan siswaId (bukan nested di
   // siswa) supaya Kompetensi.jsx tidak perlu ditulis ulang. Nama kompetensi
@@ -381,14 +380,14 @@ export function DataProvider({ children }) {
         return mapped;
       }
       case 'kelompokMagang': {
-        const body = await kelompokMagangToApi(item);
+        const body = await kelompokMagangToApi(item, t);
         const created = await apiFetch('/api/kelompok-magang', { method: 'POST', body });
         const mapped = kelompokMagangFromApi(created);
         setKelompokMagang((prev) => [...prev, mapped]);
         return mapped;
       }
       case 'penempatan': {
-        const body = await penempatanToApi(item);
+        const body = await penempatanToApi(item, t);
         const created = await apiFetch('/api/penempatan', { method: 'POST', body });
         const mapped = penempatanFromApi(created);
         setPenempatan((prev) => [...prev, mapped]);
@@ -405,7 +404,7 @@ export function DataProvider({ children }) {
       }
       case 'kompetensi': {
         const student = siswa.find((s) => s.id === item.siswaId);
-        if (!student) throw new ApiError('Profil siswa tidak ditemukan.', 404);
+        if (!student) throw new ApiError(t('errors', 'studentProfileNotFound'), 404);
         const competencyId = await resolveMasterCompetencyId(item.nama, item.kategori);
         const nextList = [
           ...(student.kompetensiSiswa || []),
@@ -451,14 +450,14 @@ export function DataProvider({ children }) {
         return mapped;
       }
       case 'kelompokMagang': {
-        const body = await kelompokMagangToApi(patch);
+        const body = await kelompokMagangToApi(patch, t);
         const updated = await apiFetch(`/api/kelompok-magang/${id}`, { method: 'PUT', body });
         const mapped = kelompokMagangFromApi(updated);
         setKelompokMagang((prev) => prev.map((k) => (k.id === id ? mapped : k)));
         return mapped;
       }
       case 'penempatan': {
-        const body = await penempatanToApi(patch);
+        const body = await penempatanToApi(patch, t);
         const updated = await apiFetch(`/api/penempatan/${id}`, { method: 'PUT', body });
         const mapped = penempatanFromApi(updated);
         setPenempatan((prev) => prev.map((p) => (p.id === id ? mapped : p)));
@@ -477,7 +476,7 @@ export function DataProvider({ children }) {
       }
       case 'kompetensi': {
         const student = findOwnerStudent(id);
-        if (!student) throw new ApiError('Data kompetensi tidak ditemukan.', 404);
+        if (!student) throw new ApiError(t('errors', 'competencyNotFound'), 404);
         let competencyId = student.kompetensiSiswa.find((k) => k.id === id).competencyId;
         if (patch.nama !== undefined) {
           competencyId = await resolveMasterCompetencyId(patch.nama, patch.kategori);

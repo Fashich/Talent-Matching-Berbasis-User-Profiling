@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Plus, Edit, Trash2, Target, Award } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import EmptyState from '../../components/ui/EmptyState';
@@ -14,6 +15,7 @@ const emptyForm = { nama: '', kategori: 'Teknis', tingkat: 'Pemula', pengalamanT
 const Kompetensi = () => {
   const { kompetensi, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const milikSaya = useMemo(() => kompetensi.filter((k) => k.siswaId === user.linkedId), [kompetensi, user.linkedId]);
 
@@ -47,20 +49,20 @@ const Kompetensi = () => {
     <div className="max-w-4xl mx-auto space-y-4 text-gray-900 dark:text-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">Kompetensi Saya</h1>
+          <h1 className="text-xl font-bold text-gray-800 dark:text-slate-100">{t('kompetensi', 'pageTitle')}</h1>
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
-            Isi kompetensi & keahlian yang kamu miliki — jadi salah satu dasar utama perhitungan Match Score (bobot 40%).
+            {t('kompetensi', 'pageDesc')}
           </p>
         </div>
         <button onClick={openAdd} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition w-fit">
           <Plus size={16} />
-          Tambah Kompetensi
+          {t('kompetensi', 'btnTambah')}
         </button>
       </div>
 
       {milikSaya.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-100 dark:border-slate-800">
-          <EmptyState icon={<Target size={28} />} title="Belum ada kompetensi" description="Tambahkan kompetensi supaya sistem bisa menghitung rekomendasi perusahaan untukmu." />
+          <EmptyState icon={<Target size={28} />} title={t('kompetensi', 'emptyTitle')} description={t('kompetensi', 'emptyDesc')} />
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -85,11 +87,11 @@ const Kompetensi = () => {
               <div className="mt-4 flex items-center gap-2">
                 <button onClick={() => openEdit(k)} className="flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-500/20 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition">
                   <Edit size={12} />
-                  Edit
+                  {t('common', 'edit')}
                 </button>
                 <button onClick={() => setDeleteTarget(k)} className="flex items-center gap-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-500/20 hover:bg-red-50 dark:hover:bg-red-500/10 transition">
                   <Trash2 size={12} />
-                  Hapus
+                  {t('common', 'delete')}
                 </button>
               </div>
             </div>
@@ -97,43 +99,43 @@ const Kompetensi = () => {
         </div>
       )}
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? 'Edit Kompetensi' : 'Tambah Kompetensi'}>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? t('kompetensi', 'modalTitleEdit') : t('kompetensi', 'modalTitleAdd')}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nama Kompetensi</label>
-            <input required placeholder="mis. Konfigurasi Jaringan, Pemrograman Web" value={form.nama} onChange={set('nama')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kompetensi', 'labelNamaKompetensi')}</label>
+            <input required placeholder={t('kompetensi', 'placeholderNamaKompetensi')} value={form.nama} onChange={set('nama')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kategori</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kompetensi', 'labelKategori')}</label>
               <select value={form.kategori} onChange={set('kategori')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Teknis">Teknis</option>
-                <option value="Non-Teknis">Non-Teknis</option>
+                <option value="Teknis">{t('kompetensi', 'optionTeknis')}</option>
+                <option value="Non-Teknis">{t('kompetensi', 'optionNonTeknis')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tingkat Kemampuan</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kompetensi', 'labelTingkatKemampuan')}</label>
               <select value={form.tingkat} onChange={set('tingkat')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Pemula">Pemula</option>
-                <option value="Menengah">Menengah</option>
-                <option value="Mahir">Mahir</option>
+                <option value="Pemula">{t('kompetensi', 'optionPemula')}</option>
+                <option value="Menengah">{t('kompetensi', 'optionMenengah')}</option>
+                <option value="Mahir">{t('kompetensi', 'optionMahir')}</option>
               </select>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Pengalaman Terkait (opsional)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kompetensi', 'labelPengalamanTerkait')}</label>
             <textarea rows={2} value={form.pengalamanTerkait} onChange={set('pengalamanTerkait')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Sertifikasi (opsional)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kompetensi', 'labelSertifikasi')}</label>
             <input value={form.sertifikasi} onChange={set('sertifikasi')} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-              Batal
+              {t('common', 'cancel')}
             </button>
             <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition">
-              {editingId ? 'Simpan Perubahan' : 'Tambah'}
+              {editingId ? t('common', 'saveChanges') : t('kompetensi', 'submitAdd')}
             </button>
           </div>
         </form>
@@ -143,8 +145,8 @@ const Kompetensi = () => {
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => deleteTarget && removeItem('kompetensi', deleteTarget.id)}
-        title="Hapus Kompetensi"
-        message={`Yakin ingin menghapus kompetensi "${deleteTarget?.nama}"?`}
+        title={t('kompetensi', 'deleteTitle')}
+        message={t('kompetensi', 'deleteMessage')(deleteTarget?.nama)}
       />
     </div>
   );
