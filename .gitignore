@@ -42,3 +42,9 @@ Edupkl Capstone Web Redesign.zip
 # dari repo ini. Baris ini jaga-jaga (defense in depth) kalau suatu saat
 # ada yang bikin file ini juga di checkout lokal buat testing.
 backend/config/env-local.php
+
+# File upload sertifikasi siswa (PDF/gambar bukti sertifikat) — data asli
+# siswa TIDAK BOLEH ke-commit ke repo public (PII), tapi struktur folder +
+# proteksi .htaccess-nya tetap di-track.
+backend/uploads/sertifikasi/*
+!backend/uploads/sertifikasi/.gitkeep
