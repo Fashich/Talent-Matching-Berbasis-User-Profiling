@@ -12,6 +12,7 @@ require_once __DIR__ . '/../controllers/PlacementController.php';
 require_once __DIR__ . '/../controllers/JournalController.php';
 require_once __DIR__ . '/../controllers/CompetencyController.php';
 require_once __DIR__ . '/../controllers/UserController.php';
+require_once __DIR__ . '/../controllers/UploadController.php';
 
 // ---- Authentication ----
 $router->post('/api/auth/login', [AuthController::class, 'login']);
@@ -71,6 +72,9 @@ $router->get('/api/users/{id}', [UserController::class, 'show']);
 $router->put('/api/users/{id}', [UserController::class, 'update']);
 $router->delete('/api/users/{id}', [UserController::class, 'destroy']);
 $router->put('/api/users/{id}/reset-password', [UserController::class, 'resetPassword']);
+
+// ---- Upload File (sertifikasi kompetensi siswa) ----
+$router->post('/api/uploads/sertifikasi', [UploadController::class, 'sertifikasi']);
 
 // ---- Talent Matching & Recommendation ----
 require_once __DIR__ . '/../controllers/MatchingController.php';
