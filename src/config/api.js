@@ -81,6 +81,49 @@ export async function apiFetch(path, { method = 'GET', body, skipAuth = false } 
   return json?.data ?? null;
 }
 
+/**
+ * Varian apiFetch khusus upload file (multipart/form-data) — dipisah dari
+ * apiFetch krn itu selalu JSON-encode body & set Content-Type: application/
+ * json. Di sini Content-Type SENGAJA tidak di-set manual, biar browser yang
+ * generate header multipart/form-data dgn boundary yang benar sendiri.
+ */
+export async function uploadFile(path, file) {
+  const headers = {};
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  let res;
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+  } catch {
+    connectionHandlers.onOffline();
+    throw new ApiError('Tidak bisa terhubung ke server. Periksa koneksi/backend menyala atau tidak.', 0, null);
+  }
+
+  connectionHandlers.onOnline();
+
+  let json = null;
+  try {
+    json = await res.json();
+  } catch {
+    // Response bukan JSON — biarkan json = null.
+  }
+
+  if (!res.ok || (json && json.success === false)) {
+    const message = json?.message || `Permintaan gagal (HTTP ${res.status}).`;
+    throw new ApiError(message, res.status, json?.errors);
+  }
+
+  return json?.data ?? null;
+}
+
 /** Test konektivitas ke backend tanpa perlu login — dipakai tombol "Coba Lagi". */
 export async function pingBackend() {
   try {
