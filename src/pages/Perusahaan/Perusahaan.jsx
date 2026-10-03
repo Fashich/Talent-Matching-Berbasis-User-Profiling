@@ -15,7 +15,7 @@ const emptyForm = {
 };
 
 const Perusahaan = () => {
-  const { perusahaan, penempatan, kelompokMagang, addItem, updateItem, removeItem } = useData();
+  const { perusahaan, kelompokMagang, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
   const { t } = useLanguage();
   const canManage = user?.role === 'Administrator' || user?.role === 'Petugas';
@@ -39,7 +39,15 @@ const Perusahaan = () => {
   // Penempatan sekarang otomatis mempersempit siswa & isi guru/perusahaan
   // dari kelompok yang dipilih) -> set status Diterima/Berlangsung -> kuota
   // baru naik. kelompokCount() di bawah cuma info tambahan biar jelas.
-  const terisiCount = (perusahaanId) => penempatan.filter((p) => p.perusahaanId === perusahaanId && ['Diterima', 'Berlangsung'].includes(p.status)).length;
+  //
+  // Bug 3 Okt 2026 (laporan Rizky): JANGAN hitung ulang dari array
+  // `penempatan` di FE ini — array itu discope per role oleh backend
+  // (PlacementController::index(): Siswa cuma dapat placement miliknya
+  // sendiri, Guru cuma yang dia bimbing), jadi kuota selalu tampil 0/
+  // undercounted utk role Siswa & Guru. `p.kuotaTerisi` sekarang dihitung
+  // di server lintas-role (lihat CompanyController::withRequirements) dan
+  // sudah ikut terbawa di tiap objek perusahaan — pakai field itu langsung,
+  // bukan filter array `penempatan` lagi.
   const kelompokCount = (perusahaanId) => kelompokMagang.filter((k) => k.perusahaanId === perusahaanId && k.status === 'Aktif').length;
 
   const openAdd = () => {
@@ -166,7 +174,7 @@ const Perusahaan = () => {
 
               <div className="mt-3 pt-3 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between text-sm">
                 <span className="text-gray-500 dark:text-slate-400">{t('perusahaan', 'pjLabel')} <span className="text-gray-700 dark:text-slate-300 font-medium">{p.penanggungJawab}</span></span>
-                <span className="text-gray-500 dark:text-slate-400" title={t('perusahaan', 'kuotaTooltip')}>{t('perusahaan', 'kuotaLabel')} <span className="text-gray-800 dark:text-slate-100 font-semibold">{terisiCount(p.id)}/{p.kuota}</span></span>
+                <span className="text-gray-500 dark:text-slate-400" title={t('perusahaan', 'kuotaTooltip')}>{t('perusahaan', 'kuotaLabel')} <span className="text-gray-800 dark:text-slate-100 font-semibold">{p.kuotaTerisi ?? 0}/{p.kuota}</span></span>
               </div>
               {kelompokCount(p.id) > 0 && (
                 <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{kelompokCount(p.id)} {t('perusahaan', 'kelompokAktifSuffix')}</p>

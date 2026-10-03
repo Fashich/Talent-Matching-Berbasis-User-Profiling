@@ -177,6 +177,22 @@ class CompanyController
         unset($req);
 
         $company['requirements'] = $requirements;
+
+        // Bug 3 Okt 2026 (laporan Rizky): kuota terisi yang ditampilkan FE
+        // (Perusahaan.jsx) dihitung lokal dari array `penempatan`, tapi
+        // GET /api/penempatan DISCOPE per role (Siswa/Guru cuma dapat
+        // placement miliknya sendiri, lihat PlacementController::index()) —
+        // jadi Siswa/Guru selalu lihat kuota terisi 0 (atau undercounted)
+        // utk SEMUA perusahaan selain yang terkait langsung dgn mereka.
+        // Hitung count-nya di server (lintas-role, cuma angka — tidak
+        // membocorkan identitas siswa lain) supaya semua role dapat angka
+        // yang sama & benar.
+        $kuotaStmt = $db->prepare(
+            "SELECT COUNT(*) FROM placements WHERE company_id = :id AND status IN ('Diterima', 'Berlangsung')"
+        );
+        $kuotaStmt->execute(['id' => $company['id']]);
+        $company['kuota_terisi'] = (int) $kuotaStmt->fetchColumn();
+
         return $company;
     }
 

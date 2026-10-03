@@ -95,6 +95,10 @@ function perusahaanFromApi(p) {
     email: p.email || '',
     penanggungJawab: p.penanggung_jawab || '',
     kuota: p.kuota,
+    // Dihitung di server (lintas-role, lihat CompanyController::withRequirements)
+    // -- JANGAN dihitung ulang di FE dari array `penempatan` krn array itu
+    // discope per role (Siswa/Guru cuma lihat placement miliknya sendiri).
+    kuotaTerisi: p.kuota_terisi ?? 0,
     status: p.status,
     posisi: req?.posisi || '',
     kompetensiDibutuhkan: req?.kompetensi_dibutuhkan || [],
