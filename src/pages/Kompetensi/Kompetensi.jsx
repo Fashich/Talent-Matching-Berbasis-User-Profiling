@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { Plus, Edit, Trash2, Target, Award } from 'lucide-react';
+import React, { useMemo, useRef, useState } from 'react';
+import { Plus, Edit, Trash2, Target, Award, X } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -41,12 +41,14 @@ const Kompetensi = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [fileError, setFileError] = useState('');
+  const fileInputRef = useRef(null);
 
   const openAdd = () => {
     setEditingId(null);
     setForm(emptyForm);
     setSelectedFile(null);
     setFileError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
     setModalOpen(true);
   };
 
@@ -55,6 +57,7 @@ const Kompetensi = () => {
     setForm({ nama: k.nama, kategori: k.kategori, tingkat: k.tingkat, pengalamanTerkait: k.pengalamanTerkait, sertifikasi: k.sertifikasi });
     setSelectedFile(null);
     setFileError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
     setModalOpen(true);
   };
 
@@ -80,6 +83,17 @@ const Kompetensi = () => {
     }
     setFileError('');
     setSelectedFile(file);
+  };
+
+  // Bug 3 Okt 2026 (laporan Hadiid): setelah pilih file di input "Sertifikasi
+  // (opsional)", tidak ada cara membatalkan pilihan itu — <input type="file">
+  // browser tidak punya tombol clear bawaan begitu sudah ada file terpilih.
+  // Reset state DAN value input-nya (lewat ref) biar user bisa balik ke
+  // kondisi "belum pilih file" tanpa harus pilih file lain dulu.
+  const handleClearFile = () => {
+    setSelectedFile(null);
+    setFileError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e) => {
@@ -203,6 +217,7 @@ const Kompetensi = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{t('kompetensi', 'labelSertifikasi')}</label>
             <input
+              ref={fileInputRef}
               type="file"
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={handleFileChange}
@@ -211,7 +226,17 @@ const Kompetensi = () => {
             <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">{t('kompetensi', 'helperSertifikasi')}</p>
             {fileError && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{fileError}</p>}
             {selectedFile && !fileError && (
-              <p className="text-xs text-green-600 dark:text-green-400 mt-1">{selectedFile.name}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <p className="text-xs text-green-600 dark:text-green-400">{selectedFile.name}</p>
+                <button
+                  type="button"
+                  onClick={handleClearFile}
+                  className="flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition"
+                >
+                  <X size={12} />
+                  {t('kompetensi', 'batalkanFile')}
+                </button>
+              </div>
             )}
             {!selectedFile && isUploadedFilePath(form.sertifikasi) && (
               <a
