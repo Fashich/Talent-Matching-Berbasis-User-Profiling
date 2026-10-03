@@ -59,6 +59,11 @@ class InternshipGroupController
         }
 
         $db = Database::getConnection();
+
+        if (!empty($data['anggota'])) {
+            self::rejectIfMembersAlreadyActive($db, $data['anggota'], 0);
+        }
+
         try {
             $db->beginTransaction();
 
@@ -99,6 +104,12 @@ class InternshipGroupController
             Response::error('Data kelompok magang tidak valid.', 422, $errors);
         }
 
+        $db = Database::getConnection();
+
+        if (array_key_exists('anggota', $data) && !empty($data['anggota'])) {
+            self::rejectIfMembersAlreadyActive($db, $data['anggota'], (int) $group['id']);
+        }
+
         $fields = [];
         $params = ['id' => $group['id']];
         foreach (self::UPDATABLE_FIELDS as $field) {
@@ -108,7 +119,6 @@ class InternshipGroupController
             }
         }
 
-        $db = Database::getConnection();
         try {
             $db->beginTransaction();
 
@@ -190,6 +200,54 @@ class InternshipGroupController
         $stmt = $db->prepare('INSERT INTO group_members (group_id, student_id) VALUES (:group_id, :student_id)');
         foreach ($studentIds as $studentId) {
             $stmt->execute(['group_id' => $groupId, 'student_id' => $studentId]);
+        }
+    }
+
+    /**
+     * Cegah 1 siswa jadi anggota kelompok magang lain yang masih berstatus
+     * Aktif di saat bersamaan (bug lapor Rizky, 3 Okt 2026: siswa yang
+     * sudah tergabung di kelompok magang lain tetap bisa ditambahkan ke
+     * kelompok magang baru tanpa ditolak sistem). $excludeGroupId = 0 saat
+     * store() (kelompok baru belum punya id), diisi id kelompok yang
+     * sedang diedit saat update() (biar anggota lama yang disimpan ulang
+     * di kelompok yang sama tidak dianggap konflik dgn dirinya sendiri).
+     * Siswa dari kelompok yang sudah berstatus Selesai TIDAK dianggap
+     * konflik — mereka boleh direkrut lagi ke kelompok/periode PKL baru.
+     */
+    private static function rejectIfMembersAlreadyActive(PDO $db, array $studentIds, int $excludeGroupId): void
+    {
+        $studentIds = array_values(array_unique(array_filter(
+            $studentIds,
+            static fn ($id) => $id !== null && $id !== ''
+        )));
+        if (!$studentIds) {
+            return;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($studentIds), '?'));
+        $stmt = $db->prepare(
+            "SELECT s.nama AS siswa_nama, ig.nama AS kelompok_nama
+             FROM group_members gm
+             JOIN internship_groups ig ON ig.id = gm.group_id
+             JOIN students s ON s.id = gm.student_id
+             WHERE gm.student_id IN ({$placeholders})
+               AND gm.group_id <> ?
+               AND ig.status = 'Aktif'"
+        );
+        $stmt->execute([...$studentIds, $excludeGroupId]);
+        $conflicts = $stmt->fetchAll();
+
+        if ($conflicts) {
+            $detail = array_map(
+                static fn ($row) => "{$row['siswa_nama']} sudah tergabung di kelompok magang \"{$row['kelompok_nama']}\" (status Aktif)",
+                $conflicts
+            );
+            Response::error(
+                'Tidak bisa menyimpan anggota: ' . implode('; ', $detail)
+                    . '. Ubah status kelompok lama jadi "Selesai" dulu, atau keluarkan siswa tsb dari kelompok lama, sebelum menambahkannya ke kelompok ini.',
+                422,
+                ['anggota' => $detail]
+            );
         }
     }
 
