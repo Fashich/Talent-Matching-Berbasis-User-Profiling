@@ -47,11 +47,19 @@ const KelompokMagang = () => {
     setModalOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingId) updateItem('kelompokMagang', editingId, form);
-    else addItem('kelompokMagang', form);
-    setModalOpen(false);
+    try {
+      if (editingId) await updateItem('kelompokMagang', editingId, form);
+      else await addItem('kelompokMagang', form);
+      setModalOpen(false);
+    } catch {
+      // Gagal (mis. validasi backend "siswa sudah di kelompok Aktif lain" —
+      // fix bug lapor Rizky 3 Okt 2026). Pesan errornya sudah ditampilkan via
+      // window.alert() di withErrorAlert (DataContext.jsx). Modal SENGAJA
+      // dibiarkan terbuka (bukan ditutup kayak sebelumnya) biar user bisa
+      // langsung koreksi pilihan anggota tanpa ngetik ulang semua field.
+    }
   };
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
