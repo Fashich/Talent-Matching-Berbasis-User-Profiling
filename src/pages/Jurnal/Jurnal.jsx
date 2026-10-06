@@ -19,7 +19,13 @@ const Jurnal = () => {
   const isAdmin = user?.role === 'Administrator';
 
   const myPenempatan = useMemo(() => scopedPenempatan(user, penempatan), [user, penempatan]);
-  const myActivePenempatan = myPenempatan.find((p) => p.status === 'Berlangsung') || myPenempatan[0];
+  // Fix bug TC-JUR-02 (QA Rizky, 6 Okt 2026): sebelumnya ada fallback "|| myPenempatan[0]"
+  // yang bikin penempatan APA SAJA (Diajukan/Diterima/Selesai/Ditolak) dianggap "aktif"
+  // kalau siswa belum/tidak punya penempatan berstatus Berlangsung. Akibatnya siswa tanpa
+  // penempatan aktif tetap bisa isi jurnal. Satu-satunya status yang sah dianggap aktif
+  // cuma 'Berlangsung' -- kalau nggak ada, myActivePenempatan harus undefined (bukan
+  // nyomot penempatan pertama apa pun statusnya).
+  const myActivePenempatan = myPenempatan.find((p) => p.status === 'Berlangsung');
   const visibleSiswaIds = new Set(myPenempatan.map((p) => p.siswaId));
 
   const [addOpen, setAddOpen] = useState(false);
@@ -31,7 +37,13 @@ const Jurnal = () => {
 
   const list = useMemo(() => {
     let data = jurnal.filter((j) => visibleSiswaIds.has(j.siswaId));
-    if (siswaFilter !== 'Semua') data = data.filter((j) => j.siswaId === siswaFilter);
+    // Fix bug TC-JUR-05 (QA Rizky/Hadiid, 6 Okt 2026): j.siswaId adalah NUMBER
+    // (dari backend PHP/PDO, native int lewat PDO::ATTR_EMULATE_PREPARES=false),
+    // sedangkan siswaFilter adalah STRING (nilai <option value={s.id}> selalu
+    // di-stringify HTML, e.target.value juga selalu string). `===` lintas tipe
+    // di JS selalu false [5 === "5" -> false], jadi filter per nama siswa
+    // sebelumnya SELALU kosong. Dibandingkan sebagai string di kedua sisi.
+    if (siswaFilter !== 'Semua') data = data.filter((j) => String(j.siswaId) === siswaFilter);
     return [...data].sort((a, b) => (a.tanggal < b.tanggal ? 1 : -1));
   }, [jurnal, siswaFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 

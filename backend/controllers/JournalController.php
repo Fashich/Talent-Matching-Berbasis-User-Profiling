@@ -73,6 +73,13 @@ class JournalController
         if ((int) $placement['student_id'] !== $studentId) {
             Response::error('Penempatan ini bukan milik kamu.', 403);
         }
+        // Fix bug TC-JUR-02 (QA Rizky, 6 Okt 2026): backend sebelumnya TIDAK PERNAH cek
+        // status penempatan sama sekali -- jadi walau frontend sudah dikunci, panggilan
+        // API langsung (curl/Postman) tetap tembus. Jurnal cuma boleh diisi kalau
+        // penempatan sedang 'Berlangsung' (lihat ENUM status di schema.sql).
+        if ($placement['status'] !== 'Berlangsung') {
+            Response::error('Jurnal hanya bisa diisi untuk penempatan yang sedang berlangsung (status Berlangsung).', 403);
+        }
 
         $db = Database::getConnection();
         try {
