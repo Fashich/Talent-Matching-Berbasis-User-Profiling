@@ -16,6 +16,30 @@ import EmptyState from '../../components/ui/EmptyState';
 // muncul di daftar penempatan, lalu dicocokkan ke perusahaan tempat ia
 // ditempatkan (bukan lagi dihitung client-side).
 
+// Fix TC-SET-01 (QA Rizky, 6 Okt 2026): sertifikat PKL sebelumnya hanya
+// menampilkan tanggalMulai s.d. tanggalSelesai TANPA keterangan lama kegiatan
+// (mis. "selama 3 bulan 28 hari") -- dihitung dari tanggal placement itu
+// sendiri (certTarget.p.tanggalMulai/tanggalSelesai), BUKAN dari setting
+// global "Periode PKL" di Pengaturan (periodePklMulai/Selesai di
+// DataContext/Pengaturan.jsx tidak pernah dipakai di mana pun -- itu field
+// terpisah/informasi sekolah umum, bukan sumber tanggal sertifikat per siswa).
+// 1 bulan dihitung 30 hari (pembulatan umum dokumen administrasi PKL/magang).
+const hitungLamaPkl = (tanggalMulai, tanggalSelesai) => {
+  if (!tanggalMulai || !tanggalSelesai) return null;
+  const mulai = new Date(tanggalMulai);
+  const selesai = new Date(tanggalSelesai);
+  if (Number.isNaN(mulai.getTime()) || Number.isNaN(selesai.getTime()) || selesai < mulai) return null;
+
+  const totalHari = Math.floor((selesai - mulai) / (1000 * 60 * 60 * 24)) + 1; // inklusif tanggal mulai & selesai
+  const bulan = Math.floor(totalHari / 30);
+  const hari = totalHari % 30;
+
+  const parts = [];
+  if (bulan > 0) parts.push(`${bulan} bulan`);
+  if (hari > 0 || bulan === 0) parts.push(`${hari} hari`);
+  return parts.join(' ');
+};
+
 const Laporan = () => {
   const { siswa, perusahaan, penempatan, settings } = useData();
   const { t } = useLanguage();
@@ -116,7 +140,16 @@ const Laporan = () => {
                 {t('laporan', 'certCompletedPrefix')}{' '}
                 <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.c?.nama}</span> {t('laporan', 'certPeriodLabel')}{' '}
                 <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalMulai}</span> {t('common', 'sd')}{' '}
-                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalSelesai}</span> {t('laporan', 'certSuitabilityLabel')}{' '}
+                <span className="font-semibold text-gray-800 dark:text-slate-100">{certTarget.p.tanggalSelesai}</span>
+                {hitungLamaPkl(certTarget.p.tanggalMulai, certTarget.p.tanggalSelesai) && (
+                  <>
+                    {' '}({t('laporan', 'certDurationPrefix')}{' '}
+                    <span className="font-semibold text-gray-800 dark:text-slate-100">
+                      {hitungLamaPkl(certTarget.p.tanggalMulai, certTarget.p.tanggalSelesai)}
+                    </span>)
+                  </>
+                )}{' '}
+                {t('laporan', 'certSuitabilityLabel')}{' '}
                 <span className="font-semibold text-gray-800 dark:text-slate-100">
                   {certTarget.match ? `${certTarget.match.kategori} (${certTarget.match.total}%)` : '—'}
                 </span>.

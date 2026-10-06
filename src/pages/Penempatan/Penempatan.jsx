@@ -13,7 +13,7 @@ const emptyForm = { siswaId: '', perusahaanId: '', kelompokMagangId: '', guruPem
 const STATUS_OPTIONS = ['Diajukan', 'Diterima', 'Berlangsung', 'Selesai', 'Ditolak'];
 
 const Penempatan = () => {
-  const { siswa, perusahaan, kelompokMagang, penempatan, users, addItem, updateItem, removeItem } = useData();
+  const { siswa, perusahaan, kelompokMagang, penempatan, users, settings, addItem, updateItem, removeItem } = useData();
   const { user } = useAuth();
   const { t } = useLanguage();
   const statusLabels = t('common', 'statusLabels');
@@ -64,7 +64,16 @@ const Penempatan = () => {
 
   const openAdd = () => {
     setEditingId(null);
-    setForm(emptyForm);
+    // Wire field "Periode PKL" (periodePklMulai/Selesai) di Pengaturan sbg
+    // DEFAULT tanggal saat bikin Penempatan baru (6 Okt 2026, atas permintaan
+    // Fashich stlh TC-SET-01 -- field itu sebelumnya kesimpan tapi nggak
+    // dipakai di mana pun). Cuma default/boleh diubah manual, bukan dikunci
+    // -- tanggal final tetap per siswa/penempatan, sesuai kebutuhan asli.
+    setForm({
+      ...emptyForm,
+      tanggalMulai: settings?.periodePklMulai || '',
+      tanggalSelesai: settings?.periodePklSelesai || '',
+    });
     setModalOpen(true);
   };
 
