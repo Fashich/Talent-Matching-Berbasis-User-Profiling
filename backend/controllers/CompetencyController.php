@@ -41,8 +41,15 @@ class CompetencyController
         Auth::requireLogin();
 
         $data = Request::body();
+        $errors = [];
         if (empty($data['nama'])) {
-            Response::error('Data kompetensi tidak valid.', 422, ['nama' => 'nama wajib diisi.']);
+            $errors['nama'] = 'nama wajib diisi.';
+        }
+        if (empty($data['kategori'])) {
+            $errors['kategori'] = 'kategori wajib diisi.';
+        }
+        if ($errors) {
+            Response::error('Data kompetensi tidak valid.', 422, $errors);
         }
 
         $db = Database::getConnection();
@@ -50,7 +57,7 @@ class CompetencyController
             $stmt = $db->prepare('INSERT INTO competencies (nama, kategori, deskripsi) VALUES (:nama, :kategori, :deskripsi)');
             $stmt->execute([
                 'nama'      => trim((string) $data['nama']),
-                'kategori'  => $data['kategori'] ?? null,
+                'kategori'  => $data['kategori'],
                 'deskripsi' => $data['deskripsi'] ?? null,
             ]);
         } catch (PDOException $e) {
