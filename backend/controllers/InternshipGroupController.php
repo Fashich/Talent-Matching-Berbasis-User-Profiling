@@ -12,7 +12,7 @@ class InternshipGroupController
 
     public static function index(): void
     {
-        Auth::requireLogin();
+        $user = Auth::requireLogin();
 
         $db = Database::getConnection();
         $where = [];
@@ -25,6 +25,20 @@ class InternshipGroupController
         if ($status = Request::query('status')) {
             $where[] = 'status = :status';
             $params['status'] = $status;
+        }
+
+        // Scoping per-role (bug ditemukan audit CD-5 BAB 6 8 Okt 2026: endpoint
+        // ini TIDAK menyaring apa pun, Guru/Siswa manapun melihat SEMUA
+        // kelompok magang). Disamakan dengan pola yang sudah benar di
+        // PlacementController::index() — Guru hanya lihat kelompok yang dia
+        // bimbing, Siswa hanya lihat kelompok tempatnya tergabung.
+        if ($user['role'] === 'Guru') {
+            $where[] = 'guru_pembimbing_id = :guru_id';
+            $params['guru_id'] = $user['id'];
+        } elseif ($user['role'] === 'Siswa') {
+            $studentId = Auth::studentIdFor((int) $user['id']);
+            $where[] = 'id IN (SELECT group_id FROM group_members WHERE student_id = :student_id)';
+            $params['student_id'] = $studentId ?? 0;
         }
         $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
