@@ -37,7 +37,15 @@ class InternshipGroupController
             $params['guru_id'] = $user['id'];
         } elseif ($user['role'] === 'Siswa') {
             $studentId = Auth::studentIdFor((int) $user['id']);
-            $where[] = 'id IN (SELECT group_id FROM group_members WHERE student_id = :student_id)';
+            // FIX bug 500 (ditemukan 8 Okt 2026, laporan Rizky — Profil Siswa
+            // tampil "Data siswa tidak ditemukan"): kolom `id` di sini WAJIB
+            // di-qualify `ig.id` krn query ini JOIN ke tabel `users` yang
+            // JUGA punya kolom `id` -> tanpa prefix, MySQL/TiDB anggap `id`
+            // ambigu [error 1052] -> PDOException TIDAK ketangkep -> 500.
+            // Promise.all() di DataContext.jsx frontend bikin SATU endpoint
+            // gagal menggagalkan SEMUA data [termasuk /api/siswa/{id} yang
+            // sebenarnya sukses sendiri], makanya Profil.jsx ikut kosong.
+            $where[] = 'ig.id IN (SELECT group_id FROM group_members WHERE student_id = :student_id)';
             $params['student_id'] = $studentId ?? 0;
         }
         $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
